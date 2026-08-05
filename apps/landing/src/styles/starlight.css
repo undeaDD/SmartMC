@@ -1,5 +1,10 @@
 /* Re-theme Starlight to match the rest of the site: same font, same
-   dark + green/teal palette, not just the accent color. */
+   dark + green/teal palette, not just the accent color. Also imports
+   Tailwind itself so utility classes work in component overrides like
+   StarlightSiteTitle.astro, which Starlight pages wouldn't otherwise
+   pick up (they load this file, not global.css). */
+@import "tailwindcss";
+@import "./theme.css";
 @import "@fontsource/fira-sans/400.css";
 @import "@fontsource/fira-sans/500.css";
 @import "@fontsource/fira-sans/600.css";

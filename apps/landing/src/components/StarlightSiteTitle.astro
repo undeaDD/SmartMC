@@ -1,28 +1,14 @@
 ---
-// Overrides Starlight's default SiteTitle to prepend a small "back to the
-// main site" home link, since Starlight's own logo/title link stays within
-// the docs section rather than going back to the marketing site.
-import Default from '@astrojs/starlight/components/SiteTitle.astro';
+// Overrides Starlight's default SiteTitle entirely with the exact same logo
+// mark used in the main site's header (Layout.astro), so the docs section
+// reads as SmartMC rather than a separately-branded "SmartMC Docs" area.
+import Icon from './Icon.astro';
 import { withBase } from '../lib/paths';
-
-const props = Astro.props;
 ---
 
-<a
-  href={withBase('/')}
-  aria-label="Back to smartmc.io"
-  title="Back to the SmartMC homepage"
-  class="sl-flex"
-  style="color: var(--sl-color-gray-3); margin-inline-end: 0.25rem;"
->
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path
-      d="M4 11.5L12 4l8 7.5M6 9.5V20h12V9.5"
-      stroke="currentColor"
-      stroke-width="1.75"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    />
-  </svg>
+<a href={withBase('/')} class="flex items-center gap-2 text-lg font-bold tracking-tight text-white">
+  <span class="flex h-7 w-7 items-center justify-center rounded-md bg-brand-green text-ink-950">
+    <Icon name="shield" class="h-4 w-4" />
+  </span>
+  SmartMC
 </a>
-<Default {...props}><slot /></Default>

@@ -1,0 +1,32 @@
+/* Shared Tailwind theme tokens, imported by both global.css (plain pages)
+   and starlight.css (docs pages) so the two don't drift apart. */
+@theme {
+  --font-sans: "Fira Sans", ui-sans-serif, system-ui, sans-serif;
+
+  /* Brand palette, as specified: white / green / gray / teal / two dark bg tones */
+  --color-brand-white: #ffffff;
+  --color-brand-green: #39bf45;
+  --color-brand-gray: #8c8c8c;
+  --color-brand-teal: #40c0c0;
+  --color-brand-ink: #181818;
+  --color-brand-ink-deep: #121212;
+
+  /* Tints/shades derived from the two brand colors for hover states, borders, etc. */
+  --color-green-300: #8fe098;
+  --color-green-400: #5ccf68;
+  --color-green-500: #39bf45;
+  --color-green-600: #2c9836;
+  --color-green-700: #21732a;
+
+  --color-teal-300: #8fe0e0;
+  --color-teal-400: #5ccdcd;
+  --color-teal-500: #40c0c0;
+  --color-teal-600: #339999;
+
+  --color-ink-950: #121212;
+  --color-ink-900: #171717;
+  --color-ink-850: #181818;
+  --color-ink-800: #1f1f1f;
+  --color-ink-700: #2b2b2b;
+  --color-ink-600: #3d3d3d;
+}
