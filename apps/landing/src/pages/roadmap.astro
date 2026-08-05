@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { statusForOrder } from '../lib/roadmap';
 import { getCollection, render } from 'astro:content';
 
 const milestones = (await getCollection('roadmap')).sort((a, b) => a.data.order - b.data.order);
@@ -26,7 +27,8 @@ const statusLabel: Record<string, string> = {
     <ol class="divide-y divide-white/5">
       {milestones.map(async (milestone) => {
         const { Content } = await render(milestone);
-        const active = milestone.data.status === 'in-progress';
+        const status = statusForOrder(milestone.data.order);
+        const active = status === 'in-progress';
         return (
           <li class="flex gap-6 py-10 sm:gap-10">
             <span
@@ -38,9 +40,9 @@ const statusLabel: Record<string, string> = {
             <div class="min-w-0 pt-2">
               <div class="flex flex-wrap items-center gap-3">
                 <h2 class="text-xl font-semibold text-white">{milestone.data.title}</h2>
-                {milestone.data.status !== 'planned' && (
+                {status !== 'planned' && (
                   <span class={`rounded-full px-2.5 py-0.5 text-xs font-medium ${active ? 'bg-green-500/15 text-brand-green ring-1 ring-inset ring-green-500/30' : 'bg-white/5 text-brand-gray ring-1 ring-inset ring-white/10'}`}>
-                    {statusLabel[milestone.data.status]}
+                    {statusLabel[status]}
                   </span>
                 )}
                 {milestone.data.date && (

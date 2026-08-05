@@ -6,10 +6,12 @@ import Logo from '../components/Logo.astro';
 import Placeholder from '../components/Placeholder.astro';
 import StoreBadge from '../components/StoreBadge.astro';
 import Layout from '../layouts/Layout.astro';
+import { config, isLinkEnabled } from '../lib/config';
 import { withBase } from '../lib/paths';
+import { statusForOrder } from '../lib/roadmap';
 
 const milestones = (await getCollection('roadmap')).sort((a, b) => a.data.order - b.data.order);
-const currentIndex = milestones.findIndex((m) => m.data.status === 'in-progress');
+const currentIndex = milestones.findIndex((m) => statusForOrder(m.data.order) === 'in-progress');
 const previewStart = Math.max(0, Math.min(currentIndex - 1, milestones.length - 3));
 const previewMilestones = milestones.slice(previewStart, previewStart + 3);
 
@@ -43,7 +45,7 @@ const features = [
     art: 'license' as const,
     title: 'Source-available',
     body: 'Free to read, modify, and self-host.',
-    href: 'https://github.com/undeaDD/SmartMC/blob/main/LICENSE',
+    href: withBase('/license'),
     linkLabel: 'Read the license',
   },
 ];
@@ -201,20 +203,40 @@ const steps = [
       <p class="mt-3 text-brand-gray">Choose your platform. Links go live alongside the first release.</p>
     </div>
     <div class="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-3">
-      <span aria-disabled="true" class="rounded-2xl border border-white/10 bg-ink-900/60 p-6 opacity-60">
-        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 text-brand-gray">
-          <Logo name="modrinth" />
-        </div>
-        <h3 class="mt-4 text-base font-semibold text-white">Modrinth</h3>
-        <p class="mt-2 text-sm text-brand-gray">Planned</p>
-      </span>
-      <span aria-disabled="true" class="rounded-2xl border border-white/10 bg-ink-900/60 p-6 opacity-60">
-        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 text-brand-gray">
-          <Logo name="curseforge" />
-        </div>
-        <h3 class="mt-4 text-base font-semibold text-white">CurseForge</h3>
-        <p class="mt-2 text-sm text-brand-gray">Planned</p>
-      </span>
+      {isLinkEnabled(config.links.modrinth) ? (
+        <a href={config.links.modrinth} class="rounded-2xl border border-white/10 bg-ink-900/60 p-6 transition hover:border-green-500/30 hover:bg-ink-900">
+          <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500/10 text-brand-green">
+            <Logo name="modrinth" />
+          </div>
+          <h3 class="mt-4 text-base font-semibold text-white">Modrinth</h3>
+          <p class="mt-2 text-sm text-brand-gray">Download</p>
+        </a>
+      ) : (
+        <span aria-disabled="true" class="rounded-2xl border border-white/10 bg-ink-900/60 p-6 opacity-60">
+          <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 text-brand-gray">
+            <Logo name="modrinth" />
+          </div>
+          <h3 class="mt-4 text-base font-semibold text-white">Modrinth</h3>
+          <p class="mt-2 text-sm text-brand-gray">Planned</p>
+        </span>
+      )}
+      {isLinkEnabled(config.links.curseforge) ? (
+        <a href={config.links.curseforge} class="rounded-2xl border border-white/10 bg-ink-900/60 p-6 transition hover:border-green-500/30 hover:bg-ink-900">
+          <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500/10 text-brand-green">
+            <Logo name="curseforge" />
+          </div>
+          <h3 class="mt-4 text-base font-semibold text-white">CurseForge</h3>
+          <p class="mt-2 text-sm text-brand-gray">Download</p>
+        </a>
+      ) : (
+        <span aria-disabled="true" class="rounded-2xl border border-white/10 bg-ink-900/60 p-6 opacity-60">
+          <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 text-brand-gray">
+            <Logo name="curseforge" />
+          </div>
+          <h3 class="mt-4 text-base font-semibold text-white">CurseForge</h3>
+          <p class="mt-2 text-sm text-brand-gray">Planned</p>
+        </span>
+      )}
       <a href="https://github.com/undeaDD/SmartMC/releases" class="rounded-2xl border border-white/10 bg-ink-900/60 p-6 transition hover:border-green-500/30 hover:bg-ink-900">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500/10 text-brand-green">
           <Logo name="github" />
@@ -237,19 +259,23 @@ const steps = [
       </a>
     </div>
     <div class="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-3">
-      {previewMilestones.map((m) => (
-        <div class={`rounded-2xl border p-6 ${m.data.status === 'in-progress' ? 'border-green-500/40 bg-ink-900' : 'border-white/10 bg-ink-900/60'}`}>
-          <span class={`text-2xl font-bold ${m.data.status === 'in-progress' ? 'text-brand-green' : 'text-white/20'}`}>
-            {String(m.data.order).padStart(2, '0')}
-          </span>
-          <p class="mt-2 text-base font-semibold text-white">{m.data.title}</p>
-          {m.data.status !== 'planned' && (
-            <p class={`mt-1 text-xs font-medium capitalize ${m.data.status === 'in-progress' ? 'text-brand-green' : 'text-brand-gray'}`}>
-              {m.data.status.replace('-', ' ')}
-            </p>
-          )}
-        </div>
-      ))}
+      {previewMilestones.map((m) => {
+        const status = statusForOrder(m.data.order);
+        const active = status === 'in-progress';
+        return (
+          <div class={`rounded-2xl border p-6 ${active ? 'border-green-500/40 bg-ink-900' : 'border-white/10 bg-ink-900/60'}`}>
+            <span class={`text-2xl font-bold ${active ? 'text-brand-green' : 'text-white/20'}`}>
+              {String(m.data.order).padStart(2, '0')}
+            </span>
+            <p class="mt-2 text-base font-semibold text-white">{m.data.title}</p>
+            {status !== 'planned' && (
+              <p class={`mt-1 text-xs font-medium capitalize ${active ? 'text-brand-green' : 'text-brand-gray'}`}>
+                {status.replace('-', ' ')}
+              </p>
+            )}
+          </div>
+        );
+      })}
     </div>
   </section>
 </Layout>

@@ -10,14 +10,28 @@ html {
   color-scheme: dark;
   scroll-behavior: smooth;
   font-family: var(--font-sans);
+  height: 100%;
 }
 
 body {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
   background-color: var(--color-ink-950);
   background-image:
     radial-gradient(60rem 30rem at 15% -10%, color-mix(in oklab, var(--color-brand-green) 14%, transparent), transparent),
     radial-gradient(50rem 25rem at 100% 10%, color-mix(in oklab, var(--color-brand-teal) 10%, transparent), transparent);
   background-attachment: fixed;
+}
+
+/* Pushes the footer to the bottom on pages whose content doesn't fill the
+   viewport, without needing every page to know about this layout. */
+body > main {
+  flex: 1 0 auto;
+}
+
+body > footer {
+  flex-shrink: 0;
 }
 
 .bg-grid {

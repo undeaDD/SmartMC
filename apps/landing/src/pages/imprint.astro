@@ -3,23 +3,24 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout title="Imprint">
-  <section class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24">
-    <h1 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">Imprint</h1>
-    <div class="mt-8 space-y-4 text-sm text-brand-gray">
-      <p class="rounded-xl border border-dashed border-ink-600 bg-ink-900/60 p-5 text-brand-gray">
-        Placeholder. Replace with the legally required provider information for Devsforge (name, address, contact,
-        and any registration details that apply to your jurisdiction) before this site is treated as production.
+  <section class="relative overflow-hidden">
+    <div class="bg-grid absolute inset-0"></div>
+    <div class="relative mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 sm:py-24">
+      <h1 class="text-glow text-4xl font-bold tracking-tight text-white sm:text-5xl">Imprint</h1>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-2xl px-4 pb-24 sm:px-6">
+    <div class="rounded-2xl border border-white/10 bg-ink-900/60 p-6 sm:p-10">
+      <p class="font-semibold text-white">Devsforge</p>
+      <p class="mt-1 text-sm text-brand-gray">
+        <a class="text-brand-teal underline hover:text-teal-300" href="mailto:undeaD_D@live.de">undeaD_D@live.de</a>
       </p>
-      <div>
-        <p class="font-semibold text-white">Devsforge</p>
-        <p>Address line 1</p>
-        <p>Address line 2</p>
-        <p>Country</p>
-      </div>
-      <div>
-        <p class="font-semibold text-white">Contact</p>
-        <p>Email: contact@devsforge.example</p>
-      </div>
+      <p class="mt-6 text-xs text-brand-gray/70">
+        This imprint intentionally lists a contact email only, with no postal address. Some jurisdictions (Germany's
+        Impressumspflicht, for example) require more than this for a fully compliant imprint. Worth revisiting if
+        SmartMC ever operates in a context where that applies.
+      </p>
     </div>
   </section>
 </Layout>

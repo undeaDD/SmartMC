@@ -1,9 +1,11 @@
 ---
 // Real Apple / Google Play brand marks (via simple-icons, CC0), composed into
-// the familiar two-line store-badge layout. Not published yet, so rendered
-// disabled/grayscale rather than linking anywhere.
+// the familiar two-line store-badge layout. Renders active once the
+// corresponding link is set in the repo-root config.json, disabled/grayscale
+// until then.
 import appleGlyph from 'simple-icons/icons/appstore.svg?raw';
 import googlePlayGlyph from 'simple-icons/icons/googleplay.svg?raw';
+import { config, isLinkEnabled } from '../lib/config';
 
 interface Props {
   store: 'apple' | 'google';
@@ -12,24 +14,31 @@ interface Props {
 const { store } = Astro.props;
 
 const copy = {
-  apple: { eyebrow: 'Coming soon on the', name: 'App Store' },
-  google: { eyebrow: 'Coming soon on', name: 'Google Play' },
+  apple: { eyebrow: 'Download on the', name: 'App Store', comingSoon: 'Coming soon on the' },
+  google: { eyebrow: 'Get it on', name: 'Google Play', comingSoon: 'Coming soon on' },
 };
 
 const glyph = (store === 'apple' ? appleGlyph : googlePlayGlyph)
   .replace('<svg ', '<svg class="h-6 w-6 shrink-0" ')
   .replace('<path ', '<path fill="currentColor" ');
 
-const { eyebrow, name } = copy[store];
+const { eyebrow, name, comingSoon } = copy[store];
+const link = store === 'apple' ? config.links.appStore : config.links.playStore;
+const enabled = isLinkEnabled(link);
+const Tag = enabled ? 'a' : 'span';
 ---
 
-<span
-  class="flex cursor-not-allowed items-center gap-3 rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2.5 text-brand-gray opacity-60"
-  title="Not released yet"
+<Tag
+  href={enabled ? link : undefined}
+  class:list={[
+    'flex items-center gap-3 rounded-lg border border-white/10 px-4 py-2.5 text-brand-gray transition',
+    enabled ? 'bg-white/5 hover:bg-white/10' : 'cursor-not-allowed bg-white/[0.03] opacity-60',
+  ]}
+  title={enabled ? name : 'Not released yet'}
 >
   <Fragment set:html={glyph} />
   <span class="text-left leading-tight">
-    <span class="block text-[10px]">{eyebrow}</span>
+    <span class="block text-[10px]">{enabled ? eyebrow : comingSoon}</span>
     <span class="block text-sm font-semibold text-white/80">{name}</span>
   </span>
-</span>
+</Tag>

@@ -14,11 +14,12 @@ const {
 } = Astro.props;
 
 const nav = [
-  { label: 'Features', href: withBase('/#features') },
+  { label: 'Home', href: withBase('/') },
   { label: 'Compatibility', href: withBase('/compatibility') },
   { label: 'Roadmap', href: withBase('/roadmap') },
   { label: 'FAQ', href: withBase('/faq') },
   { label: 'Gallery', href: withBase('/gallery') },
+  { label: 'Contributors', href: withBase('/contributors') },
   { label: 'Docs', href: withBase('/wiki/players') },
 ];
 
@@ -46,15 +47,6 @@ const year = new Date().getFullYear();
           {nav.map((item) => (
             <a href={item.href} class="transition hover:text-white">{item.label}</a>
           ))}
-        </div>
-        <div class="flex items-center gap-3">
-          <a
-            href={withBase('/wiki/players')}
-            class="flex items-center gap-1.5 rounded-lg bg-brand-green px-3.5 py-2 text-sm font-semibold text-ink-950 transition hover:bg-green-400"
-          >
-            <Icon name="book" class="h-4 w-4" />
-            Documentation
-          </a>
         </div>
       </nav>
     </header>
@@ -109,7 +101,7 @@ const year = new Date().getFullYear();
           <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
             <a class="hover:text-white" href={withBase('/imprint')}>Imprint</a>
             <a class="hover:text-white" href={withBase('/privacy')}>Data privacy</a>
-            <a class="hover:text-white" href="https://github.com/undeaDD/SmartMC/blob/main/LICENSE">License</a>
+            <a class="hover:text-white" href={withBase('/license')}>License</a>
           </div>
         </div>
       </div>

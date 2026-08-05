@@ -1,4 +1,6 @@
 ---
+import Icon from '../components/Icon.astro';
+import Logo from '../components/Logo.astro';
 import Layout from '../layouts/Layout.astro';
 
 const faqs = [
@@ -97,6 +99,33 @@ const faqs = [
     </div>
 
     <p id="faq-empty" class="mt-6 hidden text-sm text-brand-gray">No questions match "<span id="faq-empty-term"></span>".</p>
+
+    <div class="mt-16 border-t border-white/5 pt-10 text-center">
+      <p class="text-sm text-brand-gray">Still stuck? Reach out directly.</p>
+      <div class="mt-5 flex flex-wrap items-center justify-center gap-3">
+        <a
+          href="https://github.com/undeaDD/SmartMC/issues"
+          class="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+        >
+          <Icon name="github" class="h-4 w-4" />
+          GitHub
+        </a>
+        <a
+          href="https://discord.gg/ugef96S34"
+          class="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+        >
+          <Logo name="discord" class="h-4 w-4" />
+          Discord
+        </a>
+        <a
+          href="mailto:undeaD_D@live.de"
+          class="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+        >
+          <Icon name="mail" class="h-4 w-4" />
+          Email
+        </a>
+      </div>
+    </div>
   </section>
 </Layout>
 

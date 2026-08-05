@@ -7,11 +7,13 @@ import { z } from 'astro/zod';
 export const collections = {
   docs: defineCollection({ loader: docsLoader(), schema: docsSchema() }),
 
+  // Status is intentionally not part of the schema -- it's derived from
+  // config.json's currentMilestone (see src/lib/roadmap.ts) rather than
+  // hand-set per file, so advancing the roadmap is a one-number change.
   roadmap: defineCollection({
     loader: glob({ pattern: '**/*.md', base: './src/content/roadmap' }),
     schema: z.object({
       title: z.string(),
-      status: z.enum(['planned', 'in-progress', 'done']),
       order: z.number(),
       date: z.string().optional(),
     }),

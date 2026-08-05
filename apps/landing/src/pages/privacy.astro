@@ -1,28 +1,58 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { withBase } from '../lib/paths';
 ---
 
 <Layout title="Data privacy">
-  <section class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24">
-    <h1 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">Data privacy</h1>
-    <div class="mt-8 space-y-4 text-sm text-brand-gray">
-      <p class="rounded-xl border border-dashed border-ink-600 bg-ink-900/60 p-5 text-brand-gray">
-        Placeholder. Replace with a real privacy policy before this site is treated as production, covering at
-        least: what this site collects (this build only pulls public data from the GitHub API at build time, and
-        sets no cookies), what the mod and app collect once they exist, and how to request data deletion.
+  <section class="relative overflow-hidden">
+    <div class="bg-grid absolute inset-0"></div>
+    <div class="relative mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 sm:py-24">
+      <h1 class="text-glow text-4xl font-bold tracking-tight text-white sm:text-5xl">Data privacy</h1>
+      <p class="mx-auto mt-4 max-w-xl text-brand-gray">
+        What this site, the mod, and the app do and don't collect.
       </p>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-2xl px-4 pb-24 sm:px-6">
+    <div class="space-y-8 rounded-2xl border border-white/10 bg-ink-900/60 p-6 text-sm text-brand-gray sm:p-10">
       <div>
-        <p class="font-semibold text-white">This site</p>
-        <p>
-          The landing site itself is static and sets no cookies or analytics. Contributor avatars and names shown
-          on this site are pulled from GitHub's public API at build time.
+        <h2 class="text-base font-semibold text-white">This website</h2>
+        <p class="mt-2">
+          This site is static: it sets no cookies, runs no analytics or tracking scripts, and doesn't collect
+          anything from your visit. Contributor names and avatars shown on the Contributors page are pulled from
+          GitHub's public API at build time, not from you visiting the site.
         </p>
       </div>
+
       <div>
-        <p class="font-semibold text-white">The mod and app</p>
-        <p>
-          To be written once the pairing flow ships. In short: your Minecraft server keeps its own data; there is
-          no third-party service collecting it.
+        <h2 class="text-base font-semibold text-white">The mod (server-side)</h2>
+        <p class="mt-2">
+          The mod runs entirely on the Minecraft server it's installed on. There is no third-party or Devsforge-
+          operated service in the loop. Pairing stores your Minecraft player UUID, an authentication token, and
+          the devices/groups you set up, on that server, under that server owner's control, the same way any other
+          server-side mod's data would be stored. Nothing is sent anywhere else.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="text-base font-semibold text-white">The app</h2>
+        <p class="mt-2">
+          The app talks directly to the Minecraft server you pair it with, over the connection described in the
+          <a class="text-brand-teal underline hover:text-teal-300" href={withBase('/wiki/developers')}>developer docs</a>.
+          It does not send your data to Devsforge or any other third party. Push notifications are deferred (see the
+          <a class="text-brand-teal underline hover:text-teal-300" href={withBase('/roadmap')}>roadmap</a>); if that
+          changes, this page will be updated to reflect whatever that requires.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="text-base font-semibold text-white">Questions or deletion requests</h2>
+        <p class="mt-2">
+          Since your data lives on the Minecraft server you paired with, deletion is a matter of asking that
+          server's owner to revoke your pairing (see the player wiki). For anything about this site or project
+          specifically, reach out at
+          <a class="text-brand-teal underline hover:text-teal-300" href="mailto:undeaD_D@live.de">undeaD_D@live.de</a>.
         </p>
       </div>
     </div>
