@@ -6,6 +6,6 @@
   "injectors": {
     "defaultRequire": 1
   },
-  "mixins": ["ServerLifecycleMixin"],
+  "mixins": ["ServerLifecycleMixin", "ServerConnectionListenerMixin"],
   "client": []
 }

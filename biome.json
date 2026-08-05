@@ -14,7 +14,7 @@
       "!**/dist",
       "!**/build",
       "!**/.astro",
-      "!apps/mod",
+      "apps/mod/tools/**/*.ts",
       "!packages/protocol/generated"
     ]
   },
