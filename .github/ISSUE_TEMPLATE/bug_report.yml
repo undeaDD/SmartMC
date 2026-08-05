@@ -1,0 +1,40 @@
+name: Bug report
+description: Something in the mod, app, or landing site isn't working as expected
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: component
+    attributes:
+      label: Where's the bug?
+      options:
+        - Mod (Fabric)
+        - Mod (Forge)
+        - Mod (NeoForge)
+        - Mobile app
+        - Landing / docs site
+        - Protocol / codegen
+        - Not sure
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Minecraft version, loader version, and mod version (if applicable)
+      placeholder: e.g. Minecraft 1.21.1, NeoForge 21.1.x, SmartMC 0.1.0
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what actually happened?
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Server/client log output, app console output, or a crash report. This will be rendered as code automatically.
+      render: shell
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce

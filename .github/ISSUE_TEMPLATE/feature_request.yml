@@ -1,0 +1,32 @@
+name: Feature request
+description: Suggest an idea for the mod, app, or landing site
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: What are you trying to do that isn't possible (or isn't easy) today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What would you like to see? Sketches, mockups, or references to similar features elsewhere are all welcome.
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: dropdown
+    id: component
+    attributes:
+      label: Where does this belong?
+      options:
+        - Mod (server-side behavior)
+        - Mobile app
+        - Landing / docs site
+        - Protocol / wire format
+        - Not sure
+    validations:
+      required: true

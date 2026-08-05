@@ -1,0 +1,59 @@
+# Local-only planning doc, never pushed
+CLAUDE.md
+
+# --- Java / Gradle ---
+.gradle/
+build/
+out/
+**/build/
+!apps/mod/**/src/**/build/
+*.class
+.classpath
+.project
+.settings/
+bin/
+run/
+logs/
+
+# --- Node / Bun ---
+node_modules/
+.bun/
+bun.lockb
+dist/
+.turbo/
+*.tsbuildinfo
+
+# --- Expo / React Native / EAS ---
+.expo/
+.expo-shared/
+expo-env.d.ts
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+android/
+ios/
+
+# --- Astro ---
+apps/landing/.astro/
+apps/landing/dist/
+
+# --- Protocol codegen (build-time only output, not committed) ---
+packages/protocol/generated/java/
+
+# --- IDE ---
+.idea/
+*.iml
+.vscode/
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
+
+# --- Secrets ---
+.env
+.env.*
+!.env.example
+config/smartmc/server_identity.ed25519

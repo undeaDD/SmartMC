@@ -1,0 +1,59 @@
+name: Build mods
+
+# Manual only — intentionally not triggered on push/PR. See CONTRIBUTING.md:
+# build the mod locally before opening a PR; this workflow is for producing
+# real build artifacts on demand (e.g. ahead of a release), not CI-on-every-commit.
+on:
+  workflow_dispatch:
+    inputs:
+      minecraft_version:
+        description: "Minecraft version to build (matches a Stonecutter version dir under apps/mod/versions). Leave blank to build all."
+        required: false
+        type: string
+
+jobs:
+  build:
+    name: Build all loaders for a version
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        minecraft_version: [ "1.20.1", "1.21.1" ]
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          # 1.20.1 mods run on Java 17, 1.21.1 mods run on Java 21; Gradle
+          # toolchains resolve the right one per subproject as long as both
+          # are available on the runner.
+          java-version: |
+            17
+            21
+
+      - name: Skip non-matching version filter
+        if: ${{ inputs.minecraft_version != '' && inputs.minecraft_version != matrix.minecraft_version }}
+        run: echo "Skipping ${{ matrix.minecraft_version }}, only ${{ inputs.minecraft_version }} was requested" && exit 0
+
+      - name: Setup Gradle
+        if: ${{ inputs.minecraft_version == '' || inputs.minecraft_version == matrix.minecraft_version }}
+        uses: gradle/actions/setup-gradle@v4
+
+      # NOTE: task name/invocation is Stonecutter's `chiseledBuild` convention as of
+      # authoring this workflow — verify against apps/mod's actual stonecutter.gradle.kts
+      # once the mod project itself is scaffolded, and adjust if it differs.
+      - name: Build ${{ matrix.minecraft_version }} (all loaders)
+        if: ${{ inputs.minecraft_version == '' || inputs.minecraft_version == matrix.minecraft_version }}
+        working-directory: apps/mod
+        run: ./gradlew "chiseledBuild" -PmcVersion=${{ matrix.minecraft_version }} --stacktrace
+
+      - name: Upload built jars
+        if: ${{ inputs.minecraft_version == '' || inputs.minecraft_version == matrix.minecraft_version }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: smartmc-${{ matrix.minecraft_version }}
+          path: apps/mod/versions/${{ matrix.minecraft_version }}/*/build/libs/*.jar
+          if-no-files-found: warn
