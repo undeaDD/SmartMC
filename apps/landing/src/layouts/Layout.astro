@@ -15,6 +15,7 @@ const {
 
 const nav = [
   { label: 'Features', href: withBase('/#features') },
+  { label: 'Compatibility', href: withBase('/compatibility') },
   { label: 'Roadmap', href: withBase('/roadmap') },
   { label: 'FAQ', href: withBase('/faq') },
   { label: 'Gallery', href: withBase('/gallery') },
@@ -48,13 +49,6 @@ const year = new Date().getFullYear();
         </div>
         <div class="flex items-center gap-3">
           <a
-            href="https://github.com/undeaDD/SmartMC"
-            class="hidden items-center gap-1.5 text-sm font-medium text-brand-gray transition hover:text-white sm:flex"
-          >
-            <Icon name="github" class="h-4 w-4" />
-            GitHub
-          </a>
-          <a
             href={withBase('/wiki/players')}
             class="flex items-center gap-1.5 rounded-lg bg-brand-green px-3.5 py-2 text-sm font-semibold text-ink-950 transition hover:bg-green-400"
           >
@@ -87,6 +81,7 @@ const year = new Date().getFullYear();
             <p class="text-sm font-semibold text-white">Product</p>
             <ul class="mt-3 space-y-2 text-sm text-brand-gray">
               <li><a class="transition hover:text-brand-green" href={withBase('/#features')}>Features</a></li>
+              <li><a class="transition hover:text-brand-green" href={withBase('/compatibility')}>Compatibility</a></li>
               <li><a class="transition hover:text-brand-green" href={withBase('/roadmap')}>Roadmap</a></li>
               <li><a class="transition hover:text-brand-green" href={withBase('/gallery')}>Gallery</a></li>
             </ul>

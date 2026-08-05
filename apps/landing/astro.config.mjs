@@ -20,6 +20,9 @@ export default defineConfig({
       description: 'Start here: guides for players, server owners, and developers.',
       customCss: ['./src/styles/starlight.css'],
       social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/undeaDD/SmartMC' }],
+      components: {
+        SiteTitle: './src/components/StarlightSiteTitle.astro',
+      },
       sidebar: [
         {
           label: 'Getting started',

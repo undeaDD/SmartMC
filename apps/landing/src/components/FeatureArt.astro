@@ -4,19 +4,21 @@
 // Astro's image pipeline rather than hotlinked.
 import { Image } from 'astro:assets';
 import setupGear from '../assets/thiings/setup-gear.png';
-import secureShield from '../assets/thiings/secure-shield.png';
+import privacyShield from '../assets/thiings/secure-shield.png';
 import groupFriends from '../assets/thiings/group-friends.png';
-import redstoneLightning from '../assets/thiings/redstone-lightning.png';
-import compatPuzzle from '../assets/thiings/compat-puzzle.png';
+import versionLightning from '../assets/thiings/redstone-lightning.png';
+import modsPuzzle from '../assets/thiings/compat-puzzle.png';
 import licenseWarranty from '../assets/thiings/license-warranty.png';
+import supportCoffee from '../assets/thiings/support-coffee.png';
 
 const art = {
   setup: setupGear,
-  secure: secureShield,
+  privacy: privacyShield,
   group: groupFriends,
-  redstone: redstoneLightning,
-  compat: compatPuzzle,
+  versions: versionLightning,
+  mods: modsPuzzle,
   license: licenseWarranty,
+  support: supportCoffee,
 } as const;
 
 interface Props {

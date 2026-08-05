@@ -1,0 +1,77 @@
+---
+import Icon from '../components/Icon.astro';
+import Layout from '../layouts/Layout.astro';
+
+const columns = [
+  {
+    label: 'Compatible',
+    icon: 'check-circle' as const,
+    color: 'text-brand-green',
+    ring: 'ring-green-500/30',
+    bg: 'bg-green-500/10',
+    items: [
+      'Fabric, Minecraft 1.21.1',
+      'NeoForge, Minecraft 1.21.1',
+      'Single-server setups (survival, creative, modpacks)',
+    ],
+  },
+  {
+    label: 'Planned',
+    icon: 'clock' as const,
+    color: 'text-amber-400',
+    ring: 'ring-amber-400/30',
+    bg: 'bg-amber-400/10',
+    items: [
+      'Forge, Minecraft 1.21.1 (blocked on a known tooling issue, see the roadmap)',
+      'Minecraft 1.20.2 and up (expanding the version floor)',
+    ],
+  },
+  {
+    label: 'Not planned',
+    icon: 'xmark-circle' as const,
+    color: 'text-brand-gray',
+    ring: 'ring-white/10',
+    bg: 'bg-white/5',
+    items: [
+      'Proxy or multi-server networks (BungeeCord, Velocity, and similar): pairing and device state are tied to a single server process',
+      'Bedrock Edition: this is a Java Edition mod',
+    ],
+  },
+];
+---
+
+<Layout title="Compatibility">
+  <section class="relative overflow-hidden">
+    <div class="bg-grid absolute inset-0"></div>
+    <div class="relative mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 sm:py-24">
+      <h1 class="text-glow text-4xl font-bold tracking-tight text-white sm:text-5xl">Compatibility</h1>
+      <p class="mx-auto mt-4 max-w-xl text-brand-gray">
+        What works today, what's on the way, and what's explicitly out of scope.
+      </p>
+      <a
+        href="https://github.com/undeaDD/SmartMC/issues/new?title=Compatibility%20request&labels=compatibility"
+        class="mt-6 inline-flex items-center gap-2 rounded-lg bg-brand-green px-5 py-3 text-sm font-semibold text-ink-950 transition hover:bg-green-400"
+      >
+        Request mod compatibility
+      </a>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      {columns.map((col) => (
+        <div class="rounded-2xl border border-white/10 bg-ink-900/60 p-6">
+          <div class={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-semibold ${col.color} ${col.bg} ring-1 ring-inset ${col.ring}`}>
+            <Icon name={col.icon} class="h-4 w-4" />
+            {col.label}
+          </div>
+          <ul class="mt-5 space-y-4 text-sm text-brand-gray">
+            {col.items.map((item) => (
+              <li class="border-t border-white/5 pt-4 first:border-t-0 first:pt-0">{item}</li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+</Layout>

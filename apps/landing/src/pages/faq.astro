@@ -34,6 +34,22 @@ const faqs = [
     q: 'Is this open source?',
     a: 'Source-available under the PolyForm Noncommercial License 1.0.0: free to read, run, modify, and share for any noncommercial purpose. It is not an OSI-approved "open source" license, since it restricts commercial use.',
   },
+  {
+    q: 'Does this work on a BungeeCord or Velocity network?',
+    a: "Not planned. Pairing and device state are tied to a single server process, so proxy/multi-server networks aren't supported. See the compatibility page for the full picture.",
+  },
+  {
+    q: 'Do I need to be a server admin to use this?',
+    a: "No. Installing the mod requires server admin access, but pairing your phone and controlling your own devices doesn't. Any player on the server can pair once the mod is installed.",
+  },
+  {
+    q: 'What happens if I lose my phone?',
+    a: "Revoke that device's access from in-game with /smartmc devices revoke, or ask a server admin to do it for you. A lost phone can't do anything without a valid, unrevoked token.",
+  },
+  {
+    q: 'Does the app need an internet connection?',
+    a: "It needs to reach your Minecraft server directly, the same way any Minecraft client would (local network or port-forwarded), not through any cloud service in between. If you can connect to the server in Minecraft, the app can reach it too.",
+  },
 ];
 ---
 

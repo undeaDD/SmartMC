@@ -1,7 +1,6 @@
 ---
 import Placeholder from '../components/Placeholder.astro';
 import Layout from '../layouts/Layout.astro';
-import { withBase } from '../lib/paths';
 
 const placeholders = [
   'App: device dashboard',
@@ -19,25 +18,10 @@ const placeholders = [
     <div class="relative mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 sm:py-24">
       <h1 class="text-glow text-4xl font-bold tracking-tight text-white sm:text-5xl">Gallery</h1>
       <p class="mx-auto mt-4 max-w-xl text-brand-gray">
-        Real screenshots and clips land here as features ship. See the <a class="text-brand-teal underline hover:text-teal-300" href={withBase('/roadmap')}>roadmap</a> for progress.
+        Real screenshots and clips land here as features ship.
       </p>
-    </div>
-  </section>
-
-  <section class="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
-    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-      {placeholders.map((label) => (
-        <Placeholder label={label} />
-      ))}
-    </div>
-  </section>
-
-  <section class="mx-auto max-w-4xl px-4 pb-24 sm:px-6">
-    <div class="rounded-3xl border border-white/10 bg-ink-900/60 p-8 text-center sm:p-12">
-      <h2 class="text-xl font-bold text-white sm:text-2xl">Got a screenshot worth sharing?</h2>
-      <p class="mx-auto mt-3 max-w-md text-brand-gray">
-        If you're running SmartMC and have something worth showing off, open an issue with your screenshot attached
-        and it may end up here.
+      <p class="mx-auto mt-2 max-w-xl text-sm text-brand-gray">
+        Got a screenshot worth sharing? Open an issue with it attached and it may end up here.
       </p>
       <a
         href="https://github.com/undeaDD/SmartMC/issues/new?title=Gallery%20submission&labels=gallery"
@@ -45,6 +29,14 @@ const placeholders = [
       >
         Submit a screenshot
       </a>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {placeholders.map((label) => (
+        <Placeholder label={label} />
+      ))}
     </div>
   </section>
 </Layout>

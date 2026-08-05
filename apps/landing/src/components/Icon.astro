@@ -1,12 +1,16 @@
 ---
 import arrowRight from 'iconoir/icons/regular/arrow-right.svg?raw';
+import checkCircle from 'iconoir/icons/regular/check-circle.svg?raw';
+import clock from 'iconoir/icons/regular/clock.svg?raw';
 import download from 'iconoir/icons/regular/download.svg?raw';
 import githubIcon from 'iconoir/icons/regular/github.svg?raw';
+import homeSimple from 'iconoir/icons/regular/home-simple.svg?raw';
 import openBook from 'iconoir/icons/regular/open-book.svg?raw';
 // Inlines a raw Iconoir SVG (MIT licensed, https://iconoir.com) by name.
 // Using the plain `iconoir` package's SVG files directly rather than
 // `iconoir-react`, since this is a plain Astro site with no React runtime.
 import shield from 'iconoir/icons/regular/shield.svg?raw';
+import xmarkCircle from 'iconoir/icons/regular/xmark-circle.svg?raw';
 
 const icons = {
   shield,
@@ -14,6 +18,10 @@ const icons = {
   'arrow-right': arrowRight,
   book: openBook,
   download,
+  'check-circle': checkCircle,
+  clock,
+  'xmark-circle': xmarkCircle,
+  home: homeSimple,
 } as const;
 
 interface Props {

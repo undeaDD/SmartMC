@@ -14,7 +14,8 @@
       "!**/dist",
       "!**/build",
       "!**/.astro",
-      "!apps/mod"
+      "!apps/mod",
+      "!packages/protocol/generated"
     ]
   },
   "formatter": {
