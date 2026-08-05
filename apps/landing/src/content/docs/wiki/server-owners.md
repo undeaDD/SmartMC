@@ -7,7 +7,7 @@ SmartMC is a server-side mod. You don't need to host anything beyond your own Mi
 
 ## Installing
 
-Grab the jar for your loader (Fabric, Forge, or NeoForge) and Minecraft version from the [GitHub releases](https://github.com/undeaDD/SmartMC/releases) once they're published, and drop it in your server's `mods` folder like any other mod.
+Grab the jar for your loader (Fabric, NeoForge, or Quilt — the Fabric jar runs unmodified on Quilt) and Minecraft version from the [GitHub releases](https://github.com/undeaDD/SmartMC/releases) once they're published, and drop it in your server's `mods` folder like any other mod.
 
 ## Configuring
 

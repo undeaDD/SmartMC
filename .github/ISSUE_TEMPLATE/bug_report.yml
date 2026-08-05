@@ -8,7 +8,7 @@ body:
       label: Where's the bug?
       options:
         - Mod (Fabric)
-        - Mod (Forge)
+        - Mod (Quilt)
         - Mod (NeoForge)
         - Mobile app
         - Landing / docs site

@@ -1,6 +1,6 @@
 # SmartMC
 
-A Minecraft-native smart home / alarm platform. A mod (Forge, NeoForge, Fabric) turns your Minecraft server into the entire backend for a companion phone app — no separate service to host, no central server owned by anyone but the world's own server operator.
+A Minecraft-native smart home / alarm platform. A mod (Fabric, NeoForge, Quilt) turns your Minecraft server into the entire backend for a companion phone app — no separate service to host, no central server owned by anyone but the world's own server operator.
 
 Players pair their phone with a server using an in-game code, then get real-time notifications and control for in-world "smart devices" — starting with a simple redstone-triggered alarm — scoped to devices they own or share with a group. All of it rides on the single port the server already listens on (default `25565`); nothing new to open on your firewall.
 
@@ -18,7 +18,7 @@ SmartMC is licensed under the [PolyForm Noncommercial License 1.0.0](LICENSE) �
 apps/
   mobile/    Expo React Native companion app
   landing/   Landing / docs site (GitHub Pages)
-  mod/       The Minecraft mod (Fabric / Forge / NeoForge, multi-version via Stonecutter)
+  mod/       The Minecraft mod (Fabric / NeoForge, multi-version via Stonecutter; Quilt runs the Fabric jar unmodified)
 packages/
   protocol/  Shared wire-protocol schema (TypeSpec), generated Java + TypeScript types
 ```

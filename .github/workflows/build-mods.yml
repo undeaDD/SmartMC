@@ -7,18 +7,14 @@ on:
   workflow_dispatch:
     inputs:
       minecraft_version:
-        description: "Minecraft version to build (matches a Stonecutter version dir under apps/mod/versions). Leave blank to build all."
+        description: "Minecraft version to build (matches a Stonecutter version dir prefix under apps/mod/versions, e.g. 1.21.1). Leave blank to build all."
         required: false
         type: string
 
 jobs:
   build:
-    name: Build all loaders for a version
+    name: Build mod jars
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        minecraft_version: [ "1.20.1", "1.21.1" ]
-      fail-fast: false
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,33 +23,31 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          # 1.20.1 mods run on Java 17, 1.21.1 mods run on Java 21; Gradle
-          # toolchains resolve the right one per subproject as long as both
-          # are available on the runner.
-          java-version: |
-            17
-            21
-
-      - name: Skip non-matching version filter
-        if: ${{ inputs.minecraft_version != '' && inputs.minecraft_version != matrix.minecraft_version }}
-        run: echo "Skipping ${{ matrix.minecraft_version }}, only ${{ inputs.minecraft_version }} was requested" && exit 0
+          # Currently only 1.21.1 is targeted (needs Java 21). Add 17 here
+          # once an older floor version lands in M3.
+          java-version: 21
 
       - name: Setup Gradle
-        if: ${{ inputs.minecraft_version == '' || inputs.minecraft_version == matrix.minecraft_version }}
         uses: gradle/actions/setup-gradle@v4
 
-      # NOTE: task name/invocation is Stonecutter's `chiseledBuild` convention as of
-      # authoring this workflow — verify against apps/mod's actual stonecutter.gradle.kts
-      # once the mod project itself is scaffolded, and adjust if it differs.
-      - name: Build ${{ matrix.minecraft_version }} (all loaders)
-        if: ${{ inputs.minecraft_version == '' || inputs.minecraft_version == matrix.minecraft_version }}
+      - name: Build
         working-directory: apps/mod
-        run: ./gradlew "chiseledBuild" -PmcVersion=${{ matrix.minecraft_version }} --stacktrace
+        run: |
+          if [ -n "${{ inputs.minecraft_version }}" ]; then
+            projects=$(ls versions | grep "^${{ inputs.minecraft_version }}-")
+            if [ -z "$projects" ]; then
+              echo "No Stonecutter version dir matches '${{ inputs.minecraft_version }}' under versions/" >&2
+              exit 1
+            fi
+            tasks=$(for p in $projects; do echo -n ":$p:build "; done)
+            ./gradlew $tasks --stacktrace
+          else
+            ./gradlew build --stacktrace
+          fi
 
       - name: Upload built jars
-        if: ${{ inputs.minecraft_version == '' || inputs.minecraft_version == matrix.minecraft_version }}
         uses: actions/upload-artifact@v4
         with:
-          name: smartmc-${{ matrix.minecraft_version }}
-          path: apps/mod/versions/${{ matrix.minecraft_version }}/*/build/libs/*.jar
+          name: smartmc-${{ inputs.minecraft_version || 'all' }}
+          path: apps/mod/versions/*/build/libs/*.jar
           if-no-files-found: warn

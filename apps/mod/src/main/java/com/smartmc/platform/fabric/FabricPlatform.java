@@ -14,7 +14,9 @@ public class FabricPlatform implements Platform {
 
 	@Override
 	public ModLoader loader() {
-		return ModLoader.FABRIC;
+		// Quilt's built-in Fabric-compatibility layer runs this same jar
+		// unmodified; "quilt_loader" is how a Fabric mod tells the two apart.
+		return FabricLoader.getInstance().isModLoaded("quilt_loader") ? ModLoader.QUILT : ModLoader.FABRIC;
 	}
 
 	@Override

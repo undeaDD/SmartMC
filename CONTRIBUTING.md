@@ -6,7 +6,7 @@ Thanks for taking a look. This project is early — expect things to move and sh
 
 This is a monorepo:
 
-- `apps/mod` — the Minecraft mod. Gradle multi-project, managed with [Stonecutter](https://stonecutter.kikugie.dev) for multi-version support, with `common` / `fabric` / `forge` / `neoforge` subprojects per version.
+- `apps/mod` — the Minecraft mod, targeting Fabric and NeoForge (Quilt runs the Fabric build unmodified via its Fabric-compatibility layer). A single shared source tree, preprocessed per version/loader by [Stonecutter](https://stonecutter.kikugie.dev) into a generated Gradle subproject per combination under `versions/`.
 - `apps/mobile` — the companion app, Expo (React Native).
 - `apps/landing` — the landing/docs site, Astro + Tailwind + Starlight, deployed to GitHub Pages.
 - `packages/protocol` — the shared wire protocol, authored once in [TypeSpec](https://typespec.io), compiled to JSON Schema, and generated into both Java and TypeScript types. This is the single source of truth for messages exchanged between the mod and the app — never hand-edit generated output under `generated/`.

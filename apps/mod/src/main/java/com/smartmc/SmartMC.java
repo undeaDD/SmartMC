@@ -8,10 +8,8 @@ import org.slf4j.LoggerFactory;
 
 //? fabric {
 import com.smartmc.platform.fabric.FabricPlatform;
-//?} neoforge {
+//?} else {
 /*import com.smartmc.platform.neoforge.NeoforgePlatform;
- *///?} forge {
-/*import com.smartmc.platform.forge.ForgePlatform;
  *///?}
 
 @SuppressWarnings("LoggingSimilarMessage")
@@ -41,10 +39,8 @@ public class SmartMC {
 	private static Platform createPlatformInstance() {
 		//? fabric {
 		return new FabricPlatform();
-		//?} neoforge {
+		//?} else {
 		/*return new NeoforgePlatform();
-		 *///?} forge {
-		/*return new ForgePlatform();
 		 *///?}
 	}
 

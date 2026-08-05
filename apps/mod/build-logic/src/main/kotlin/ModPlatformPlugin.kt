@@ -76,10 +76,6 @@ abstract class ModPlatformPlugin @Inject constructor() : Plugin<Project> {
 					extensions.getByType<dev.kikugie.loomx.LoomCompatProjectExtension>().modSourcesJar.name
 				})
 			}
-			is Loader.Forge -> {
-				extension.jarTask.convention("reobfJar")
-				extension.sourcesJarTask.convention("sourcesJar")
-			}
 			else -> {
 				extension.jarTask.convention("jar")
 				extension.sourcesJarTask.convention("sourcesJar")
@@ -165,9 +161,6 @@ abstract class ModPlatformPlugin @Inject constructor() : Plugin<Project> {
 		tasks.withType<Jar>().configureEach {
 			archiveBaseName.set(ctx.modId)
 			dependsOn(generateTask)
-			if (ctx.loader is Loader.Forge) {
-				manifest.attributes(ctx.loader.mixinConfigAttribute to "${ctx.modId}.mixins.json")
-			}
 		}
 	}
 
