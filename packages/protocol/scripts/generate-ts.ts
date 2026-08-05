@@ -3,20 +3,22 @@
 // index.ts re-exporting all of them. Zero runtime dependency in the output --
 // json-schema-to-typescript emits type-only declarations.
 
-import { readdir, mkdir, writeFile, rm } from "node:fs/promises";
-import { join, basename, extname } from "node:path";
-import { compile } from "json-schema-to-typescript";
+import { mkdir, readdir, rm, writeFile } from 'node:fs/promises';
+import { basename, extname, join } from 'node:path';
+import { compile } from 'json-schema-to-typescript';
 
-const jsonSchemaDir = join(import.meta.dir, "..", "generated", "jsonschema");
-const tsOutDir = join(import.meta.dir, "..", "generated", "ts");
+const jsonSchemaDir = join(import.meta.dir, '..', 'generated', 'jsonschema');
+const tsOutDir = join(import.meta.dir, '..', 'generated', 'ts');
 
 async function main() {
   await rm(tsOutDir, { recursive: true, force: true });
   await mkdir(tsOutDir, { recursive: true });
 
-  const entries = (await readdir(jsonSchemaDir)).filter((f) => f.endsWith(".json"));
+  const entries = (await readdir(jsonSchemaDir)).filter((f) => f.endsWith('.json'));
   if (entries.length === 0) {
-    throw new Error(`No JSON Schema files found in ${jsonSchemaDir} -- run generate:jsonschema first.`);
+    throw new Error(
+      `No JSON Schema files found in ${jsonSchemaDir} -- run generate:jsonschema first.`,
+    );
   }
 
   const names: string[] = [];
@@ -34,16 +36,16 @@ async function main() {
     const ts = await compile(schema, name, {
       cwd: jsonSchemaDir,
       bannerComment:
-        "/* eslint-disable */\n/**\n * Generated from packages/protocol/schema/*.tsp via JSON Schema.\n * Do not edit by hand -- run `bun run protocol:generate`.\n */",
+        '/* eslint-disable */\n/**\n * Generated from packages/protocol/schema/*.tsp via JSON Schema.\n * Do not edit by hand -- run `bun run protocol:generate`.\n */',
       style: { singleQuote: true },
     });
 
-    await writeFile(join(tsOutDir, `${name}.ts`), ts, "utf-8");
+    await writeFile(join(tsOutDir, `${name}.ts`), ts, 'utf-8');
     names.push(name);
   }
 
-  const index = names.map((n) => `export type { ${n} } from "./${n}";`).join("\n") + "\n";
-  await writeFile(join(tsOutDir, "index.ts"), index, "utf-8");
+  const index = `${names.map((n) => `export type { ${n} } from "./${n}";`).join('\n')}\n`;
+  await writeFile(join(tsOutDir, 'index.ts'), index, 'utf-8');
 
   console.log(`Generated ${names.length} TypeScript type file(s) in ${tsOutDir}`);
 }

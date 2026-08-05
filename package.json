@@ -9,6 +9,11 @@
   "scripts": {
     "typecheck": "bun run --filter '*' typecheck",
     "protocol:generate": "bun run --filter '@smart-mc/protocol' generate",
-    "web:dev": "bun run --filter '@smart-mc/landing' dev --force"
+    "web:dev": "bun run --filter '@smart-mc/landing' dev --force",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write ."
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.7"
   }
 }

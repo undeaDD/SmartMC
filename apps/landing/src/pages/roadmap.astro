@@ -4,22 +4,10 @@ import { getCollection, render } from 'astro:content';
 
 const milestones = (await getCollection('roadmap')).sort((a, b) => a.data.order - b.data.order);
 
-const statusStyles: Record<string, string> = {
-  done: 'bg-green-500/15 text-green-300 ring-1 ring-inset ring-green-500/30',
-  'in-progress': 'bg-teal-400/15 text-teal-300 ring-1 ring-inset ring-teal-400/30',
-  planned: 'bg-white/5 text-brand-gray ring-1 ring-inset ring-white/10',
-};
-
 const statusLabel: Record<string, string> = {
   done: 'Done',
   'in-progress': 'In progress',
   planned: 'Planned',
-};
-
-const dotStyles: Record<string, string> = {
-  done: 'bg-green-400 text-ink-950',
-  'in-progress': 'bg-teal-400 text-ink-950',
-  planned: 'bg-ink-600 text-white',
 };
 ---
 
@@ -34,23 +22,34 @@ const dotStyles: Record<string, string> = {
     </div>
   </section>
 
-  <section class="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
-    <ol class="space-y-10 border-l border-white/10 pl-8">
+  <section class="mx-auto max-w-4xl px-4 pb-24 sm:px-6">
+    <ol class="divide-y divide-white/5">
       {milestones.map(async (milestone) => {
         const { Content } = await render(milestone);
+        const active = milestone.data.status === 'in-progress';
         return (
-          <li class="relative">
-            <span class={`absolute -left-[calc(2rem+13px)] top-0 flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold ${dotStyles[milestone.data.status]}`}>
-              {milestone.data.order}
+          <li class="flex gap-6 py-10 sm:gap-10">
+            <span
+              class={`shrink-0 text-6xl font-bold leading-none sm:text-8xl ${active ? 'text-brand-green' : 'text-white'}`}
+              style="mask-image: linear-gradient(to bottom, black 35%, transparent 95%); -webkit-mask-image: linear-gradient(to bottom, black 35%, transparent 95%); opacity: 0.9;"
+            >
+              {String(milestone.data.order).padStart(2, '0')}
             </span>
-            <div class="flex flex-wrap items-center gap-3">
-              <h2 class="text-lg font-semibold text-white">{milestone.data.title}</h2>
-              <span class={`rounded-full px-2.5 py-0.5 text-xs font-medium ${statusStyles[milestone.data.status]}`}>
-                {statusLabel[milestone.data.status]}
-              </span>
-            </div>
-            <div class="mt-2 max-w-none text-sm text-brand-gray">
-              <Content />
+            <div class="min-w-0 pt-2">
+              <div class="flex flex-wrap items-center gap-3">
+                <h2 class="text-xl font-semibold text-white">{milestone.data.title}</h2>
+                {milestone.data.status !== 'planned' && (
+                  <span class={`rounded-full px-2.5 py-0.5 text-xs font-medium ${active ? 'bg-green-500/15 text-brand-green ring-1 ring-inset ring-green-500/30' : 'bg-white/5 text-brand-gray ring-1 ring-inset ring-white/10'}`}>
+                    {statusLabel[milestone.data.status]}
+                  </span>
+                )}
+                {milestone.data.date && (
+                  <span class="text-xs text-brand-gray">{milestone.data.date}</span>
+                )}
+              </div>
+              <div class="mt-2 max-w-none text-sm text-brand-gray">
+                <Content />
+              </div>
             </div>
           </li>
         );

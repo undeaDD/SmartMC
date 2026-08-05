@@ -13,6 +13,7 @@ export const collections = {
       title: z.string(),
       status: z.enum(['planned', 'in-progress', 'done']),
       order: z.number(),
+      date: z.string().optional(),
     }),
   }),
 };

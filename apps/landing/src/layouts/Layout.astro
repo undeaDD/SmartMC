@@ -56,9 +56,10 @@ const year = new Date().getFullYear();
           </a>
           <a
             href={withBase('/wiki/players')}
-            class="rounded-lg bg-brand-green px-3.5 py-2 text-sm font-semibold text-ink-950 transition hover:bg-green-400"
+            class="flex items-center gap-1.5 rounded-lg bg-brand-green px-3.5 py-2 text-sm font-semibold text-ink-950 transition hover:bg-green-400"
           >
-            Get started
+            <Icon name="book" class="h-4 w-4" />
+            Documentation
           </a>
         </div>
       </nav>
@@ -109,13 +110,14 @@ const year = new Date().getFullYear();
           </div>
         </div>
         <div class="mt-12 flex flex-col gap-3 border-t border-white/5 pt-6 text-xs text-brand-gray sm:flex-row sm:items-center sm:justify-between">
+          <span>Copyright © {year} Devsforge</span>
           <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <span>© {year} Devsforge</span>
             <a class="hover:text-white" href={withBase('/imprint')}>Imprint</a>
             <a class="hover:text-white" href={withBase('/privacy')}>Data privacy</a>
+            <a class="hover:text-white" href="https://github.com/undeaDD/SmartMC/blob/main/LICENSE">License</a>
           </div>
-          <a class="hover:text-white" href="https://github.com/undeaDD/SmartMC/blob/main/LICENSE">License</a>
         </div>
+        <p class="mt-4 text-[11px] text-brand-gray/60">Illustrations by <a class="underline hover:text-brand-gray" href="https://www.thiings.co">Thiings</a>.</p>
       </div>
     </footer>
   </body>
