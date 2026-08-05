@@ -13,6 +13,7 @@
         "@astrojs/starlight": "^0.41.7",
         "@tailwindcss/vite": "^4.3.3",
         "astro": "^7.1.6",
+        "iconoir": "^7.11.1",
         "tailwindcss": "^4.3.3",
         "typescript": "^6",
       },
@@ -1263,6 +1264,8 @@
     "hyphenate-style-name": ["hyphenate-style-name@1.1.0", "", {}, "sha512-WDC/ui2VVRrz3jOVi+XtjqkDjiVjTtFaAGiW37k6b+ohyQ5wYDOGkvCZa8+H0nx3gyvv0+BST9xuOgIyGQ00gw=="],
 
     "i18next": ["i18next@26.3.6", "", { "peerDependencies": { "typescript": "^5 || ^6 || ^7" }, "optionalPeers": ["typescript"] }, "sha512-Bu5Z2nAXgfVyM8xvW3jk9EKRIuX37PudsrBViThNFx7CR7aaYTpP01cxNB/E4c4UUzTDiAZRstEhsRfPOL/8xA=="],
+
+    "iconoir": ["iconoir@7.11.1", "", {}, "sha512-W3LG94l/LcZZv/Q7XZNFvQSkaQibS21B4pUytrIl+6Ue2FKAwhuuOo1+o7chjkWqhmYqboDUeUlQGXwPShCijw=="],
 
     "iconv-lite": ["iconv-lite@0.7.3", "", { "dependencies": { "safer-buffer": ">= 2.1.2 < 3.0.0" } }, "sha512-IKXpvIzjnC9XTAUbVBcMfGS0EPaIXtW6v+zr+RRp+hqULEpo0owZax6wyRwPOJbWbzjYspQwusTsfVr0ifh4uQ=="],
 

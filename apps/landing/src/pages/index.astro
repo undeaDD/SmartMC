@@ -1,38 +1,272 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+import Placeholder from '../components/Placeholder.astro';
+import { withBase } from '../lib/paths';
+import { getCollection } from 'astro:content';
 
-const base = import.meta.env.BASE_URL;
+const milestones = (await getCollection('roadmap')).sort((a, b) => a.data.order - b.data.order);
+
+let contributors: { login: string; html_url: string; avatar_url: string }[] = [];
+try {
+  const res = await fetch('https://api.github.com/repos/undeaDD/SmartMC/contributors');
+  if (res.ok) contributors = await res.json();
+} catch {
+  // handled below by falling back to an empty list
+}
+
+const benefits = [
+  { icon: 'network', title: 'One port, no exceptions', body: "Rides on the same port your server already uses (25565 by default). Nothing new to open on your firewall, nothing else for admins to run." },
+  { icon: 'key', title: 'Pairs with an in-game code', body: "No re-implementation of Microsoft's login. You're already authenticated by being connected — a short code links that to your phone once." },
+  { icon: 'group', title: 'Owner and group scoped', body: "You only ever see and control devices you own, or that a group you're in was given access to. Never anyone else's." },
+  { icon: 'shield', title: 'Encrypted end to end', body: 'Every connection is authenticated and encrypted with the Noise Protocol Framework and Ed25519 signatures — the same primitives behind WireGuard and Signal.' },
+  { icon: 'git-fork', title: 'Fabric, Forge & NeoForge', body: 'One shared codebase, built with Stonecutter, targets all three major loaders — no picking a favorite.' },
+  { icon: 'code-brackets', title: 'Source-available', body: 'Read it, run it, modify it, self-host it. Licensed PolyForm Noncommercial — free for any noncommercial use.' },
+];
+
+const steps = [
+  { n: '01', title: 'Install the mod', body: 'Drop the SmartMC jar in your server\'s mods folder, like any other mod. No extra services, no extra ports.' },
+  { n: '02', title: 'Pair your phone', body: 'Run the in-game pairing command and enter the short code it gives you into the SmartMC app.' },
+  { n: '03', title: 'Place a device', body: 'Place an Alarm Controller block and wire it to redstone. It shows up in the app automatically.' },
+  { n: '04', title: 'Control it remotely', body: 'Arm, disarm, or check status from your phone — and share it with your group so everyone stays in the loop.' },
+];
+
+const statusStyles: Record<string, string> = {
+  done: 'bg-brand-500',
+  'in-progress': 'bg-amber-400',
+  planned: 'bg-ink-600',
+};
 ---
 
 <Layout>
-  <section class="space-y-6">
-    <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">
-      Your Minecraft server, as a smart home.
-    </h1>
-    <p class="max-w-2xl text-lg text-neutral-600 dark:text-neutral-400">
-      SmartMC turns in-world devices — starting with a redstone-triggered alarm — into
-      something you can check on and control from your phone. No separate service to
-      host: the mod running on your server <em>is</em> the entire backend.
-    </p>
-    <ul class="max-w-2xl space-y-2 text-neutral-700 dark:text-neutral-300">
-      <li>· One port — rides on the same port your server already uses, nothing new to open.</li>
-      <li>· Pairs with an in-game code, not a Microsoft account re-login.</li>
-      <li>· You only ever see and control devices you own, or share with a group.</li>
-      <li>· Fabric, Forge, and NeoForge, from one codebase.</li>
-    </ul>
-    <div class="flex gap-4 pt-2">
-      <a
-        href={`${base}roadmap`}
-        class="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
-      >
-        See the roadmap
+  <!-- Hero -->
+  <section class="relative overflow-hidden">
+    <div class="bg-grid absolute inset-0"></div>
+    <div class="relative mx-auto max-w-6xl px-4 pb-20 pt-20 sm:px-6 sm:pb-28 sm:pt-28">
+      <div class="mx-auto max-w-3xl text-center">
+        <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-brand-300">
+          <span class="h-1.5 w-1.5 rounded-full bg-brand-400"></span>
+          Early, active development — see the roadmap
+        </span>
+        <h1 class="text-glow mt-6 text-4xl font-extrabold tracking-tight text-white sm:text-6xl">
+          Your Minecraft server,<br class="hidden sm:block" /> as a <span class="text-brand-400">smart home</span>.
+        </h1>
+        <p class="mx-auto mt-6 max-w-xl text-lg text-neutral-400">
+          SmartMC turns in-world devices — starting with a redstone-triggered alarm — into something you can check
+          on and control from your phone. No separate service to host: the mod running on your server{' '}
+          <em class="text-neutral-300 not-italic">is</em> the entire backend.
+        </p>
+        <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <a href={withBase('/wiki/players')} class="rounded-lg bg-brand-500 px-5 py-3 text-sm font-semibold text-ink-950 transition hover:bg-brand-400">
+            Get started
+          </a>
+          <a href="https://github.com/undeaDD/SmartMC" class="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
+            <Icon name="github" class="h-4 w-4" />
+            Star on GitHub
+          </a>
+        </div>
+
+        <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+          <span
+            class="flex cursor-not-allowed items-center gap-2.5 rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2.5 opacity-50"
+            title="Not released yet"
+          >
+            <Icon name="app-store" class="h-6 w-6 text-neutral-400" />
+            <span class="text-left leading-tight">
+              <span class="block text-[10px] text-neutral-500">Coming soon to the</span>
+              <span class="block text-sm font-semibold text-neutral-300">App Store</span>
+            </span>
+          </span>
+          <span
+            class="flex cursor-not-allowed items-center gap-2.5 rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2.5 opacity-50"
+            title="Not released yet"
+          >
+            <Icon name="google" class="h-6 w-6 text-neutral-400" />
+            <span class="text-left leading-tight">
+              <span class="block text-[10px] text-neutral-500">Coming soon to</span>
+              <span class="block text-sm font-semibold text-neutral-300">Google Play</span>
+            </span>
+          </span>
+        </div>
+      </div>
+
+      <div class="mx-auto mt-16 max-w-4xl">
+        <Placeholder label="App screenshot placeholder — device dashboard" aspect="aspect-[16/8]" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Benefits -->
+  <section id="features" class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
+    <div class="mx-auto max-w-2xl text-center">
+      <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">Built to not be a liability</h2>
+      <p class="mt-3 text-neutral-400">Every design decision here answers a "but what if someone abuses this" question first.</p>
+    </div>
+    <div class="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {benefits.map((b) => (
+        <div class="rounded-2xl border border-white/10 bg-ink-900/60 p-6 transition hover:border-brand-500/30 hover:bg-ink-900">
+          <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-500/10 text-brand-400">
+            <Icon name={b.icon as any} class="h-5 w-5" />
+          </div>
+          <h3 class="mt-4 text-base font-semibold text-white">{b.title}</h3>
+          <p class="mt-2 text-sm text-neutral-400">{b.body}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Feature spotlight: alarm -->
+  <section class="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+    <div class="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
+      <div>
+        <span class="text-xs font-semibold uppercase tracking-wider text-brand-400">First device</span>
+        <h2 class="mt-3 text-2xl font-bold text-white sm:text-3xl">A redstone alarm, wired to your pocket</h2>
+        <p class="mt-4 text-neutral-400">
+          Place an Alarm Controller block, wire it to any redstone signal, and it shows up in the app automatically.
+          Arm it, disarm it, or silence it remotely — and if it's shared with a group, everyone gets the same view.
+        </p>
+        <ul class="mt-6 space-y-3 text-sm text-neutral-300">
+          <li class="flex items-start gap-2"><Icon name="bell" class="mt-0.5 h-4 w-4 shrink-0 text-brand-400" /> Real-time status while you're connected</li>
+          <li class="flex items-start gap-2"><Icon name="group" class="mt-0.5 h-4 w-4 shrink-0 text-brand-400" /> Shared with a group, not just you</li>
+          <li class="flex items-start gap-2"><Icon name="network" class="mt-0.5 h-4 w-4 shrink-0 text-brand-400" /> Honest about unloaded chunks — never guesses</li>
+        </ul>
+      </div>
+      <Placeholder label="App screenshot placeholder — alarm control" />
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
+    <div class="mx-auto max-w-2xl text-center">
+      <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">How it works</h2>
+      <p class="mt-3 text-neutral-400">Four steps, no account creation, no extra server to run.</p>
+    </div>
+    <div class="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      {steps.map((s) => (
+        <div class="relative rounded-2xl border border-white/10 bg-ink-900/60 p-6">
+          <span class="text-3xl font-extrabold text-white/10">{s.n}</span>
+          <h3 class="mt-2 text-base font-semibold text-white">{s.title}</h3>
+          <p class="mt-2 text-sm text-neutral-400">{s.body}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Get the mod -->
+  <section class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
+    <div class="mx-auto max-w-2xl text-center">
+      <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">Get the mod</h2>
+      <p class="mt-3 text-neutral-400">Not published yet — links go live alongside the first release. See the roadmap.</p>
+    </div>
+    <div class="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-3">
+      <a href="#" aria-disabled="true" class="pointer-events-none rounded-2xl border border-white/10 bg-ink-900/60 p-6 opacity-60">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 text-neutral-400">
+          <Icon name="cube" class="h-5 w-5" />
+        </div>
+        <h3 class="mt-4 text-base font-semibold text-white">Modrinth</h3>
+        <p class="mt-2 text-sm text-neutral-500">Not published yet</p>
       </a>
-      <a
-        href={`${base}wiki/players`}
-        class="rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-900"
-      >
-        Read the wiki
+      <a href="#" aria-disabled="true" class="pointer-events-none rounded-2xl border border-white/10 bg-ink-900/60 p-6 opacity-60">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 text-neutral-400">
+          <Icon name="box" class="h-5 w-5" />
+        </div>
+        <h3 class="mt-4 text-base font-semibold text-white">CurseForge</h3>
+        <p class="mt-2 text-sm text-neutral-500">Not published yet</p>
       </a>
+      <a href="https://github.com/undeaDD/SmartMC/releases" class="rounded-2xl border border-white/10 bg-ink-900/60 p-6 transition hover:border-brand-500/30 hover:bg-ink-900">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-500/10 text-brand-400">
+          <Icon name="download" class="h-5 w-5" />
+        </div>
+        <h3 class="mt-4 text-base font-semibold text-white">Direct download</h3>
+        <p class="mt-2 text-sm text-neutral-400">GitHub Releases</p>
+      </a>
+    </div>
+  </section>
+
+  <!-- Roadmap preview -->
+  <section class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">Roadmap</h2>
+        <p class="mt-3 text-neutral-400">Updated by hand as each milestone lands.</p>
+      </div>
+      <a href={withBase('/roadmap')} class="flex items-center gap-1.5 text-sm font-semibold text-brand-400 hover:text-brand-300">
+        Full roadmap <Icon name="arrow-right" class="h-4 w-4" />
+      </a>
+    </div>
+    <div class="mt-10 overflow-x-auto pb-2">
+      <ol class="flex min-w-max gap-0">
+        {milestones.map((m, i) => (
+          <li class="flex items-center">
+            <div class="flex w-40 flex-col items-center text-center sm:w-48">
+              <span class={`h-3 w-3 rounded-full ${statusStyles[m.data.status]}`}></span>
+              <p class="mt-3 text-sm font-semibold text-white">{m.data.title.replace(/^M\d+\s*—\s*/, '')}</p>
+              <p class="mt-1 text-xs capitalize text-neutral-500">{m.data.status.replace('-', ' ')}</p>
+            </div>
+            {i < milestones.length - 1 && <div class="h-px w-10 bg-white/10 sm:w-16"></div>}
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- Support -->
+  <section class="mx-auto max-w-4xl px-4 py-4 sm:px-6">
+    <div class="rounded-3xl border border-brand-500/20 bg-gradient-to-br from-brand-500/10 via-ink-900 to-ink-900 p-8 text-center sm:p-12">
+      <span class="text-3xl">☕</span>
+      <h2 class="mt-4 text-2xl font-bold text-white sm:text-3xl">Support the project</h2>
+      <p class="mx-auto mt-3 max-w-md text-neutral-400">
+        SmartMC is free and built in spare time. If it's useful to you, a coffee helps keep it going.
+      </p>
+      <a
+        href="https://www.buymeacoffee.com/devsforge"
+        class="mt-6 inline-flex items-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-semibold text-ink-950 transition hover:bg-neutral-200"
+      >
+        Buy me a coffee
+      </a>
+      <p class="mt-3 text-xs text-neutral-600">(placeholder link — swap for the real Buy Me a Coffee/Ko-fi URL)</p>
+    </div>
+  </section>
+
+  <!-- Contributors -->
+  <section class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
+    <div class="mx-auto max-w-2xl text-center">
+      <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">Built in the open</h2>
+      <p class="mt-3 text-neutral-400">Pulled live from GitHub — no hand-maintained list to go stale.</p>
+    </div>
+    {contributors.length > 0 ? (
+      <div class="mt-10 flex flex-wrap justify-center gap-4">
+        {contributors.slice(0, 12).map((c) => (
+          <a href={c.html_url} class="flex flex-col items-center gap-2 rounded-xl p-3 text-center transition hover:bg-white/5">
+            <img src={c.avatar_url} alt={c.login} width="56" height="56" class="rounded-full border border-white/10" />
+            <span class="text-xs font-medium text-neutral-400">{c.login}</span>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <p class="mt-8 text-center text-sm text-neutral-500">
+        Couldn't reach GitHub's API while building this page —
+        <a class="text-brand-400 underline" href="https://github.com/undeaDD/SmartMC/graphs/contributors"> see the contributors graph</a>.
+      </p>
+    )}
+    <div class="mt-8 text-center">
+      <a href="https://github.com/undeaDD/SmartMC" class="text-sm font-semibold text-brand-400 hover:text-brand-300">Contribute on GitHub →</a>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
+    <div class="rounded-3xl border border-white/10 bg-gradient-to-br from-ink-900 to-ink-850 p-10 text-center sm:p-16">
+      <h2 class="text-3xl font-bold text-white sm:text-4xl">Ready to try it?</h2>
+      <p class="mx-auto mt-3 max-w-md text-neutral-400">Start with the player wiki, or dive into the source on GitHub.</p>
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+        <a href={withBase('/wiki/players')} class="rounded-lg bg-brand-500 px-5 py-3 text-sm font-semibold text-ink-950 transition hover:bg-brand-400">
+          Read the docs
+        </a>
+        <a href={withBase('/roadmap')} class="rounded-lg border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
+          See what's live
+        </a>
+      </div>
     </div>
   </section>
 </Layout>

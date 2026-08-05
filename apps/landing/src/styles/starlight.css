@@ -1,0 +1,14 @@
+/* Re-theme Starlight to match the rest of the site (dark + brand green). */
+:root {
+  --sl-color-accent-low: #14773d;
+  --sl-color-accent: #22b85c;
+  --sl-color-accent-high: #b1f1c3;
+  --sl-color-white: #ffffff;
+  --sl-color-gray-1: #eef1f3;
+  --sl-color-gray-2: #c3cbd1;
+  --sl-color-gray-3: #8b96a1;
+  --sl-color-gray-4: #565f68;
+  --sl-color-gray-5: #363d44;
+  --sl-color-gray-6: #232a31;
+  --sl-color-black: #08090b;
+}

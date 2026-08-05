@@ -1,0 +1,48 @@
+---
+// Inlines a raw Iconoir SVG (MIT licensed, https://iconoir.com) by name.
+// Using the plain `iconoir` package's SVG files directly rather than
+// `iconoir-react`, since this is a plain Astro site with no React runtime.
+import shield from 'iconoir/icons/regular/shield.svg?raw';
+import network from 'iconoir/icons/regular/network.svg?raw';
+import group from 'iconoir/icons/regular/group.svg?raw';
+import bell from 'iconoir/icons/regular/bell.svg?raw';
+import gitFork from 'iconoir/icons/regular/git-fork.svg?raw';
+import codeBrackets from 'iconoir/icons/regular/code-brackets.svg?raw';
+import key from 'iconoir/icons/regular/key.svg?raw';
+import smartphone from 'iconoir/icons/regular/smartphone-device.svg?raw';
+import githubIcon from 'iconoir/icons/regular/github.svg?raw';
+import arrowRight from 'iconoir/icons/regular/arrow-right.svg?raw';
+import appStore from 'iconoir/icons/regular/app-store.svg?raw';
+import googleIcon from 'iconoir/icons/regular/google.svg?raw';
+import download from 'iconoir/icons/regular/download.svg?raw';
+import box from 'iconoir/icons/regular/box.svg?raw';
+import cube from 'iconoir/icons/regular/cube.svg?raw';
+
+const icons = {
+  shield,
+  network,
+  group,
+  bell,
+  'git-fork': gitFork,
+  'code-brackets': codeBrackets,
+  key,
+  smartphone,
+  github: githubIcon,
+  'arrow-right': arrowRight,
+  'app-store': appStore,
+  google: googleIcon,
+  download,
+  box,
+  cube,
+} as const;
+
+interface Props {
+  name: keyof typeof icons;
+  class?: string;
+}
+
+const { name, class: className = 'w-6 h-6' } = Astro.props;
+const svg = icons[name].replace('<svg ', `<svg class="${className}" `);
+---
+
+<Fragment set:html={svg} />

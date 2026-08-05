@@ -16,14 +16,15 @@ export default defineConfig({
 
   integrations: [
     starlight({
-      title: 'SmartMC',
-      description: 'Docs for players, server owners, and developers.',
+      title: 'SmartMC Docs',
+      description: 'Start here: guides for players, server owners, and developers.',
+      customCss: ['./src/styles/starlight.css'],
       social: [
         { icon: 'github', label: 'GitHub', href: 'https://github.com/undeaDD/SmartMC' }
       ],
       sidebar: [
         {
-          label: 'Wiki',
+          label: 'Getting started',
           items: [
             { label: 'For players', slug: 'wiki/players' },
             { label: 'For server owners', slug: 'wiki/server-owners' },

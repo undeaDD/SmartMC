@@ -1,1 +1,45 @@
 @import "tailwindcss";
+
+@theme {
+  --color-brand-50: #effcf3;
+  --color-brand-100: #d7f9e0;
+  --color-brand-200: #b1f1c3;
+  --color-brand-300: #7ee59f;
+  --color-brand-400: #46d377;
+  --color-brand-500: #22b85c;
+  --color-brand-600: #16974a;
+  --color-brand-700: #14773d;
+  --color-brand-800: #145e34;
+  --color-brand-900: #124d2d;
+  --color-ink-950: #08090b;
+  --color-ink-900: #0d1013;
+  --color-ink-850: #12161a;
+  --color-ink-800: #171c21;
+  --color-ink-700: #232a31;
+  --color-ink-600: #333d46;
+}
+
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-ink-950);
+  background-image:
+    radial-gradient(60rem 30rem at 15% -10%, color-mix(in oklab, var(--color-brand-500) 16%, transparent), transparent),
+    radial-gradient(50rem 25rem at 100% 10%, color-mix(in oklab, var(--color-brand-700) 12%, transparent), transparent);
+  background-attachment: fixed;
+}
+
+.bg-grid {
+  background-image:
+    linear-gradient(color-mix(in oklab, white 6%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, white 6%, transparent) 1px, transparent 1px);
+  background-size: 2.5rem 2.5rem;
+  mask-image: radial-gradient(60% 60% at 50% 20%, black, transparent);
+}
+
+.text-glow {
+  text-shadow: 0 0 40px color-mix(in oklab, var(--color-brand-400) 45%, transparent);
+}
