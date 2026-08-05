@@ -1,0 +1,66 @@
+---
+// Small flat-style illustrations for the feature grid, in place of plain
+// line icons -- built from simple shapes rather than sourced artwork.
+interface Props {
+  name: 'setup' | 'secure' | 'group' | 'redstone' | 'compat' | 'license';
+  class?: string;
+}
+
+const { name, class: className = 'h-16 w-16' } = Astro.props;
+---
+
+{name === 'setup' && (
+  <svg class={className} viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="14" y="34" width="40" height="40" rx="6" fill="#1f1f1f" stroke="#3d3d3d" />
+    <rect x="22" y="44" width="24" height="4" rx="2" fill="#8c8c8c" />
+    <rect x="22" y="54" width="16" height="4" rx="2" fill="#8c8c8c" />
+    <path d="M54 54h14" stroke="#39bf45" stroke-width="3" stroke-linecap="round" />
+    <circle cx="76" cy="54" r="10" fill="#39bf45" fill-opacity="0.15" stroke="#39bf45" stroke-width="2" />
+    <path d="M71 54l3.5 3.5L81 51" stroke="#39bf45" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+)}
+
+{name === 'secure' && (
+  <svg class={className} viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M48 14l24 8v18c0 18-10.5 29-24 34-13.5-5-24-16-24-34V22z" fill="#1f1f1f" stroke="#40c0c0" stroke-width="2" />
+    <rect x="36" y="44" width="24" height="18" rx="3" fill="none" stroke="#40c0c0" stroke-width="2.5" />
+    <path d="M40 44v-6a8 8 0 0 1 16 0v6" stroke="#40c0c0" stroke-width="2.5" fill="none" />
+    <circle cx="48" cy="52" r="2.5" fill="#40c0c0" />
+  </svg>
+)}
+
+{name === 'group' && (
+  <svg class={className} viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="34" cy="38" r="11" fill="#1f1f1f" stroke="#39bf45" stroke-width="2" />
+    <path d="M18 68c0-9.4 7.2-16 16-16s16 6.6 16 16" stroke="#39bf45" stroke-width="2" fill="none" />
+    <circle cx="64" cy="34" r="9" fill="#1f1f1f" stroke="#8c8c8c" stroke-width="2" />
+    <path d="M50 62c1-7.5 7-13 14-13s13 5.5 14 13" stroke="#8c8c8c" stroke-width="2" fill="none" />
+  </svg>
+)}
+
+{name === 'redstone' && (
+  <svg class={className} viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="14" y="56" width="16" height="16" rx="2" fill="#1f1f1f" stroke="#3d3d3d" />
+    <rect x="34" y="56" width="16" height="16" rx="2" fill="#1f1f1f" stroke="#3d3d3d" />
+    <rect x="54" y="56" width="16" height="16" rx="2" fill="#e5533d" fill-opacity="0.25" stroke="#e5533d" />
+    <circle cx="62" cy="64" r="3" fill="#e5533d" />
+    <rect x="54" y="26" width="20" height="20" rx="3" fill="#1f1f1f" stroke="#39bf45" stroke-width="2" />
+    <path d="M64 46v10" stroke="#e5533d" stroke-width="2.5" stroke-dasharray="2 3" />
+  </svg>
+)}
+
+{name === 'compat' && (
+  <svg class={className} viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="14" y="38" width="20" height="20" rx="4" fill="#1f1f1f" stroke="#39bf45" stroke-width="2" />
+    <rect x="38" y="38" width="20" height="20" rx="4" fill="#1f1f1f" stroke="#40c0c0" stroke-width="2" />
+    <rect x="62" y="38" width="20" height="20" rx="4" fill="#1f1f1f" stroke="#8c8c8c" stroke-width="2" />
+  </svg>
+)}
+
+{name === 'license' && (
+  <svg class={className} viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M24 20a4 4 0 0 1 4-4h28l16 16v44a4 4 0 0 1-4 4H28a4 4 0 0 1-4-4z" fill="#1f1f1f" stroke="#8c8c8c" stroke-width="2" />
+    <path d="M56 16v16h16" stroke="#8c8c8c" stroke-width="2" fill="none" />
+    <path d="M34 50h28M34 58h28M34 66h18" stroke="#39bf45" stroke-width="2.5" stroke-linecap="round" />
+  </svg>
+)}

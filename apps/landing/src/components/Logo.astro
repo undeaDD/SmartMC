@@ -1,0 +1,18 @@
+---
+// Real platform brand marks via simple-icons (CC0).
+import modrinthGlyph from 'simple-icons/icons/modrinth.svg?raw';
+import curseforgeGlyph from 'simple-icons/icons/curseforge.svg?raw';
+import githubGlyph from 'simple-icons/icons/github.svg?raw';
+
+const logos = { modrinth: modrinthGlyph, curseforge: curseforgeGlyph, github: githubGlyph } as const;
+
+interface Props {
+  name: keyof typeof logos;
+  class?: string;
+}
+
+const { name, class: className = 'h-5 w-5' } = Astro.props;
+const svg = logos[name].replace('<svg ', `<svg class="${className}" `).replace('<path ', '<path fill="currentColor" ');
+---
+
+<Fragment set:html={svg} />

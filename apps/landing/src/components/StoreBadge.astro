@@ -1,0 +1,35 @@
+---
+// Real Apple / Google Play brand marks (via simple-icons, CC0), composed into
+// the familiar two-line store-badge layout. Not published yet, so rendered
+// disabled/grayscale rather than linking anywhere.
+import appleGlyph from 'simple-icons/icons/appstore.svg?raw';
+import googlePlayGlyph from 'simple-icons/icons/googleplay.svg?raw';
+
+interface Props {
+  store: 'apple' | 'google';
+}
+
+const { store } = Astro.props;
+
+const copy = {
+  apple: { eyebrow: 'Coming soon on the', name: 'App Store' },
+  google: { eyebrow: 'Coming soon on', name: 'Google Play' },
+};
+
+const glyph = (store === 'apple' ? appleGlyph : googlePlayGlyph)
+  .replace('<svg ', '<svg class="h-6 w-6 shrink-0" ')
+  .replace('<path ', '<path fill="currentColor" ');
+
+const { eyebrow, name } = copy[store];
+---
+
+<span
+  class="flex cursor-not-allowed items-center gap-3 rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2.5 text-brand-gray opacity-60"
+  title="Not released yet"
+>
+  <Fragment set:html={glyph} />
+  <span class="text-left leading-tight">
+    <span class="block text-[10px]">{eyebrow}</span>
+    <span class="block text-sm font-semibold text-white/80">{name}</span>
+  </span>
+</span>

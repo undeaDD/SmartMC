@@ -11,8 +11,8 @@ See [CONTRIBUTING.md](https://github.com/undeaDD/SmartMC/blob/main/CONTRIBUTING.
 
 ## License
 
-SmartMC is licensed under the [PolyForm Noncommercial License 1.0.0](https://github.com/undeaDD/SmartMC/blob/main/LICENSE) — source-available and free to use, modify, and share for any noncommercial purpose.
+SmartMC is licensed under the [PolyForm Noncommercial License 1.0.0](https://github.com/undeaDD/SmartMC/blob/main/LICENSE): source-available and free to use, modify, and share for any noncommercial purpose.
 
 ## Security-sensitive areas
 
-The port-multiplexing Mixin, Noise Protocol transport encryption, and Ed25519 token authorization are the security-critical core of the mod. If you're touching any of those, please call that out explicitly in your PR — see CONTRIBUTING.md for how those pieces fit together.
+The port-multiplexing Mixin, Noise Protocol transport encryption, and Ed25519 token authorization are the security-critical core of the mod. If you're touching any of those, please call that out explicitly in your PR. See CONTRIBUTING.md for how those pieces fit together.

@@ -1,14 +1,27 @@
-/* Re-theme Starlight to match the rest of the site (dark + brand green). */
+/* Re-theme Starlight to match the rest of the site: same font, same
+   dark + green/teal palette, not just the accent color. */
+@import "@fontsource/fira-sans/400.css";
+@import "@fontsource/fira-sans/500.css";
+@import "@fontsource/fira-sans/600.css";
+@import "@fontsource/fira-sans/700.css";
+
 :root {
-  --sl-color-accent-low: #14773d;
-  --sl-color-accent: #22b85c;
-  --sl-color-accent-high: #b1f1c3;
+  --sl-font: "Fira Sans", ui-sans-serif, system-ui, sans-serif;
+
+  --sl-color-accent-low: #21732a;
+  --sl-color-accent: #39bf45;
+  --sl-color-accent-high: #8fe098;
+
   --sl-color-white: #ffffff;
   --sl-color-gray-1: #eef1f3;
   --sl-color-gray-2: #c3cbd1;
-  --sl-color-gray-3: #8b96a1;
+  --sl-color-gray-3: #8c8c8c;
   --sl-color-gray-4: #565f68;
-  --sl-color-gray-5: #363d44;
-  --sl-color-gray-6: #232a31;
-  --sl-color-black: #08090b;
+  --sl-color-gray-5: #2b2b2b;
+  --sl-color-gray-6: #1f1f1f;
+  --sl-color-black: #121212;
+
+  --sl-color-bg: #121212;
+  --sl-color-bg-nav: #181818;
+  --sl-color-bg-sidebar: #121212;
 }

@@ -1,34 +1,52 @@
 @import "tailwindcss";
 
+@import "@fontsource/fira-sans/400.css";
+@import "@fontsource/fira-sans/500.css";
+@import "@fontsource/fira-sans/600.css";
+@import "@fontsource/fira-sans/700.css";
+
 @theme {
-  --color-brand-50: #effcf3;
-  --color-brand-100: #d7f9e0;
-  --color-brand-200: #b1f1c3;
-  --color-brand-300: #7ee59f;
-  --color-brand-400: #46d377;
-  --color-brand-500: #22b85c;
-  --color-brand-600: #16974a;
-  --color-brand-700: #14773d;
-  --color-brand-800: #145e34;
-  --color-brand-900: #124d2d;
-  --color-ink-950: #08090b;
-  --color-ink-900: #0d1013;
-  --color-ink-850: #12161a;
-  --color-ink-800: #171c21;
-  --color-ink-700: #232a31;
-  --color-ink-600: #333d46;
+  --font-sans: "Fira Sans", ui-sans-serif, system-ui, sans-serif;
+
+  /* Brand palette, as specified: white / green / gray / teal / two dark bg tones */
+  --color-brand-white: #ffffff;
+  --color-brand-green: #39bf45;
+  --color-brand-gray: #8c8c8c;
+  --color-brand-teal: #40c0c0;
+  --color-brand-ink: #181818;
+  --color-brand-ink-deep: #121212;
+
+  /* Tints/shades derived from the two brand colors for hover states, borders, etc. */
+  --color-green-300: #8fe098;
+  --color-green-400: #5ccf68;
+  --color-green-500: #39bf45;
+  --color-green-600: #2c9836;
+  --color-green-700: #21732a;
+
+  --color-teal-300: #8fe0e0;
+  --color-teal-400: #5ccdcd;
+  --color-teal-500: #40c0c0;
+  --color-teal-600: #339999;
+
+  --color-ink-950: #121212;
+  --color-ink-900: #171717;
+  --color-ink-850: #181818;
+  --color-ink-800: #1f1f1f;
+  --color-ink-700: #2b2b2b;
+  --color-ink-600: #3d3d3d;
 }
 
 html {
   color-scheme: dark;
   scroll-behavior: smooth;
+  font-family: var(--font-sans);
 }
 
 body {
   background-color: var(--color-ink-950);
   background-image:
-    radial-gradient(60rem 30rem at 15% -10%, color-mix(in oklab, var(--color-brand-500) 16%, transparent), transparent),
-    radial-gradient(50rem 25rem at 100% 10%, color-mix(in oklab, var(--color-brand-700) 12%, transparent), transparent);
+    radial-gradient(60rem 30rem at 15% -10%, color-mix(in oklab, var(--color-brand-green) 14%, transparent), transparent),
+    radial-gradient(50rem 25rem at 100% 10%, color-mix(in oklab, var(--color-brand-teal) 10%, transparent), transparent);
   background-attachment: fixed;
 }
 
@@ -41,5 +59,5 @@ body {
 }
 
 .text-glow {
-  text-shadow: 0 0 40px color-mix(in oklab, var(--color-brand-400) 45%, transparent);
+  text-shadow: 0 0 40px color-mix(in oklab, var(--color-brand-green) 45%, transparent);
 }

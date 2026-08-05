@@ -4,11 +4,11 @@ import Layout from '../layouts/Layout.astro';
 const faqs = [
   {
     q: 'Do I need to host anything besides my Minecraft server?',
-    a: 'No. The mod is the entire backend. There is no separate service, database, or account system to run — everything lives on the server you already have.',
+    a: 'No. The mod is the entire backend. There is no separate service, database, or account system to run: everything lives on the server you already have.',
   },
   {
     q: 'Does this open a new port on my server?',
-    a: 'No. Phone-app traffic and normal Minecraft traffic share the same port (25565 by default). A connection is told apart from a real Minecraft client in the first few bytes, before anything else happens — and only once, at connection setup, so it adds no per-packet cost to normal gameplay.',
+    a: 'No. Phone-app traffic and normal Minecraft traffic share the same port (25565 by default). A connection is told apart from a real Minecraft client in the first few bytes, before anything else happens, and only once, at connection setup, so it adds no per-packet cost to normal gameplay.',
   },
   {
     q: "How does the app prove which player it belongs to?",
@@ -20,7 +20,7 @@ const faqs = [
   },
   {
     q: 'Will I get a push notification if I close the app?',
-    a: "Not yet — v1 delivers alerts live, while the app is open and connected. Background push has a real cost/ownership problem (whose Apple/Google credentials pay for it) that hasn't been solved yet; see the roadmap.",
+    a: "Not yet: v1 delivers alerts live, while the app is open and connected. Background push has a real cost and ownership problem (whose Apple or Google credentials pay for it) that hasn't been solved yet; see the roadmap.",
   },
   {
     q: 'Does this work in singleplayer?',
@@ -32,49 +32,55 @@ const faqs = [
   },
   {
     q: 'Is this open source?',
-    a: 'Source-available under the PolyForm Noncommercial License 1.0.0 — free to read, run, modify, and share for any noncommercial purpose. It is not an OSI-approved "open source" license, since it restricts commercial use.',
+    a: 'Source-available under the PolyForm Noncommercial License 1.0.0: free to read, run, modify, and share for any noncommercial purpose. It is not an OSI-approved "open source" license, since it restricts commercial use.',
   },
 ];
 ---
 
 <Layout title="FAQ">
-  <section class="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-24">
-    <h1 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">Frequently asked questions</h1>
-    <p class="mt-3 text-neutral-400">Can't find what you're looking for? <a class="text-brand-400 underline hover:text-brand-300" href="https://github.com/undeaDD/SmartMC/issues">Open an issue</a>.</p>
+  <section class="relative overflow-hidden">
+    <div class="bg-grid absolute inset-0"></div>
+    <div class="relative mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 sm:py-24">
+      <h1 class="text-glow text-4xl font-bold tracking-tight text-white sm:text-5xl">Frequently asked questions</h1>
+      <p class="mx-auto mt-4 max-w-xl text-brand-gray">
+        Can't find what you're looking for? <a class="text-brand-teal underline hover:text-teal-300" href="https://github.com/undeaDD/SmartMC/issues">Open an issue</a>.
+      </p>
+    </div>
+  </section>
 
-    <div class="mt-8">
-      <div class="relative">
-        <svg class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5" />
-          <path d="M20 20l-3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-        </svg>
-        <input
-          id="faq-search"
-          type="search"
-          placeholder="Search the FAQ…"
-          class="w-full rounded-xl border border-white/10 bg-ink-900 py-3 pl-10 pr-4 text-sm text-white placeholder:text-neutral-500 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
-        />
-      </div>
+  <section class="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
+    <div class="relative">
+      <svg class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-gray" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5" />
+        <path d="M20 20l-3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+      </svg>
+      <input
+        id="faq-search"
+        type="search"
+        placeholder="Search the FAQ…"
+        class="w-full rounded-xl border border-white/10 bg-ink-900 py-3 pl-10 pr-4 text-sm text-white placeholder:text-brand-gray focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+      />
     </div>
 
     <div id="faq-list" class="mt-6 space-y-3">
       {faqs.map((item, i) => (
         <details
-          class="faq-item group rounded-xl border border-white/10 bg-ink-900/60 open:border-brand-500/40"
+          class="faq-item group rounded-xl border border-white/10 bg-ink-900/60 open:border-green-500/40"
+          name="faq-accordion"
           open={i === 0}
         >
           <summary class="faq-question flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-sm font-medium text-white">
             <span>{item.q}</span>
-            <svg class="h-4 w-4 shrink-0 text-neutral-500 transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg class="h-4 w-4 shrink-0 text-brand-gray transition-transform group-open:rotate-45" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
             </svg>
           </summary>
-          <p class="faq-answer px-5 pb-4 text-sm text-neutral-400">{item.a}</p>
+          <p class="faq-answer px-5 pb-4 text-sm text-brand-gray">{item.a}</p>
         </details>
       ))}
     </div>
 
-    <p id="faq-empty" class="mt-6 hidden text-sm text-neutral-500">No questions match "<span id="faq-empty-term"></span>".</p>
+    <p id="faq-empty" class="mt-6 hidden text-sm text-brand-gray">No questions match "<span id="faq-empty-term"></span>".</p>
   </section>
 </Layout>
 
@@ -93,7 +99,6 @@ const faqs = [
       const matches = term === '' || text.includes(term);
       item.classList.toggle('hidden', !matches);
       if (matches) visibleCount++;
-      if (term !== '' && matches) item.open = true;
     }
 
     empty.classList.toggle('hidden', visibleCount !== 0);
