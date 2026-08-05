@@ -1,0 +1,15 @@
+---
+// Inlines the project's own brand mark (src/assets/smartmc-logo.svg). Kept
+// separate from Icon.astro (Iconoir) and Logo.astro (simple-icons) since
+// this is neither of those icon sources -- just our own one mark.
+import raw from '../assets/smartmc-logo.svg?raw';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = 'w-6 h-6' } = Astro.props;
+const svg = raw.replace('<svg ', `<svg class="${className}" `);
+---
+
+<Fragment set:html={svg} />

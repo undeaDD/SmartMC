@@ -2,13 +2,13 @@
 // Overrides Starlight's default SiteTitle entirely with the exact same logo
 // mark used in the main site's header (Layout.astro), so the docs section
 // reads as SmartMC rather than a separately-branded "SmartMC Docs" area.
-import Icon from './Icon.astro';
+import SmartMcLogo from './SmartMcLogo.astro';
 import { withBase } from '../lib/paths';
 ---
 
 <a href={withBase('/')} class="flex items-center gap-2 text-lg font-bold tracking-tight text-white">
-  <span class="flex h-7 w-7 items-center justify-center rounded-md bg-brand-green text-ink-950">
-    <Icon name="shield" class="h-4 w-4" />
+  <span class="flex h-7 w-7 items-center justify-center">
+    <SmartMcLogo class="h-7 w-7 text-brand-green" />
   </span>
   SmartMC
 </a>
