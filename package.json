@@ -1,0 +1,13 @@
+{
+  "name": "smart-mc",
+  "private": true,
+  "workspaces": [
+    "apps/mobile",
+    "apps/landing",
+    "packages/*"
+  ],
+  "scripts": {
+    "typecheck": "bun run --filter '*' typecheck",
+    "protocol:generate": "bun run --filter '@smart-mc/protocol' generate"
+  }
+}

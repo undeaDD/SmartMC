@@ -1,0 +1,22 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "PingMessage.json",
+    "type": "object",
+    "properties": {
+        "sequence": {
+            "type": "integer",
+            "minimum": -2147483648,
+            "maximum": 2147483647,
+            "description": "Monotonically increasing sequence number set by the sender."
+        },
+        "message": {
+            "type": "string",
+            "description": "Free-form text echoed back by the receiver."
+        }
+    },
+    "required": [
+        "sequence",
+        "message"
+    ],
+    "description": "A trivial ping/pong pair used only to prove the TypeSpec -> JSON Schema -> Java + TS codegen pipeline end to end (M0 gate). Not part of the real protocol."
+}

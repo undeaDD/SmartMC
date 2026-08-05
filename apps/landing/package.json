@@ -1,0 +1,8 @@
+{
+  "name": "@smart-mc/landing",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "typecheck": "echo \"landing: not scaffolded yet\""
+  }
+}
