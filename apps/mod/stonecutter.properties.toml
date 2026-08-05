@@ -1,0 +1,50 @@
+loomx.loom_version="1.16-SNAPSHOT"
+
+mod.id = "smartmc"
+mod.name = "SmartMC"
+mod.group = "com.smartmc"
+mod.version = "0.1.0"
+mod.channel_tag = "-alpha.1"
+mod.description = "A Minecraft-native smart home & alarm platform. No central server to host."
+mod.authors = ["undeaDD"]
+mod.contributors = []
+mod.inception_year = "2026"
+mod.license.name = "PolyForm Noncommercial License 1.0.0"
+mod.license.url = "https://polyformproject.org/licenses/noncommercial/1.0.0"
+mod.license.dist = "repo"
+mod.sources_url = "https://github.com/undeaDD/SmartMC"
+mod.homepage_url = "https://undeadd.github.io/SmartMC"
+mod.issues_url = "https://github.com/undeaDD/SmartMC/issues"
+mod.discord_url = ""
+mod.environment = "both"   #"client", "server", "both"
+[[mod.pom.developers]]
+id = "undeadd"
+name = "undeaDD"
+url = "https://github.com/undeaDD"
+
+# NOTE on version coverage: the original plan called for a 1.20.1 floor
+# version across all three loaders. That's not actually possible --
+# NeoForge has no build for 1.20.1 at all; its earliest release (20.2.x)
+# targets Minecraft 1.20.2 (confirmed against maven.neoforged.net's
+# metadata during M0). 1.21.1 is the only version targeted for now,
+# since it's also the real dogfooding environment (the Opolis modpack).
+# Revisit the actual floor version in M3 when expanding version coverage.
+
+[fabric]
+deps.fabric-loader = "0.19.3"
+
+[fabric."1.21.1"]
+deps.minecraft = "1.21.1"
+deps.fabric-api = "0.116.7+1.21.1"
+
+[forge]
+
+[forge."1.21.1"]
+deps.minecraft = "1.21.1"
+deps.forge = "52.1.16"
+
+[neoforge]
+
+[neoforge."1.21.1"]
+deps.minecraft = "1.21.1"
+deps.neoforge = "21.1.213"
