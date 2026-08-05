@@ -1,0 +1,44 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+
+const milestones = (await getCollection('roadmap')).sort((a, b) => a.data.order - b.data.order);
+
+const statusStyles: Record<string, string> = {
+  done: 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300',
+  'in-progress': 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300',
+  planned: 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400',
+};
+
+const statusLabel: Record<string, string> = {
+  done: 'Done',
+  'in-progress': 'In progress',
+  planned: 'Planned',
+};
+---
+
+<Layout title="Roadmap">
+  <h1 class="text-3xl font-bold tracking-tight">Roadmap</h1>
+  <p class="mt-2 max-w-2xl text-neutral-600 dark:text-neutral-400">
+    Updated by hand as each milestone lands — not wired to CI status, on purpose.
+  </p>
+
+  <ol class="mt-8 space-y-4">
+    {milestones.map(async (milestone) => {
+      const { Content } = await render(milestone);
+      return (
+        <li class="rounded-lg border border-neutral-200 p-5 dark:border-neutral-800">
+          <div class="flex flex-wrap items-center gap-3">
+            <h2 class="text-lg font-semibold">{milestone.data.title}</h2>
+            <span class={`rounded-full px-2.5 py-0.5 text-xs font-medium ${statusStyles[milestone.data.status]}`}>
+              {statusLabel[milestone.data.status]}
+            </span>
+          </div>
+          <div class="mt-2 max-w-none text-sm text-neutral-700 dark:text-neutral-300">
+            <Content />
+          </div>
+        </li>
+      );
+    })}
+  </ol>
+</Layout>

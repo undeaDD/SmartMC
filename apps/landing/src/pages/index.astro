@@ -1,0 +1,38 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const base = import.meta.env.BASE_URL;
+---
+
+<Layout>
+  <section class="space-y-6">
+    <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">
+      Your Minecraft server, as a smart home.
+    </h1>
+    <p class="max-w-2xl text-lg text-neutral-600 dark:text-neutral-400">
+      SmartMC turns in-world devices — starting with a redstone-triggered alarm — into
+      something you can check on and control from your phone. No separate service to
+      host: the mod running on your server <em>is</em> the entire backend.
+    </p>
+    <ul class="max-w-2xl space-y-2 text-neutral-700 dark:text-neutral-300">
+      <li>· One port — rides on the same port your server already uses, nothing new to open.</li>
+      <li>· Pairs with an in-game code, not a Microsoft account re-login.</li>
+      <li>· You only ever see and control devices you own, or share with a group.</li>
+      <li>· Fabric, Forge, and NeoForge, from one codebase.</li>
+    </ul>
+    <div class="flex gap-4 pt-2">
+      <a
+        href={`${base}roadmap`}
+        class="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
+      >
+        See the roadmap
+      </a>
+      <a
+        href={`${base}wiki/players`}
+        class="rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-900"
+      >
+        Read the wiki
+      </a>
+    </div>
+  </section>
+</Layout>

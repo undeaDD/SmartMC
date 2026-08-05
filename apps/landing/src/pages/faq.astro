@@ -1,0 +1,42 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const faqs = [
+  {
+    q: 'Do I need to host anything besides my Minecraft server?',
+    a: 'No. The mod is the entire backend. There is no separate service, database, or account system to run — everything lives on the server you already have.',
+  },
+  {
+    q: 'Does this open a new port on my server?',
+    a: 'No. Phone-app traffic and normal Minecraft traffic share the same port (25565 by default). A connection is told apart from a real Minecraft client in the first few bytes, before anything else happens.',
+  },
+  {
+    q: 'How does the app prove which player it belongs to?',
+    a: "Through an in-game pairing code, not a re-implementation of Microsoft's login flow. You're already authenticated just by being connected to the server; the code links that to your phone once.",
+  },
+  {
+    q: 'Can other players see or control my devices?',
+    a: 'Only if you share them with a group you create. Everyone else is rejected, and the server never reveals whether a device exists at all to someone who is not its owner or a group member.',
+  },
+  {
+    q: 'Will I get a push notification if I close the app?',
+    a: "Not yet — v1 delivers alerts live, while the app is open and connected. Background push has a real cost/ownership problem (whose Apple/Google credentials pay for it) that hasn't been solved yet; see the roadmap.",
+  },
+  {
+    q: 'Does this work in singleplayer?',
+    a: "Technically, but a singleplayer world is only \"online\" while the game is actually running, so the app will read as offline whenever you're not playing. The mod warns about this by default.",
+  },
+];
+---
+
+<Layout title="FAQ">
+  <h1 class="text-3xl font-bold tracking-tight">FAQ</h1>
+  <dl class="mt-8 space-y-8">
+    {faqs.map((item) => (
+      <div>
+        <dt class="font-semibold">{item.q}</dt>
+        <dd class="mt-1 text-neutral-600 dark:text-neutral-400">{item.a}</dd>
+      </div>
+    ))}
+  </dl>
+</Layout>

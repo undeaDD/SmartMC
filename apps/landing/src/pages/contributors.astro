@@ -1,0 +1,51 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+type Contributor = {
+  login: string;
+  html_url: string;
+  avatar_url: string;
+  contributions: number;
+};
+
+let contributors: Contributor[] = [];
+let fetchFailed = false;
+
+try {
+  const res = await fetch('https://api.github.com/repos/undeaDD/SmartMC/contributors');
+  if (res.ok) {
+    contributors = await res.json();
+  } else {
+    fetchFailed = true;
+  }
+} catch {
+  fetchFailed = true;
+}
+---
+
+<Layout title="Contributors">
+  <h1 class="text-3xl font-bold tracking-tight">Contributors</h1>
+  <p class="mt-2 max-w-2xl text-neutral-600 dark:text-neutral-400">
+    Pulled from GitHub at build time — no hand-maintained list to go stale.
+  </p>
+
+  {fetchFailed && (
+    <p class="mt-8 text-sm text-neutral-500 dark:text-neutral-400">
+      Couldn't reach GitHub's API while building this page. See the
+      <a class="underline" href="https://github.com/undeaDD/SmartMC/graphs/contributors"> contributors graph</a> directly.
+    </p>
+  )}
+
+  {!fetchFailed && (
+    <ul class="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+      {contributors.map((c) => (
+        <li>
+          <a href={c.html_url} class="flex flex-col items-center gap-2 rounded-lg p-3 text-center hover:bg-neutral-50 dark:hover:bg-neutral-900">
+            <img src={c.avatar_url} alt={c.login} width="64" height="64" class="rounded-full" />
+            <span class="text-sm font-medium">{c.login}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  )}
+</Layout>

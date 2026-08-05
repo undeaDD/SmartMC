@@ -1,8 +1,21 @@
 {
   "name": "@smart-mc/landing",
-  "version": "0.0.0",
   "private": true,
+  "type": "module",
+  "version": "0.0.0",
   "scripts": {
-    "typecheck": "echo \"landing: not scaffolded yet\""
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "typecheck": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@astrojs/starlight": "^0.41.7",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^7.1.6",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^6"
   }
 }
