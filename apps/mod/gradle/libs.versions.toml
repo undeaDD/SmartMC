@@ -13,6 +13,7 @@ vanniktech-maven-publish = "0.35.0"
 mixin = "0.8.5"
 serialization-json = "1.7.3"
 serialization-toml = "0.6.0"
+h2 = "2.4.240"
 
 [libraries]
 kikugie-postprocess = { module = "dev.kikugie:postprocess", version.ref = "stonecutter-postprocess" }
@@ -25,6 +26,7 @@ moulberry-mixinconstraints = { module = "com.moulberry:mixinconstraints", versio
 vanniktech-maven-publish = { module = "com.vanniktech.maven.publish:com.vanniktech.maven.publish.gradle.plugin", version.ref = "vanniktech-maven-publish" }
 serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization-json" }
 serialization-toml = { module = "dev.eav.tomlkt:tomlkt", version.ref = "serialization-toml" }
+h2 = { module = "com.h2database:h2", version.ref = "h2" }
 
 [plugins]
 stonecutter = { id = "dev.kikugie.stonecutter", version.ref = "stonecutter" }
