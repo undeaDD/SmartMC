@@ -1,0 +1,29 @@
+---
+// Never embeds the address in the rendered HTML source, to keep it off
+// naive scrapers. Assembled from parts client-side and only then written
+// into the link's href (and, unless a slot fills in its own label, its text).
+interface Props {
+  class?: string;
+  label?: string;
+}
+
+const { class: className = '', label } = Astro.props;
+const id = `email-${crypto.randomUUID()}`;
+const hasLabel = !!label || Astro.slots.has('default');
+---
+
+<a href="#" class={className} id={id} rel="nofollow" data-static-label={hasLabel}>{label ?? <slot>···</slot>}</a>
+<script define:vars={{ id, hasLabel }}>
+  (function () {
+    const user = ['u', 'n', 'd', 'e', 'a', 'D', '_', 'D'].join('');
+    const domain = ['l', 'i', 'v', 'e'].join('') + '.' + ['d', 'e'].join('');
+    const address = user + '@' + domain;
+    const el = document.getElementById(id);
+    if (el) {
+      el.setAttribute('href', 'mailto:' + address);
+      if (!hasLabel) {
+        el.textContent = address;
+      }
+    }
+  })();
+</script>

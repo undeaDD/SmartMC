@@ -18,6 +18,7 @@ export default defineConfig({
     starlight({
       title: 'SmartMC Docs',
       description: 'Start here: guides for players, server owners, and developers.',
+      favicon: '/favicon.svg',
       customCss: ['./src/styles/starlight.css'],
       social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/undeaDD/SmartMC' }],
       components: {

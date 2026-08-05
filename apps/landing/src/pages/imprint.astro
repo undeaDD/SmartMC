@@ -1,5 +1,7 @@
 ---
+import ObfuscatedEmail from '../components/ObfuscatedEmail.astro';
 import Layout from '../layouts/Layout.astro';
+import { withBase } from '../lib/paths';
 ---
 
 <Layout title="Imprint">
@@ -7,20 +9,60 @@ import Layout from '../layouts/Layout.astro';
     <div class="bg-grid absolute inset-0"></div>
     <div class="relative mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 sm:py-24">
       <h1 class="text-glow text-4xl font-bold tracking-tight text-white sm:text-5xl">Imprint</h1>
+      <p class="mx-auto mt-4 max-w-xl text-brand-gray">Legal disclosure and contact information.</p>
     </div>
   </section>
 
   <section class="mx-auto max-w-2xl px-4 pb-24 sm:px-6">
-    <div class="rounded-2xl border border-white/10 bg-ink-900/60 p-6 sm:p-10">
-      <p class="font-semibold text-white">Devsforge</p>
-      <p class="mt-1 text-sm text-brand-gray">
-        <a class="text-brand-teal underline hover:text-teal-300" href="mailto:undeaD_D@live.de">undeaD_D@live.de</a>
-      </p>
-      <p class="mt-6 text-xs text-brand-gray/70">
-        This imprint intentionally lists a contact email only, with no postal address. Some jurisdictions (Germany's
-        Impressumspflicht, for example) require more than this for a fully compliant imprint. Worth revisiting if
-        SmartMC ever operates in a context where that applies.
-      </p>
+    <div class="space-y-8 rounded-2xl border border-white/10 bg-ink-900/60 p-6 text-sm text-brand-gray sm:p-10">
+      <div>
+        <h2 class="text-base font-semibold text-white">Responsible for content</h2>
+        <p class="mt-2">Devsforge</p>
+        <p class="mt-1">SmartMC is an independent, community-run project developed and maintained under the Devsforge name.</p>
+      </div>
+
+      <div>
+        <h2 class="text-base font-semibold text-white">Contact</h2>
+        <p class="mt-2">
+          For all inquiries relating to this website, the SmartMC mod, or the companion app, please get in touch by
+          email: <ObfuscatedEmail class="text-brand-teal underline hover:text-teal-300" />.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="text-base font-semibold text-white">Accuracy of content</h2>
+        <p class="mt-2">
+          The content of this website has been compiled with care and to the best of our knowledge. However, we
+          cannot accept liability for the accuracy, completeness, or timeliness of the information provided.
+          Statements about the SmartMC mod, its features, and its roadmap reflect the current state of development
+          and may change without prior notice.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="text-base font-semibold text-white">External links</h2>
+        <p class="mt-2">
+          This site links to third-party services and platforms, including but not limited to GitHub, Discord,
+          Modrinth, and CurseForge. We have no influence over the content of external sites and accept no
+          responsibility for it. The respective operator or provider of each linked page is always responsible for
+          its content. Linked pages were checked for possible legal violations at the time of linking; no such
+          violations were apparent at that time. A permanent review of linked content without concrete evidence of a
+          violation is not reasonable.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="text-base font-semibold text-white">Copyright</h2>
+        <p class="mt-2">
+          Unless otherwise noted, the text, images, and other content on this site are provided under the terms
+          described on the{' '}
+          <a class="text-brand-teal underline hover:text-teal-300" href={withBase('/license')}>License</a> page.
+          Third-party brand marks, trademarks, and logos referenced or displayed on this site (including
+          Minecraft, Mojang, Microsoft, GitHub, Discord, Modrinth, and CurseForge) remain the property of their
+          respective owners and are used solely for identification purposes. SmartMC is not affiliated with, endorsed
+          by, or sponsored by Mojang Studios or Microsoft.
+        </p>
+      </div>
     </div>
   </section>
 </Layout>

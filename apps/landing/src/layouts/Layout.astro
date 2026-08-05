@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import Icon from '../components/Icon.astro';
+import ObfuscatedEmail from '../components/ObfuscatedEmail.astro';
 import { withBase } from '../lib/paths';
 
 interface Props {
@@ -32,6 +33,8 @@ const year = new Date().getFullYear();
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
+    <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
+    <link rel="alternate icon" href={withBase('/favicon.ico')} />
     <title>{title} · SmartMC</title>
   </head>
   <body class="min-h-screen text-white/90 antialiased">
@@ -57,7 +60,7 @@ const year = new Date().getFullYear();
 
     <footer class="border-t border-white/5">
       <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6">
-        <div class="grid grid-cols-2 gap-10 sm:grid-cols-4">
+        <div class="grid grid-cols-2 gap-10 sm:grid-cols-5">
           <div class="col-span-2 sm:col-span-1">
             <a href={withBase('/')} class="flex items-center gap-2 text-base font-bold text-white">
               <span class="flex h-6 w-6 items-center justify-center rounded-md bg-brand-green text-ink-950">
@@ -74,7 +77,6 @@ const year = new Date().getFullYear();
             <ul class="mt-3 space-y-2 text-sm text-brand-gray">
               <li><a class="transition hover:text-brand-green" href={withBase('/#features')}>Features</a></li>
               <li><a class="transition hover:text-brand-green" href={withBase('/compatibility')}>Compatibility</a></li>
-              <li><a class="transition hover:text-brand-green" href={withBase('/roadmap')}>Roadmap</a></li>
               <li><a class="transition hover:text-brand-green" href={withBase('/gallery')}>Gallery</a></li>
             </ul>
           </div>
@@ -84,7 +86,6 @@ const year = new Date().getFullYear();
               <li><a class="transition hover:text-brand-green" href={withBase('/wiki/players')}>For players</a></li>
               <li><a class="transition hover:text-brand-green" href={withBase('/wiki/server-owners')}>For server owners</a></li>
               <li><a class="transition hover:text-brand-green" href={withBase('/wiki/developers')}>For developers</a></li>
-              <li><a class="transition hover:text-brand-green" href={withBase('/faq')}>FAQ</a></li>
             </ul>
           </div>
           <div>
@@ -93,6 +94,14 @@ const year = new Date().getFullYear();
               <li><a class="transition hover:text-brand-green" href="https://github.com/undeaDD/SmartMC">GitHub</a></li>
               <li><a class="transition hover:text-brand-green" href="https://github.com/undeaDD/SmartMC/issues">Report an issue</a></li>
               <li><a class="transition hover:text-brand-green" href={withBase('/contributors')}>Contributors</a></li>
+            </ul>
+          </div>
+          <div>
+            <p class="text-sm font-semibold text-white">Contact</p>
+            <ul class="mt-3 space-y-2 text-sm text-brand-gray">
+              <li><a class="transition hover:text-brand-green" href="https://discord.gg/ugef96S34">Discord</a></li>
+              <li><a class="transition hover:text-brand-green" href="https://github.com/undeaDD/SmartMC">GitHub</a></li>
+              <li><ObfuscatedEmail class="transition hover:text-brand-green" label="Email" /></li>
             </ul>
           </div>
         </div>

@@ -9,15 +9,17 @@ interface Entry {
   status: Status;
   link: string;
   note?: string;
+  /** SmartMC version this integration is (or will be) available from. Left unset for entries SmartMC won't add. */
+  since?: string;
 }
 
 // Third-party mods and services SmartMC could integrate with -- not to be
 // confused with Minecraft loader/version support, which lives on the
 // roadmap page instead.
 const entries: Entry[] = [
-  { name: 'Applied Energistics 2', status: 'planned', link: 'https://modrinth.com/mod/ae2' },
-  { name: 'Home Assistant', status: 'planned', link: 'https://www.home-assistant.io', note: 'Not a Minecraft mod, a smart home service' },
-  { name: 'Refined Storage', status: 'planned', link: 'https://modrinth.com/mod/refined-storage' },
+  { name: 'Applied Energistics 2', status: 'planned', link: 'https://modrinth.com/mod/ae2', since: 'v1.0.0' },
+  { name: 'Home Assistant', status: 'planned', link: 'https://www.home-assistant.io', note: 'Not a Minecraft mod, a smart home service', since: 'v1.0.0' },
+  { name: 'Refined Storage', status: 'planned', link: 'https://modrinth.com/mod/refined-storage', since: 'v1.0.0' },
   { name: 'BungeeCord', status: "won't add", link: 'https://github.com/SpigotMC/BungeeCord', note: 'Proxy networks split state across multiple servers' },
   { name: 'Velocity', status: "won't add", link: 'https://velocitypowered.com', note: 'Proxy networks split state across multiple servers' },
 ];
@@ -72,6 +74,7 @@ const statusLabel: Record<Status, string> = {
           <tr>
             <th class="px-5 py-3 font-semibold">Mod</th>
             <th class="px-5 py-3 font-semibold">Status</th>
+            <th class="px-5 py-3 font-semibold">Version</th>
             <th class="px-5 py-3 font-semibold">Link</th>
           </tr>
         </thead>
@@ -88,6 +91,7 @@ const statusLabel: Record<Status, string> = {
                   {statusLabel[entry.status]}
                 </span>
               </td>
+              <td class="px-5 py-4 text-brand-gray">{entry.since ?? '—'}</td>
               <td class="px-5 py-4">
                 <a href={entry.link} class="inline-flex items-center gap-1 font-medium text-brand-teal hover:text-teal-300">
                   Visit <Icon name="arrow-right" class="h-3.5 w-3.5" />

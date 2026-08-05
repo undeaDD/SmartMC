@@ -1,6 +1,7 @@
 ---
 import Icon from '../components/Icon.astro';
 import Logo from '../components/Logo.astro';
+import ObfuscatedEmail from '../components/ObfuscatedEmail.astro';
 import Layout from '../layouts/Layout.astro';
 
 const faqs = [
@@ -117,13 +118,10 @@ const faqs = [
           <Logo name="discord" class="h-4 w-4" />
           Discord
         </a>
-        <a
-          href="mailto:undeaD_D@live.de"
-          class="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
-        >
+        <ObfuscatedEmail class="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
           <Icon name="mail" class="h-4 w-4" />
           Email
-        </a>
+        </ObfuscatedEmail>
       </div>
     </div>
   </section>

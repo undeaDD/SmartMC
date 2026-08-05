@@ -31,7 +31,7 @@ const Tag = enabled ? 'a' : 'span';
 <Tag
   href={enabled ? link : undefined}
   class:list={[
-    'flex items-center gap-3 rounded-lg border border-white/10 px-4 py-2.5 text-brand-gray transition',
+    'flex w-[190px] items-center gap-3 rounded-lg border border-white/10 px-4 py-2.5 text-brand-gray transition',
     enabled ? 'bg-white/5 hover:bg-white/10' : 'cursor-not-allowed bg-white/[0.03] opacity-60',
   ]}
   title={enabled ? name : 'Not released yet'}

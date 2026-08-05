@@ -1,4 +1,5 @@
 ---
+import ObfuscatedEmail from '../components/ObfuscatedEmail.astro';
 import Layout from '../layouts/Layout.astro';
 import { withBase } from '../lib/paths';
 ---
@@ -9,7 +10,7 @@ import { withBase } from '../lib/paths';
     <div class="relative mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 sm:py-24">
       <h1 class="text-glow text-4xl font-bold tracking-tight text-white sm:text-5xl">Data privacy</h1>
       <p class="mx-auto mt-4 max-w-xl text-brand-gray">
-        What this site, the mod, and the app do and don't collect.
+        Privacy policy for the SmartMC website, mod, and companion app.
       </p>
     </div>
   </section>
@@ -17,42 +18,134 @@ import { withBase } from '../lib/paths';
   <section class="mx-auto max-w-2xl px-4 pb-24 sm:px-6">
     <div class="space-y-8 rounded-2xl border border-white/10 bg-ink-900/60 p-6 text-sm text-brand-gray sm:p-10">
       <div>
-        <h2 class="text-base font-semibold text-white">This website</h2>
+        <h2 class="text-base font-semibold text-white">1. Introduction</h2>
         <p class="mt-2">
-          This site is static: it sets no cookies, runs no analytics or tracking scripts, and doesn't collect
-          anything from your visit. Contributor names and avatars shown on the Contributors page are pulled from
-          GitHub's public API at build time, not from you visiting the site.
+          This privacy policy informs you about the nature, scope, and purpose of the processing of personal data
+          within the SmartMC project, comprising this website (the "Website"), the SmartMC Minecraft server
+          modification (the "Mod"), and the SmartMC companion mobile application (the "App"), collectively the
+          "Services". It is addressed to visitors of the Website and to users of the Mod and the App.
         </p>
       </div>
 
       <div>
-        <h2 class="text-base font-semibold text-white">The mod (server-side)</h2>
+        <h2 class="text-base font-semibold text-white">2. Controller</h2>
         <p class="mt-2">
-          The mod runs entirely on the Minecraft server it's installed on. There is no third-party or Devsforge-
-          operated service in the loop. Pairing stores your Minecraft player UUID, an authentication token, and
-          the devices/groups you set up, on that server, under that server owner's control, the same way any other
-          server-side mod's data would be stored. Nothing is sent anywhere else.
+          The entity responsible for the processing of personal data described in this policy ("we", "us", "our")
+          is Devsforge, as identified in the{' '}
+          <a class="text-brand-teal underline hover:text-teal-300" href={withBase('/imprint')}>Imprint</a>. For any
+          question regarding this policy or the processing of your data, you may contact us using the details
+          provided in Section 8 below.
         </p>
       </div>
 
       <div>
-        <h2 class="text-base font-semibold text-white">The app</h2>
+        <h2 class="text-base font-semibold text-white">3. The Website</h2>
         <p class="mt-2">
-          The app talks directly to the Minecraft server you pair it with, over the connection described in the
-          <a class="text-brand-teal underline hover:text-teal-300" href={withBase('/wiki/developers')}>developer docs</a>.
-          It does not send your data to Devsforge or any other third party. Push notifications are deferred (see the
-          <a class="text-brand-teal underline hover:text-teal-300" href={withBase('/roadmap')}>roadmap</a>); if that
-          changes, this page will be updated to reflect whatever that requires.
+          The Website is served as a static site with no server-side application logic of its own. It does not set
+          cookies, does not embed analytics, advertising, or tracking scripts of any kind, and does not maintain
+          user accounts. Standard access logs (such as those generated automatically by our hosting or content
+          delivery provider, typically containing an IP address, timestamp, requested resource, and user agent
+          string) may be created purely for the operational purposes of security, abuse prevention, and diagnosing
+          technical faults, and are outside our direct control as they are generated and retained by the underlying
+          hosting infrastructure rather than by any code we operate.
+        </p>
+        <p class="mt-2">
+          Contributor names, usernames, and avatar images displayed on the Contributors page are retrieved from
+          GitHub's public API at the time the Website is built and published, not in response to your visit. This
+          data is limited to information that contributors have already made public through their GitHub profile
+          and their public contributions to the project's source code repository.
         </p>
       </div>
 
       <div>
-        <h2 class="text-base font-semibold text-white">Questions or deletion requests</h2>
+        <h2 class="text-base font-semibold text-white">4. The Mod (processing on the server)</h2>
         <p class="mt-2">
-          Since your data lives on the Minecraft server you paired with, deletion is a matter of asking that
-          server's owner to revoke your pairing (see the player wiki). For anything about this site or project
-          specifically, reach out at
-          <a class="text-brand-teal underline hover:text-teal-300" href="mailto:undeaD_D@live.de">undeaD_D@live.de</a>.
+          The Mod is designed to run entirely within the Minecraft server process on which it is installed. There is
+          no Devsforge-operated backend, cloud service, or database that the Mod communicates with, and no data
+          processed by the Mod is transmitted to us or to any other third party as part of its normal operation.
+        </p>
+        <p class="mt-2">
+          When a player pairs the App with a server, the Mod stores, locally on that server and under the exclusive
+          control of that server's operator, the player's Minecraft account identifier (UUID), an authentication
+          token associated with the paired device, and the device and group records the player has configured. This
+          data is retained for as long as the pairing remains active and is stored using the same mechanisms, and
+          subject to the same operator control, as any other server-side modification's persistent data.
+        </p>
+        <p class="mt-2">
+          Because this data resides exclusively on the Minecraft server operated by a third party (the server
+          owner), that server owner is the appropriate party to contact for access, correction, or deletion of data
+          stored by the Mod on their server. We, as the developer of the Mod, do not have access to this data and
+          cannot act on it directly.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="text-base font-semibold text-white">5. The App</h2>
+        <p class="mt-2">
+          The App establishes a direct, end-to-end encrypted connection to the Minecraft server you choose to pair
+          it with, over the same network path used by the Minecraft client itself, as described in the{' '}
+          <a class="text-brand-teal underline hover:text-teal-300" href={withBase('/wiki/developers')}>developer
+          documentation</a>. No intermediary server operated by us sits between the App and the Minecraft server, and
+          no data exchanged over that connection is routed through, logged by, or made available to us.
+        </p>
+        <p class="mt-2">
+          The App stores, locally on your device, the cryptographic material and authentication token required to
+          maintain your pairing with each server, together with locally cached, non-authoritative copies of device
+          and group state for display purposes. This data remains on your device and is not synchronized to any
+          service operated by us.
+        </p>
+        <p class="mt-2">
+          Push notifications are not part of the current version of the Services; alerts are delivered only while
+          the App is open and actively connected to a paired server. Should push notification support be introduced
+          in the future (see the{' '}
+          <a class="text-brand-teal underline hover:text-teal-300" href={withBase('/roadmap')}>roadmap</a>), this
+          policy will be updated in advance to describe the categories of data such a feature would require, the
+          purpose of that processing, and the third-party push delivery providers involved, before the feature
+          becomes active.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="text-base font-semibold text-white">6. Legal basis for processing</h2>
+        <p class="mt-2">
+          To the extent any processing described in this policy constitutes processing of personal data under
+          applicable law (such as the EU General Data Protection Regulation), the legal basis relied upon is, as
+          applicable: performance of a contract or steps taken at your request prior to entering into one
+          (Art. 6(1)(b) GDPR, in connecting your device to a server you have chosen to pair with), our legitimate interest in
+          operating, securing, and maintaining the Services (Art. 6(1)(f) GDPR), or your consent where explicitly
+          given (Art. 6(1)(a) GDPR).
+        </p>
+      </div>
+
+      <div>
+        <h2 class="text-base font-semibold text-white">7. Your rights</h2>
+        <p class="mt-2">
+          Subject to applicable law, you may have the right to request access to, correction of, deletion of, or
+          restriction on the processing of your personal data, the right to data portability, and the right to
+          object to processing carried out on the basis of legitimate interest. Where data is stored by a Mod
+          instance under the control of a third-party server operator, these rights are exercised against that
+          operator, typically by revoking your own pairing in-game or asking the operator to do so on your behalf.
+          Where data is processed by us directly (for example, in connection with this Website or in response to a
+          message you send us), you may exercise these rights by contacting us using the details in Section 8. You
+          also have the right to lodge a complaint with a supervisory authority.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="text-base font-semibold text-white">8. Contact</h2>
+        <p class="mt-2">
+          For any question about this policy, to exercise a right described above with respect to data we process
+          directly, or to report a suspected security or privacy issue, please contact us by email at{' '}
+          <ObfuscatedEmail class="text-brand-teal underline hover:text-teal-300" />.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="text-base font-semibold text-white">9. Changes to this policy</h2>
+        <p class="mt-2">
+          We may update this policy from time to time to reflect changes in the Services or in applicable law. The
+          version published on this page is always the version currently in effect. We encourage you to review this
+          page periodically.
         </p>
       </div>
     </div>
