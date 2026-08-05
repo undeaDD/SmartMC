@@ -9,6 +9,6 @@
   "scripts": {
     "typecheck": "bun run --filter '*' typecheck",
     "protocol:generate": "bun run --filter '@smart-mc/protocol' generate",
-    "web:dev": "bun run --filter '@smart-mc/landing' dev",
+    "web:dev": "bun run --filter '@smart-mc/landing' dev --force"
   }
 }
