@@ -1,0 +1,28 @@
+{
+  "tabHome": "Start",
+  "tabDevices": "Geräte",
+  "tabProfile": "Profil",
+
+  "homeEmpty": "Noch nichts angeheftet.",
+
+  "devicesEmpty": "Platziere einen Alarm Controller Block und er erscheint hier.",
+
+  "profilePairedServers": "Verbundene Server",
+  "profileNotificationPreferences": "Benachrichtigungseinstellungen",
+  "profileAboutLinks": "Über & Links",
+  "profileVersion": "Version {{version}} (b{{build}})",
+
+  "pairTitle": "Mit Server verbinden",
+  "pairIntro": "Führe /smartmc pair im Spiel aus, um einen 6-stelligen Code zu erhalten, und gib dann unten die Serveradresse und den Code ein.",
+  "pairHost": "Serveradresse",
+  "pairPort": "Port",
+  "pairCode": "Pairing-Code",
+  "pairDeviceName": "Gerätename",
+  "pairSubmit": "Verbinden",
+  "pairPairing": "Verbinde…",
+  "pairSuccess": "Erfolgreich verbunden",
+  "pairHostRequired": "Serveradresse eingeben",
+  "pairPortInvalid": "Gültigen Port eingeben (1-65535)",
+  "pairCodeInvalid": "Den 6-stelligen Code aus dem Spiel eingeben",
+  "pairDeviceNameRequired": "Namen für dieses Gerät eingeben"
+}

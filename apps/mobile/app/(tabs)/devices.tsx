@@ -1,11 +1,14 @@
 import { StyleSheet } from 'react-native';
 
 import { Text, View } from '@/components/Themed';
+import { useI18n } from '@/providers/I18nProvider';
 
 export default function DevicesScreen() {
+  const { t } = useI18n();
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Place an Alarm Controller block and it'll show up here.</Text>
+      <Text style={styles.title}>{t('devicesEmpty')}</Text>
     </View>
   );
 }
