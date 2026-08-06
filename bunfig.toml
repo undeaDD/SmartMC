@@ -1,0 +1,10 @@
+[install]
+# Bun 1.2+/1.3+ defaults to "isolated" linking, which keeps a separate
+# physical copy of a package per dependency-resolution context (even when
+# the resolved version is identical), storing them under
+# node_modules/.bun/<pkg>@<version>+<hash>/. expo-doctor's "duplicate
+# native module dependencies" check isn't aware of this and flags it as
+# broken duplicates, which fails EAS Build's automatic pre-flight
+# expo-doctor run outright. "hoisted" restores the classic flat npm/yarn
+# node_modules layout Expo's tooling actually expects.
+linker = "hoisted"
