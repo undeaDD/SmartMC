@@ -4,12 +4,14 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.smartmc.SmartMC;
+import com.smartmc.command.SmartMcPermissions.Permission;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.time.Duration;
+import java.util.List;
 
 /**
  * Builds the {@code /smartmc} command tree. Pure vanilla types
@@ -20,12 +22,24 @@ import java.time.Duration;
  */
 public final class SmartMcCommand {
 
+	/** Kept in sync with the tree built in {@link #register} -- used only to render {@code help}. */
+	private static final List<CommandInfo> COMMANDS = List.of(
+		new CommandInfo("/smartmc pair", "Generates a pairing code to link the SmartMC app to your account."),
+		new CommandInfo("/smartmc help", "Shows this list of commands.")
+	);
+
 	private SmartMcCommand() {
 	}
 
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
 		dispatcher.register(Commands.literal("smartmc")
-			.then(Commands.literal("pair").executes(SmartMcCommand::pair)));
+			.executes(SmartMcCommand::help)
+			.then(Commands.literal("pair")
+				.requires(source -> SmartMC.permissions().hasPermission(source, Permission.PAIR))
+				.executes(SmartMcCommand::pair))
+			.then(Commands.literal("help")
+				.requires(source -> SmartMC.permissions().hasPermission(source, Permission.HELP))
+				.executes(SmartMcCommand::help)));
 	}
 
 	private static int pair(CommandContext<CommandSourceStack> ctx) {
@@ -42,5 +56,18 @@ public final class SmartMcCommand {
 		ctx.getSource().sendSuccess(() -> Component.literal(
 			"Your SmartMC pairing code is " + code + " -- enter it in the app within " + (ttlSeconds / 60) + " minutes."), false);
 		return 1;
+	}
+
+	/** Also the fallback for bare {@code /smartmc} with no subcommand, instead of Brigadier's generic parse error. */
+	private static int help(CommandContext<CommandSourceStack> ctx) {
+		CommandSourceStack source = ctx.getSource();
+		source.sendSuccess(() -> Component.literal("SmartMC commands:"), false);
+		for (CommandInfo command : COMMANDS) {
+			source.sendSuccess(() -> Component.literal(command.usage() + " -- " + command.description()), false);
+		}
+		return 1;
+	}
+
+	private record CommandInfo(String usage, String description) {
 	}
 }

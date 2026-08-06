@@ -4,6 +4,8 @@ import com.smartmc.auth.NoiseStaticKeys;
 import com.smartmc.auth.PairingCodeManager;
 import com.smartmc.auth.ServerIdentity;
 import com.smartmc.auth.TokenService;
+import com.smartmc.command.SmartMcPermissions;
+import com.smartmc.command.VanillaPermissions;
 import com.smartmc.config.SmartMcConfig;
 import com.smartmc.platform.Platform;
 import com.smartmc.storage.DeviceStore;
@@ -36,6 +38,7 @@ public class SmartMC {
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	private static final Platform PLATFORM = createPlatformInstance();
+	private static final SmartMcPermissions PERMISSIONS = new VanillaPermissions();
 
 	private static SmartMcConfig config;
 	private static ServerIdentity identity;
@@ -117,6 +120,10 @@ public class SmartMC {
 
 	public static TokenService tokens() {
 		return tokens;
+	}
+
+	public static SmartMcPermissions permissions() {
+		return PERMISSIONS;
 	}
 
 	public static DeviceStore devices() {
