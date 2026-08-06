@@ -1,0 +1,62 @@
+name: EAS build (local, iOS)
+
+# Manual only. This exists specifically as a workaround/diagnostic for a
+# persistent EAS Build cloud failure ("tar: Error opening archive:
+# Unrecognized archive format" during the PREPARE_PROJECT phase -- see
+# CLAUDE.md's apps/mobile section) that has survived every client-side fix
+# attempted so far. `eas build --local` runs the entire build on this
+# runner directly, with no project-archive upload/download round-trip
+# through EAS's own storage at all -- so this both produces a real,
+# installable .ipa and doubles as a clean test of whether that round-trip
+# is really where the corruption happens.
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: "EAS build profile (from apps/mobile/eas.json)"
+        required: false
+        default: development
+        type: choice
+        options:
+          - development
+          - preview
+          - production
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build iOS app (eas build --local)
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build via EAS (local)
+        working-directory: apps/mobile
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          bun x eas-cli build \
+            --local \
+            --platform ios \
+            --profile "${{ inputs.profile }}" \
+            --non-interactive \
+            --output ./build.ipa
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: smartmc-ios-${{ inputs.profile }}
+          path: apps/mobile/build.ipa
+          if-no-files-found: error
+          retention-days: 14
