@@ -2,12 +2,6 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "expo-web",
-      "runtimeExecutable": "bun",
-      "runtimeArgs": ["run", "--cwd", "apps/mobile", "start", "--web"],
-      "port": 8081
-    },
-    {
       "name": "landing",
       "runtimeExecutable": "bun",
       "runtimeArgs": ["run", "--cwd", "apps/landing", "dev"],

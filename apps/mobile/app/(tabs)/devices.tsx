@@ -2,10 +2,10 @@ import { StyleSheet } from 'react-native';
 
 import { Text, View } from '@/components/Themed';
 
-export default function HomeScreen() {
+export default function DevicesScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Nothing pinned yet.</Text>
+      <Text style={styles.title}>Place an Alarm Controller block and it'll show up here.</Text>
     </View>
   );
 }
