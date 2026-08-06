@@ -62,6 +62,10 @@ repositories {
 	mavenCentral()
 	strictMaven("https://api.modrinth.com/maven", "maven.modrinth") { name = "Modrinth" }
 	strictMaven("https://jitpack.io", "com.github.jchambers") { name = "Jitpack" }
+	strictMaven("https://maven.ftb.dev/releases", "dev.ftb.mods") { name = "FTB" }
+	// FTB Teams (NeoForge) is Architectury-Loom-based and declares an `api`
+	// dependency on Architectury API, which resolves even for compileOnly.
+	strictMaven("https://maven.architectury.dev/", "dev.architectury") { name = "Architectury" }
 }
 
 dependencies {
@@ -71,6 +75,10 @@ dependencies {
 	jarJar(libs.h2)
 	implementation(libs.java.noise)
 	jarJar(libs.java.noise)
+	// Optional soft-dependency: only ever constructed when the server actually
+	// has FTB Teams installed (see com.smartmc.group.FtbTeamsGroupProvider) --
+	// compile-only, never embedded, since it's someone else's whole mod.
+	compileOnly(libs.ftb.teams.neoforge)
 }
 
 tasks.named("createMinecraftArtifacts") {

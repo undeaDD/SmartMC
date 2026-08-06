@@ -18,7 +18,7 @@ public class VanillaPermissions implements SmartMcPermissions {
 
 	private static int opLevelFor(Permission permission) {
 		return switch (permission) {
-			case PAIR, HELP -> 0; // any connected player
+			case PAIR, HELP, SESSIONS, GROUP -> 0; // any connected player
 			case ADMIN -> 2; // server operator
 		};
 	}

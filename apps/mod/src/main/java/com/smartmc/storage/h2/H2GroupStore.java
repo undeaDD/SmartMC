@@ -83,6 +83,26 @@ public class H2GroupStore implements GroupStore {
 	}
 
 	@Override
+	public List<GroupRecord> findByMember(UUID memberUuid) throws SQLException {
+		String sql = """
+			SELECT g.id, g.name, g.owner_uuid FROM groups g
+			JOIN group_members gm ON gm.group_id = g.id
+			WHERE gm.member_uuid = ?
+			""";
+		try (PreparedStatement statement = database.connection().prepareStatement(sql)) {
+			statement.setString(1, memberUuid.toString());
+			try (ResultSet rs = statement.executeQuery()) {
+				List<GroupRecord> groups = new ArrayList<>();
+				while (rs.next()) {
+					String id = rs.getString("id");
+					groups.add(new GroupRecord(id, rs.getString("name"), UUID.fromString(rs.getString("owner_uuid")), members(id)));
+				}
+				return groups;
+			}
+		}
+	}
+
+	@Override
 	public void delete(String id) throws SQLException {
 		try (PreparedStatement members = database.connection().prepareStatement("DELETE FROM group_members WHERE group_id = ?");
 			 PreparedStatement group = database.connection().prepareStatement("DELETE FROM groups WHERE id = ?")) {

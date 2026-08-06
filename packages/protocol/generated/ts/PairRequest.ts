@@ -12,8 +12,8 @@
 export interface PairRequest {
   pairingCode: string;
   /**
-   * Player-chosen, app-side name for this paired device (e.g. "Dominic's
-   * iPhone") -- stored on the session record so /smartmc devices list
+   * Player-chosen, app-side name for this paired device (e.g. "undeaD_D's
+   * iPhone") -- stored on the session record so /smartmc sessions list
    * shows something meaningful instead of an opaque session id.
    */
   deviceName: string;

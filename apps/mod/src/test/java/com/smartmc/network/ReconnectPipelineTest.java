@@ -11,6 +11,8 @@ import com.smartmc.group.GroupInfo;
 import com.smartmc.group.GroupProvider;
 import com.smartmc.protocol.PairRequest;
 import com.smartmc.protocol.PairResponse;
+import com.smartmc.protocol.ReconnectRequest;
+import com.smartmc.protocol.ReconnectResponse;
 import com.smartmc.storage.SessionRecord;
 import com.smartmc.storage.SessionStore;
 import io.netty.buffer.ByteBuf;
@@ -25,7 +27,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.sql.SQLException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,23 +36,23 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Exercises the real {@link NoiseHandshakeHandler}/{@link NoiseTransportCodec}/
- * {@link SmartMcMessageHandler} pipeline via a Netty {@link EmbeddedChannel}
- * -- no real socket needed. A java-noise initiator stands in for the app on
- * "the other side," feeding length-framed bytes into the channel and reading
- * length-framed bytes back out, exactly as a real TCP peer would see them.
- * This is what actually proves the pipeline wiring (handler-swap timing on
- * handshake completion, frame boundaries) works, not just the library or the
- * pairing logic in isolation -- see {@link NoiseHandshakeTest} for the former.
+ * Drives a full pair-then-reconnect exchange through the real
+ * {@link NoiseHandshakeHandler}/{@link SmartMcMessageHandler} pipeline via an
+ * {@link EmbeddedChannel}, proving the sliding-window rotation actually
+ * works end to end: reconnect issues a fresh token and moves the session row
+ * to the new {@code jti} in place (not a second row), and the previously
+ * issued token's session can no longer be found once rotated away.
  */
-class NoisePipelineTest {
+class ReconnectPipelineTest {
 
 	@Test
-	void handshakeCompletesAndPairingRoundTripsOverEncryptedTransport(@TempDir Path tempDir) throws Exception {
+	void pairThenReconnectRotatesTheToken(@TempDir Path tempDir) throws Exception {
 		Gson gson = new Gson();
 		UUID playerUuid = UUID.randomUUID();
 
@@ -85,44 +86,55 @@ class NoisePipelineTest {
 			new NoiseHandshakeHandler(serverStatic, context)
 		);
 
-		// -> e
+		// Noise_XX handshake
 		channel.writeInbound(frame(clientHandshake.writeMessage((byte[]) null)));
-		// <- e, ee, s, es
 		clientHandshake.readMessage(readFramedMessage(channel));
-		// -> s, se
 		channel.writeInbound(frame(clientHandshake.writeMessage((byte[]) null)));
-
 		assertTrue(clientHandshake.isDone());
-		assertNoFurtherHandshakeOutput(channel);
+		NoiseTransport transport = clientHandshake.toTransport();
 
-		NoiseTransport clientTransport = clientHandshake.toTransport();
+		// pair
+		PairRequest pairRequest = new PairRequest();
+		pairRequest.setPairingCode(code);
+		pairRequest.setDeviceName("Test Device");
+		channel.writeInbound(frame(transport.writeMessage(
+			MessageEnvelope.encode(gson, "pair", pairRequest).getBytes(StandardCharsets.UTF_8))));
 
-		PairRequest request = new PairRequest();
-		request.setPairingCode(code);
-		request.setDeviceName("Test Device");
-		byte[] requestBytes = MessageEnvelope.encode(gson, "pair", request).getBytes(StandardCharsets.UTF_8);
-		channel.writeInbound(frame(clientTransport.writeMessage(requestBytes)));
+		MessageEnvelope.Decoded pairEnvelope = MessageEnvelope.decode(gson,
+			new String(transport.readMessage(readFramedMessage(channel)), StandardCharsets.UTF_8)).orElseThrow();
+		assertEquals("pair", pairEnvelope.type());
+		PairResponse pairResponse = gson.fromJson(pairEnvelope.payload(), PairResponse.class);
+		assertTrue(pairResponse.getSuccess());
+		String firstToken = pairResponse.getToken();
+		assertNotNull(firstToken);
 
-		byte[] responseBytes = clientTransport.readMessage(readFramedMessage(channel));
-		MessageEnvelope.Decoded responseEnvelope = MessageEnvelope.decode(gson,
-			new String(responseBytes, StandardCharsets.UTF_8)).orElseThrow();
-		assertEquals("pair", responseEnvelope.type());
-		PairResponse response = gson.fromJson(responseEnvelope.payload(), PairResponse.class);
+		// reconnect
+		ReconnectRequest reconnectRequest = new ReconnectRequest();
+		reconnectRequest.setToken(firstToken);
+		channel.writeInbound(frame(transport.writeMessage(
+			MessageEnvelope.encode(gson, "reconnect", reconnectRequest).getBytes(StandardCharsets.UTF_8))));
 
-		assertTrue(response.getSuccess());
-		assertEquals(playerUuid.toString(), response.getPlayerUuid());
-		assertNotNull(response.getToken());
-		assertTrue(tokens.verify(response.getToken()).isPresent());
-		assertEquals(1, sessions.records.size());
-		assertEquals("Test Device", sessions.records.values().iterator().next().deviceName());
-	}
+		MessageEnvelope.Decoded reconnectEnvelope = MessageEnvelope.decode(gson,
+			new String(transport.readMessage(readFramedMessage(channel)), StandardCharsets.UTF_8)).orElseThrow();
+		assertEquals("reconnect", reconnectEnvelope.type());
+		ReconnectResponse reconnectResponse = gson.fromJson(reconnectEnvelope.payload(), ReconnectResponse.class);
+		assertTrue(reconnectResponse.getSuccess());
+		String secondToken = reconnectResponse.getToken();
+		assertNotNull(secondToken);
+		assertNotEquals(firstToken, secondToken);
 
-	private static void assertNoFurtherHandshakeOutput(EmbeddedChannel channel) {
-		ByteBuf leftover = channel.readOutbound();
-		if (leftover != null) {
-			leftover.release();
-			throw new AssertionError("Expected no further handshake output once the client's final message is sent");
-		}
+		// the old token's signature/expiry still verify (it's immutable) --
+		// revocation lives in the session store, not the token itself
+		String oldJti = tokens.verify(firstToken).orElseThrow().jti();
+		assertTrue(sessions.findByJti(oldJti).isEmpty(), "old jti should have been rotated away, not just marked revoked");
+
+		String newJti = tokens.verify(secondToken).orElseThrow().jti();
+		Optional<SessionRecord> newSession = sessions.findByJti(newJti);
+		assertTrue(newSession.isPresent());
+		assertFalse(newSession.get().revoked());
+
+		// rotation updates the row in place -- still exactly one session for this device
+		assertEquals(1, sessions.findByOwner(playerUuid).size());
 	}
 
 	private static ByteBuf frame(byte[] payload) {
@@ -132,14 +144,6 @@ class NoisePipelineTest {
 		return buf;
 	}
 
-	/**
-	 * {@link LengthFieldPrepender} is a {@code MessageToMessageEncoder}: it
-	 * queues the 4-byte length header and the original payload as two
-	 * separate outbound messages (Netty coalesces these into one write on a
-	 * real socket, but {@link EmbeddedChannel}'s outbound queue keeps them
-	 * distinct), so reading a full outgoing frame back out takes two
-	 * {@code readOutbound()} calls, not one.
-	 */
 	private static byte[] readFramedMessage(EmbeddedChannel channel) {
 		ByteBuf header = channel.readOutbound();
 		int length = header.readInt();
@@ -156,9 +160,9 @@ class NoisePipelineTest {
 		return KeyPairGenerator.getInstance("X25519").generateKeyPair();
 	}
 
-	/** Minimal in-memory {@link SessionStore} test double -- no H2/file IO needed for this test. */
+	/** Minimal in-memory {@link SessionStore} test double, including {@code rotate}. */
 	private static class InMemorySessionStore implements SessionStore {
-		final Map<String, SessionRecord> records = new HashMap<>();
+		private final Map<String, SessionRecord> records = new HashMap<>();
 
 		@Override
 		public void insert(SessionRecord session) {

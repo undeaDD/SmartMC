@@ -23,5 +23,13 @@ public interface SessionStore {
 
 	void revoke(String jti) throws SQLException;
 
+	/**
+	 * Sliding-window token renewal: swaps a session's primary key from
+	 * {@code oldJti} to {@code newJti} and bumps its issued-at time, keeping
+	 * exactly one row per paired device across its lifetime rather than
+	 * accumulating a new row on every reconnect.
+	 */
+	void rotate(String oldJti, String newJti, long newIssuedAt) throws SQLException;
+
 	List<SessionRecord> findByOwner(UUID ownerUuid) throws SQLException;
 }

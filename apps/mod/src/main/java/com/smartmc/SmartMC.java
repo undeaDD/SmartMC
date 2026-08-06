@@ -7,6 +7,9 @@ import com.smartmc.auth.TokenService;
 import com.smartmc.command.SmartMcPermissions;
 import com.smartmc.command.VanillaPermissions;
 import com.smartmc.config.SmartMcConfig;
+import com.smartmc.group.FtbTeamsGroupProvider;
+import com.smartmc.group.GroupProvider;
+import com.smartmc.group.NativeGroupProvider;
 import com.smartmc.platform.Platform;
 import com.smartmc.storage.DeviceStore;
 import com.smartmc.storage.GroupStore;
@@ -49,6 +52,7 @@ public class SmartMC {
 	private static DeviceStore devices;
 	private static GroupStore groups;
 	private static SessionStore sessions;
+	private static GroupProvider groupProvider;
 
 	public static void onInitialize() {
 		LOGGER.info("Initializing {} on {}", MOD_ID, SmartMC.xplat().loader());
@@ -83,6 +87,17 @@ public class SmartMC {
 		groups = new H2GroupStore(database);
 		sessions = new H2SessionStore(database);
 
+		if ("ftbteams".equals(config.groupProvider)) {
+			if (xplat().isModLoaded("ftbteams")) {
+				groupProvider = new FtbTeamsGroupProvider();
+			} else {
+				LOGGER.warn("groupProvider is set to \"ftbteams\" but FTB Teams isn't installed -- falling back to native groups");
+				groupProvider = new NativeGroupProvider(groups);
+			}
+		} else {
+			groupProvider = new NativeGroupProvider(groups);
+		}
+
 		LOGGER.info("SmartMC ready -- enabled: {}, identity fingerprint: {}", config.enabled, identity.fingerprint());
 	}
 
@@ -100,6 +115,7 @@ public class SmartMC {
 		}
 		pairingCodes = null;
 		tokens = null;
+		groupProvider = null;
 	}
 
 	public static SmartMcConfig config() {
@@ -136,6 +152,10 @@ public class SmartMC {
 
 	public static SessionStore sessions() {
 		return sessions;
+	}
+
+	public static GroupProvider groupProvider() {
+		return groupProvider;
 	}
 
 	static Platform xplat() {

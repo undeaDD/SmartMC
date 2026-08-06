@@ -49,8 +49,15 @@ packages/protocol/generated/java/
 *.iml
 .vscode/
 !.vscode/extensions.json
+.eclipse/
 .DS_Store
 Thumbs.db
+
+# --- Stonecutter-generated per-version-loader subprojects (apps/mod) ---
+# Entirely generated build output (bin/build/.gradle/.eclipse/run), no hand-authored
+# content ever lives here -- also where absolute local paths (incl. Windows
+# username) can leak into IDE launch configs if not excluded.
+apps/mod/versions/
 
 # --- Claude Code session-local state (launch.json itself is tracked) ---
 .claude/scheduled_tasks.lock

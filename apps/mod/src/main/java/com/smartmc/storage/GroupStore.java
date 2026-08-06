@@ -24,5 +24,8 @@ public interface GroupStore {
 
 	List<GroupRecord> findByOwner(UUID ownerUuid) throws SQLException;
 
+	/** Groups where {@code memberUuid} is a listed member -- does NOT include groups they merely own; combine with {@link #findByOwner} for "all my groups." */
+	List<GroupRecord> findByMember(UUID memberUuid) throws SQLException;
+
 	void delete(String id) throws SQLException;
 }

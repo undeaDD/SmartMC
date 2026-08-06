@@ -45,6 +45,9 @@ public class SmartMcConfig {
 
 	public String logLevel = "INFO";
 
+	/** "native" (SmartMC's own DB-backed groups) or "ftbteams" (delegate to FTB Teams, if installed). */
+	public String groupProvider = "native";
+
 	public static SmartMcConfig load(Path configDir) {
 		Path file = configDir.resolve(FILE_NAME);
 		if (Files.exists(file)) {

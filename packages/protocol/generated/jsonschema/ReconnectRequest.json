@@ -1,0 +1,14 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "ReconnectRequest.json",
+    "type": "object",
+    "properties": {
+        "token": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "token"
+    ],
+    "description": "Sent by the app to resume an existing session without re-pairing,\npresenting the token it stored from a previous PairResponse/ReconnectResponse."
+}

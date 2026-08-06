@@ -58,6 +58,17 @@ public class H2SessionStore implements SessionStore {
 	}
 
 	@Override
+	public void rotate(String oldJti, String newJti, long newIssuedAt) throws SQLException {
+		String sql = "UPDATE sessions SET jti = ?, issued_at = ? WHERE jti = ?";
+		try (PreparedStatement statement = database.connection().prepareStatement(sql)) {
+			statement.setString(1, newJti);
+			statement.setLong(2, newIssuedAt);
+			statement.setString(3, oldJti);
+			statement.executeUpdate();
+		}
+	}
+
+	@Override
 	public List<SessionRecord> findByOwner(UUID ownerUuid) throws SQLException {
 		String sql = "SELECT * FROM sessions WHERE owner_uuid = ?";
 		try (PreparedStatement statement = database.connection().prepareStatement(sql)) {

@@ -20,6 +20,10 @@ public interface SmartMcPermissions {
 		PAIR,
 		/** Any connected player -- listing available commands. */
 		HELP,
+		/** Any connected player -- managing your own paired devices. */
+		SESSIONS,
+		/** Any connected player -- managing groups you own/belong to. */
+		GROUP,
 		/** Server operators only -- reserved for future admin-only subcommands. */
 		ADMIN
 	}

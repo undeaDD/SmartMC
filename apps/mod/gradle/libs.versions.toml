@@ -16,6 +16,7 @@ serialization-toml = "0.6.0"
 h2 = "2.4.240"
 jsonschema2pojo = "1.3.3"
 java-noise = "4de5aefbf2bb19bf2efcfbe97d3d13231e693488"
+ftb-teams = "2101.1.10"
 
 [libraries]
 kikugie-postprocess = { module = "dev.kikugie:postprocess", version.ref = "stonecutter-postprocess" }
@@ -31,6 +32,8 @@ serialization-toml = { module = "dev.eav.tomlkt:tomlkt", version.ref = "serializ
 h2 = { module = "com.h2database:h2", version.ref = "h2" }
 jsonschema2pojo = { module = "org.jsonschema2pojo:jsonschema2pojo-gradle-plugin", version.ref = "jsonschema2pojo" }
 java-noise = { module = "com.github.jchambers:java-noise", version.ref = "java-noise" }
+ftb-teams-fabric = { module = "dev.ftb.mods:ftb-teams-fabric", version.ref = "ftb-teams" }
+ftb-teams-neoforge = { module = "dev.ftb.mods:ftb-teams-neoforge", version.ref = "ftb-teams" }
 
 [plugins]
 stonecutter = { id = "dev.kikugie.stonecutter", version.ref = "stonecutter" }

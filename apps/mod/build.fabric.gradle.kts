@@ -64,6 +64,10 @@ repositories {
 	strictMaven("https://maven.terraformersmc.com/", "com.terraformersmc") { name = "TerraformersMC" }
 	strictMaven("https://api.modrinth.com/maven", "maven.modrinth") { name = "Modrinth" }
 	strictMaven("https://jitpack.io", "com.github.jchambers") { name = "Jitpack" }
+	strictMaven("https://maven.ftb.dev/releases", "dev.ftb.mods") { name = "FTB" }
+	// FTB Teams (Fabric) is Architectury-Loom-based and declares an `api`
+	// dependency on Architectury API, which resolves even for modCompileOnly.
+	strictMaven("https://maven.architectury.dev/", "dev.architectury") { name = "Architectury" }
 }
 
 configurations.all {
@@ -89,4 +93,8 @@ dependencies {
 	include(libs.h2)
 	implementation(libs.java.noise)
 	include(libs.java.noise)
+	// Optional soft-dependency: only ever constructed when the server actually
+	// has FTB Teams installed (see com.smartmc.group.FtbTeamsGroupProvider) --
+	// compile-only, never embedded, since it's someone else's whole mod.
+	modCompileOnly(libs.ftb.teams.fabric)
 }

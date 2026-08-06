@@ -55,9 +55,11 @@ public class MagicBytePeekDecoder extends ByteToMessageDecoder {
 			ChannelPipeline pipeline = ctx.pipeline();
 			pipeline.addAfter(ctx.name(), "smartmc_frame_decoder", new LengthFieldBasedFrameDecoder(1 << 20, 0, 4, 0, 4));
 			pipeline.addAfter("smartmc_frame_decoder", "smartmc_frame_encoder", new LengthFieldPrepender(4));
-			pipeline.addAfter("smartmc_frame_encoder", "smartmc_noise_handshake", new NoiseHandshakeHandler(
-				SmartMC.noiseKeys().keyPair(), SmartMC.pairingCodes(), SmartMC.tokens(), SmartMC.sessions(),
-				Duration.ofSeconds(SmartMC.config().tokenExpirySeconds)));
+			MessageContext context = new MessageContext(
+				SmartMC.pairingCodes(), SmartMC.tokens(), SmartMC.sessions(), SmartMC.groupProvider(),
+				Duration.ofSeconds(SmartMC.config().tokenExpirySeconds));
+			pipeline.addAfter("smartmc_frame_encoder", "smartmc_noise_handshake",
+				new NoiseHandshakeHandler(SmartMC.noiseKeys().keyPair(), context));
 		}
 		// Either path: get out of the way. Removing a ByteToMessageDecoder from
 		// inside its own decode() defers the actual removal until this call

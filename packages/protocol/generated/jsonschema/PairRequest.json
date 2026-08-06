@@ -8,7 +8,7 @@
         },
         "deviceName": {
             "type": "string",
-            "description": "Player-chosen, app-side name for this paired device (e.g. \"Dominic's\niPhone\") -- stored on the session record so /smartmc devices list\nshows something meaningful instead of an opaque session id."
+            "description": "Player-chosen, app-side name for this paired device (e.g. \"undeaD_D's\niPhone\") -- stored on the session record so /smartmc sessions list\nshows something meaningful instead of an opaque session id."
         }
     },
     "required": [

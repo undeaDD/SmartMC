@@ -1,0 +1,26 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "ReconnectResponse.json",
+    "type": "object",
+    "properties": {
+        "success": {
+            "type": "boolean"
+        },
+        "token": {
+            "type": "string",
+            "description": "Present only when success is true: the new token, replacing the one submitted."
+        },
+        "playerUuid": {
+            "type": "string",
+            "description": "Present only when success is true."
+        },
+        "error": {
+            "type": "string",
+            "description": "Present only when success is false -- a player-facing reason\n(expired, revoked, malformed) telling the app it needs to re-pair."
+        }
+    },
+    "required": [
+        "success"
+    ],
+    "description": "The mod's reply to a ReconnectRequest. On success, the mod always issues a\nfresh token (sliding-window renewal) -- the app must overwrite its stored\ntoken with the new one, even though the reconnect itself succeeded."
+}

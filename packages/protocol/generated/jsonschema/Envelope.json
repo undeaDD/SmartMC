@@ -1,0 +1,16 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "Envelope.json",
+    "type": "object",
+    "properties": {
+        "type": {
+            "type": "string"
+        },
+        "payload": {}
+    },
+    "required": [
+        "type",
+        "payload"
+    ],
+    "description": "Wraps every message exchanged over the post-handshake tunnel. `type`\nselects which payload shape `payload` holds (e.g. \"pair\", \"reconnect\") --\nsee the mod's `com.smartmc.network.SmartMcMessageHandler` for the current\ndispatch table. Adding a new message type means adding a new payload\nmodel plus a new dispatch entry on each side; the envelope itself never\nchanges."
+}
