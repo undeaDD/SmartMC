@@ -63,6 +63,7 @@ repositories {
 	mavenCentral()
 	strictMaven("https://maven.terraformersmc.com/", "com.terraformersmc") { name = "TerraformersMC" }
 	strictMaven("https://api.modrinth.com/maven", "maven.modrinth") { name = "Modrinth" }
+	strictMaven("https://jitpack.io", "com.github.jchambers") { name = "Jitpack" }
 }
 
 configurations.all {
@@ -86,4 +87,6 @@ dependencies {
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${prop("deps.fabric-api")}")
 	implementation(libs.h2)
 	include(libs.h2)
+	implementation(libs.java.noise)
+	include(libs.java.noise)
 }

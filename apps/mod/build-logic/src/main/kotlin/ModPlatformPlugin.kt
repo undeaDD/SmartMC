@@ -15,6 +15,7 @@ import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.testing.Test
 import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.*
@@ -113,6 +114,7 @@ abstract class ModPlatformPlugin @Inject constructor() : Plugin<Project> {
 
 		configureFletchingTable(ctx)
 		configureJsonSchema2Pojo(ctx)
+		configureTesting()
 		registerGenerateManifestTask(ctx)
 		configureJarTask(ctx)
 		configureIdea()
@@ -209,6 +211,38 @@ abstract class ModPlatformPlugin @Inject constructor() : Plugin<Project> {
 		tasks.withType<org.gradle.api.tasks.compile.AbstractCompile>().configureEach { mustRunAfter(generate) }
 		tasks.withType<Jar>().configureEach { mustRunAfter(generate) }
 		tasks.withType<org.gradle.api.tasks.javadoc.Javadoc>().configureEach { mustRunAfter(generate) }
+	}
+
+	// Applied uniformly to both loaders (unlike H2/java-noise, which are wired
+	// per-loader in build.<loader>.gradle.kts since they need include()/jarJar()
+	// embedding) -- test dependencies never ship in the mod jar, so there's
+	// nothing loader-specific here, just the JUnit 5 platform every versioned
+	// subproject's already-scaffolded (but previously empty) test source set needs.
+	private fun Project.configureTesting() {
+		dependencies {
+			"testImplementation"(platform("org.junit:junit-bom:5.11.4"))
+			"testImplementation"("org.junit.jupiter:junit-jupiter")
+			// Gradle's test worker talks to JUnit via the Launcher API, which
+			// junit-jupiter no longer pulls in transitively -- must be added
+			// explicitly or the test task fails before running anything.
+			"testRuntimeOnly"("org.junit.platform:junit-platform-launcher")
+			// Loom wires Minecraft's bundled Netty into Fabric's test
+			// classpath automatically, but NeoForge's ModDevGradle plugin
+			// only wires it into `main`, not `test` -- declared explicitly
+			// here so Netty-pipeline tests compile identically on both
+			// loaders. Version is unrelated to whatever Minecraft bundles;
+			// these tests run in a plain JVM, never the actual game.
+			"testImplementation"("io.netty:netty-buffer:4.1.115.Final")
+			"testImplementation"("io.netty:netty-transport:4.1.115.Final")
+			"testImplementation"("io.netty:netty-codec:4.1.115.Final")
+			// Same NeoForge-vs-Fabric asymmetry as above -- touching SmartMC's
+			// LOGGER field (e.g. from NoiseHandshakeHandler) triggers its
+			// static initializer, which needs SLF4J on the classpath.
+			"testImplementation"("org.slf4j:slf4j-api:2.0.16")
+		}
+		tasks.withType<Test>().configureEach {
+			useJUnitPlatform()
+		}
 	}
 
 	private fun Project.registerBuildAndCollectTask(ctx: Context) {

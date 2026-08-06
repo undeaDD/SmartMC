@@ -12,6 +12,9 @@ public final class MultiplexConstants {
 
 	public static final byte[] MAGIC_PREFIX = {0x53, 0x4D, 0x43, 0x01};
 
+	/** Layer 1 transport encryption -- see CLAUDE.md's "Security model / Layer 1". */
+	public static final String NOISE_PROTOCOL_NAME = "Noise_XX_25519_ChaChaPoly_SHA256";
+
 	private MultiplexConstants() {
 	}
 }

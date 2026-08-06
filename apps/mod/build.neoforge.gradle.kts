@@ -61,6 +61,7 @@ neoForge {
 repositories {
 	mavenCentral()
 	strictMaven("https://api.modrinth.com/maven", "maven.modrinth") { name = "Modrinth" }
+	strictMaven("https://jitpack.io", "com.github.jchambers") { name = "Jitpack" }
 }
 
 dependencies {
@@ -68,6 +69,8 @@ dependencies {
 	// jarJar(libs.moulberry.mixinconstraints)
 	implementation(libs.h2)
 	jarJar(libs.h2)
+	implementation(libs.java.noise)
+	jarJar(libs.java.noise)
 }
 
 tasks.named("createMinecraftArtifacts") {

@@ -7,21 +7,19 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
  * Installed at the front of every brand-new connection's pipeline (see
  * {@code com.smartmc.mixin.ServerConnectionListenerMixin}). Peeks -- never
  * consumes -- the first {@link MultiplexConstants#MAGIC_PREFIX}.length bytes once
- * they're buffered. On a match, consumes the prefix and swaps in the ad hoc
- * framed-JSON pipeline (replaced by the real wire protocol in M4); on a mismatch,
- * removes itself immediately so the untouched bytes flow into vanilla's own
- * decoders exactly as if this handler had never existed. Runs once per new
- * connection, never on the hot path of an already-established session.
+ * they're buffered. On a match, consumes the prefix and swaps in the framed
+ * pipeline with a Noise_XX handshake ahead of any application data (see
+ * {@link NoiseHandshakeHandler}); on a mismatch, removes itself immediately so
+ * the untouched bytes flow into vanilla's own decoders exactly as if this
+ * handler had never existed. Runs once per new connection, never on the hot
+ * path of an already-established session.
  */
 public class MagicBytePeekDecoder extends ByteToMessageDecoder {
 
@@ -47,7 +45,7 @@ public class MagicBytePeekDecoder extends ByteToMessageDecoder {
 			// already added vanilla's ReadTimeoutHandler/LegacyQueryHandler/packet
 			// codec/Connection ahead of us in the pipeline (we're only first
 			// because the Mixin used addFirst before any of that ran). addLast
-			// would install our echo pipeline AFTER all of vanilla's handlers,
+			// would install our pipeline AFTER all of vanilla's handlers,
 			// so vanilla's own packet decoder would see our raw framed bytes
 			// first, fail to parse them as a Minecraft packet, and close the
 			// connection -- addAfter(ctx.name(), ...), chained forward, inserts
@@ -56,9 +54,8 @@ public class MagicBytePeekDecoder extends ByteToMessageDecoder {
 			ChannelPipeline pipeline = ctx.pipeline();
 			pipeline.addAfter(ctx.name(), "smartmc_frame_decoder", new LengthFieldBasedFrameDecoder(1 << 20, 0, 4, 0, 4));
 			pipeline.addAfter("smartmc_frame_decoder", "smartmc_frame_encoder", new LengthFieldPrepender(4));
-			pipeline.addAfter("smartmc_frame_encoder", "smartmc_string_decoder", new StringDecoder(StandardCharsets.UTF_8));
-			pipeline.addAfter("smartmc_string_decoder", "smartmc_string_encoder", new StringEncoder(StandardCharsets.UTF_8));
-			pipeline.addAfter("smartmc_string_encoder", "smartmc_echo", new FramedJsonEchoHandler());
+			pipeline.addAfter("smartmc_frame_encoder", "smartmc_noise_handshake",
+				new NoiseHandshakeHandler(SmartMC.noiseKeys().keyPair()));
 		}
 		// Either path: get out of the way. Removing a ByteToMessageDecoder from
 		// inside its own decode() defers the actual removal until this call

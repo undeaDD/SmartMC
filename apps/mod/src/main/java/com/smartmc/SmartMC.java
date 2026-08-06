@@ -1,5 +1,6 @@
 package com.smartmc;
 
+import com.smartmc.auth.NoiseStaticKeys;
 import com.smartmc.auth.ServerIdentity;
 import com.smartmc.config.SmartMcConfig;
 import com.smartmc.platform.Platform;
@@ -33,6 +34,7 @@ public class SmartMC {
 
 	private static SmartMcConfig config;
 	private static ServerIdentity identity;
+	private static NoiseStaticKeys noiseKeys;
 	private static Database database;
 	private static DeviceStore devices;
 	private static GroupStore groups;
@@ -57,6 +59,7 @@ public class SmartMC {
 		var configDir = xplat().configDir();
 		config = SmartMcConfig.load(configDir);
 		identity = ServerIdentity.load(configDir);
+		noiseKeys = NoiseStaticKeys.load(configDir);
 
 		try {
 			database = Database.open(configDir);
@@ -91,6 +94,10 @@ public class SmartMC {
 
 	public static ServerIdentity identity() {
 		return identity;
+	}
+
+	public static NoiseStaticKeys noiseKeys() {
+		return noiseKeys;
 	}
 
 	public static DeviceStore devices() {
