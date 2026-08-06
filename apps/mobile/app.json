@@ -6,16 +6,26 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
+    "githubUrl": "https://github.com/undeaDD/SmartMC",
     "scheme": "smartmc",
     "userInterfaceStyle": "automatic",
+    "platforms": ["ios", "android"],
+    "assetBundlePatterns": ["assets/*"],
+		"developmentClient": {
+			"silentLaunch": true
+		},
     "ios": {
       "supportsTablet": false,
+      "deploymentTarget": "18.0",
       "bundleIdentifier": "com.smartmc.app",
       "infoPlist": {
+        "CFBundleDevelopmentRegion": "en",
+				"CFBundleLocalizations": ["en", "de"],
         "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
+      "versionCode": 2,
       "package": "com.smartmc.app",
       "adaptiveIcon": {
         "backgroundColor": "#39bf45",
@@ -26,7 +36,49 @@
       "predictiveBackGestureEnabled": false
     },
     "plugins": [
-      "expo-router",
+      ["expo-router", {}],
+			["expo-status-bar", {}],
+			["expo-web-browser", {}],
+			["expo-localization", {}],
+			["react-native-legal", {}],
+			["expo-alternate-app-icons", {}],
+      ["./plugins/withTabIcons", {}],
+      [
+				"expo-quick-actions",
+				{
+					"androidIcons": {
+						"quickaction_search": {
+							"foregroundImage": "./assets/icons/quickaction_search_foreground.png",
+							"backgroundColor": "#fab616"
+						},
+						"quickaction_feedback": {
+							"foregroundImage": "./assets/icons/quickaction_feedback_foreground.png",
+							"backgroundColor": "#fab616"
+						}
+					}
+				}
+			],
+      [
+				"expo-build-properties",
+				{
+					"ios": {
+						"useFrameworks": "static",
+						"useHermesV1": true
+					},
+					"android": {
+						"minSdkVersion": 29,
+						"useHermesV1": true,
+						"enableProguardInReleaseBuilds": true,
+						"enableShrinkResourcesInReleaseBuilds": true
+					}
+				}
+			],
+      [
+				"react-native-permissions",
+				{
+					"iosPermissions": []
+				}
+			],
       [
         "expo-splash-screen",
         {
@@ -34,13 +86,30 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
+      ],
+      [
+				"expo-secure-store",
+				{
+					"configureAndroidBackup": true,
+					"faceIDPermission": "Erlaube SmartMC zugriff auf Gesichtserkennung"
+				}
+			],
+      [
+				"expo-image",
+				{
+					"disableLibdav1d": true
+				}
+			],
+      [
+				"expo-alternate-app-icons",
+				{}
       ]
     ],
     "experiments": {
+      "reactCompiler": true,
       "typedRoutes": true
     },
     "extra": {
-      "router": {},
       "eas": {
         "projectId": "e2153c65-8522-43f0-b838-a73e3232bdf5"
       }

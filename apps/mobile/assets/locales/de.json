@@ -1,16 +1,38 @@
 {
-  "tabHome": "Start",
+  "tabHome": "Home",
   "tabDevices": "Geräte",
-  "tabProfile": "Profil",
+  "tabProfile": "Einstellungen",
 
-  "homeEmpty": "Noch nichts angeheftet.",
+  "homeEmptyTitle": "Noch nichts angeheftet",
+  "homeEmptySubtitle": "Hefte ein Gerät im Geräte-Tab an, um es hier auf deinem Dashboard zu sehen.",
+  "homePinDevice": "Gerät anheften",
 
   "devicesEmpty": "Platziere einen Alarm Controller Block und er erscheint hier.",
+  "devicesNoServerTitle": "Kein Server verbunden",
+  "devicesNoServerSubtitle": "Verbinde dich im Einstellungen-Tab mit einem Server, um deine Geräte hier zu sehen.",
+  "devicesGoToProfile": "Zu den Einstellungen",
 
-  "profilePairedServers": "Verbundene Server",
-  "profileNotificationPreferences": "Benachrichtigungseinstellungen",
-  "profileAboutLinks": "Über & Links",
+  "profilePairedServerAddress": "{{host}}:{{port}}",
+  "profileReconnect": "Neu verbinden",
   "profileVersion": "Version {{version}} (b{{build}})",
+
+  "reconnectSuccess": "Neu verbunden",
+
+  "settingsServer": "Server",
+  "settingsNotifications": "Benachrichtigungen",
+  "settingsImprint": "Impressum",
+  "settingsPrivacy": "Datenschutz",
+  "settingsLicense": "Lizenz",
+  "settingsHomepage": "Homepage",
+  "settingsGithub": "GitHub-Quellcode",
+  "settingsDocs": "Dokumentation",
+  "settingsDiscord": "Discord",
+  "settingsFeedback": "Feedback senden",
+
+  "serverNotPairedIntro": "Führe /smartmc pair im Spiel aus und verbinde dann die App mit deinem Server.",
+  "serverPairDifferent": "Mit einem anderen Server verbinden",
+  "serverForget": "Diesen Server vergessen",
+  "serverForgotten": "Server vergessen",
 
   "pairTitle": "Mit Server verbinden",
   "pairIntro": "Führe /smartmc pair im Spiel aus, um einen 6-stelligen Code zu erhalten, und gib dann unten die Serveradresse und den Code ein.",
@@ -24,5 +46,11 @@
   "pairHostRequired": "Serveradresse eingeben",
   "pairPortInvalid": "Gültigen Port eingeben (1-65535)",
   "pairCodeInvalid": "Den 6-stelligen Code aus dem Spiel eingeben",
-  "pairDeviceNameRequired": "Namen für dieses Gerät eingeben"
+  "pairDeviceNameRequired": "Namen für dieses Gerät eingeben",
+
+  "deviceAlarmArmed": "Scharf",
+  "deviceAlarmDisarmed": "Unscharf",
+  "deviceAlarmTriggered": "Ausgelöst",
+  "deviceSwitchOn": "An",
+  "deviceSwitchOff": "Aus"
 }

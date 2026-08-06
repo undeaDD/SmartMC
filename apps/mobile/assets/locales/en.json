@@ -1,16 +1,38 @@
 {
   "tabHome": "Home",
   "tabDevices": "Devices",
-  "tabProfile": "Profile",
+  "tabProfile": "Settings",
 
-  "homeEmpty": "Nothing pinned yet.",
+  "homeEmptyTitle": "Nothing pinned yet",
+  "homeEmptySubtitle": "Pin a device from the Devices tab to see it here on your dashboard.",
+  "homePinDevice": "Pin a device",
 
   "devicesEmpty": "Place an Alarm Controller block and it'll show up here.",
+  "devicesNoServerTitle": "No server connected",
+  "devicesNoServerSubtitle": "Pair with a server from the Settings tab to see your devices here.",
+  "devicesGoToProfile": "Go to Settings",
 
-  "profilePairedServers": "Paired servers",
-  "profileNotificationPreferences": "Notification preferences",
-  "profileAboutLinks": "About & links",
+  "profilePairedServerAddress": "{{host}}:{{port}}",
+  "profileReconnect": "Reconnect",
   "profileVersion": "Version {{version}} (b{{build}})",
+
+  "reconnectSuccess": "Reconnected",
+
+  "settingsServer": "Server",
+  "settingsNotifications": "Notifications",
+  "settingsImprint": "Imprint",
+  "settingsPrivacy": "Data Privacy",
+  "settingsLicense": "License",
+  "settingsHomepage": "Homepage",
+  "settingsGithub": "GitHub Source",
+  "settingsDocs": "Documentation",
+  "settingsDiscord": "Discord",
+  "settingsFeedback": "Send Feedback",
+
+  "serverNotPairedIntro": "Run /smartmc pair in-game, then pair the app with your server.",
+  "serverPairDifferent": "Pair with a different server",
+  "serverForget": "Forget this server",
+  "serverForgotten": "Server forgotten",
 
   "pairTitle": "Pair with a server",
   "pairIntro": "Run /smartmc pair in-game to get a 6-digit code, then enter your server's address and the code below.",
@@ -24,5 +46,11 @@
   "pairHostRequired": "Enter a server address",
   "pairPortInvalid": "Enter a valid port (1-65535)",
   "pairCodeInvalid": "Enter the 6-digit code shown in-game",
-  "pairDeviceNameRequired": "Enter a name for this device"
+  "pairDeviceNameRequired": "Enter a name for this device",
+
+  "deviceAlarmArmed": "Armed",
+  "deviceAlarmDisarmed": "Disarmed",
+  "deviceAlarmTriggered": "Triggered",
+  "deviceSwitchOn": "On",
+  "deviceSwitchOff": "Off"
 }

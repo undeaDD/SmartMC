@@ -1,65 +1,65 @@
 import { useFonts } from 'expo-font';
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import { Platform } from 'react-native';
+import { NativeStackNavigationOptions, Stack } from 'expo-router';
+import { LogBox, Platform } from 'react-native';
 import FlashMessage from 'react-native-flash-message';
 import 'react-native-reanimated';
-import { FullWindowOverlay } from 'react-native-screens';
-
-import { useColorScheme } from '@/components/useColorScheme';
+import { enableFreeze, enableScreens, FullWindowOverlay } from 'react-native-screens';
 import { I18nProvider } from '@/providers/I18nProvider';
+import { ExtendedThemeProvider, useTheme } from '@/providers/ExtendedThemeProvider';
+import { AppPreferencesProvider } from '@/providers/AppPreferences';
+import AppPlatform from '@/components/AppPlatform';
+import { StatusBar } from 'expo-status-bar';
 
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from 'expo-router';
+LogBox.ignoreAllLogs();
+enableScreens(true);
+enableFreeze(true);
 
-export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
+const ROOT_SCREEN_OPTIONS: NativeStackNavigationOptions = {
+	headerShown: false,
+	headerBackButtonDisplayMode: "generic",
+	headerTransparent: AppPlatform.OS === "iosnew",
+	freezeOnBlur: true,
+	scrollEdgeEffects: {
+		bottom: "soft",
+		left: "soft",
+		right: "soft",
+		top: "soft",
+	},
 };
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+const TABS_SCREEN_OPTIONS: NativeStackNavigationOptions = {
+	animation: "fade",
+  animationDuration: 150,
+};
+
+const AppStatusBar = () => {
+	const { scheme } = useTheme();
+	return <StatusBar style={scheme === "dark" ? "light" : "dark"} animated={true} />;
+};  
 
 export default function RootLayout() {
-  const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+  useFonts({
     TabIcons: require('../assets/fonts/TabIcons.ttf'),
   });
-
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
-  useEffect(() => {
-    if (error) throw error;
-  }, [error]);
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
 
   return <RootLayoutNav />;
 }
 
 function RootLayoutNav() {
-  const colorScheme = useColorScheme();
-
   return (
-    <I18nProvider>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-        </Stack>
-        <ToastHost />
-      </ThemeProvider>
-    </I18nProvider>
+    <AppPreferencesProvider>
+      <I18nProvider>
+        <ExtendedThemeProvider>
+          <Stack screenOptions={ROOT_SCREEN_OPTIONS}>
+            <Stack.Screen name="index" options={{ animation: 'none' }} />
+            <Stack.Screen name="(tabs)" options={TABS_SCREEN_OPTIONS} />
+            <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+          </Stack>
+          <ToastHost />
+          <AppStatusBar />
+        </ExtendedThemeProvider>
+      </I18nProvider>
+    </AppPreferencesProvider>
   );
 }
 
