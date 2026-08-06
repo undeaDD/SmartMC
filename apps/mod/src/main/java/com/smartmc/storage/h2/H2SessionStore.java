@@ -21,13 +21,14 @@ public class H2SessionStore implements SessionStore {
 
 	@Override
 	public void insert(SessionRecord session) throws SQLException {
-		String sql = "MERGE INTO sessions (jti, owner_uuid, device_id, issued_at, revoked) KEY (jti) VALUES (?, ?, ?, ?, ?)";
+		String sql = "MERGE INTO sessions (jti, owner_uuid, device_id, device_name, issued_at, revoked) KEY (jti) VALUES (?, ?, ?, ?, ?, ?)";
 		try (PreparedStatement statement = database.connection().prepareStatement(sql)) {
 			statement.setString(1, session.jti());
 			statement.setString(2, session.ownerUuid().toString());
 			statement.setString(3, session.deviceId());
-			statement.setLong(4, session.issuedAt());
-			statement.setBoolean(5, session.revoked());
+			statement.setString(4, session.deviceName());
+			statement.setLong(5, session.issuedAt());
+			statement.setBoolean(6, session.revoked());
 			statement.executeUpdate();
 		}
 	}
@@ -76,6 +77,7 @@ public class H2SessionStore implements SessionStore {
 			rs.getString("jti"),
 			UUID.fromString(rs.getString("owner_uuid")),
 			rs.getString("device_id"),
+			rs.getString("device_name"),
 			rs.getLong("issued_at"),
 			rs.getBoolean("revoked")
 		);

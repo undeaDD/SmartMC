@@ -75,10 +75,16 @@ public class H2Database implements AutoCloseable {
 				  jti TEXT PRIMARY KEY,
 				  owner_uuid TEXT NOT NULL,
 				  device_id TEXT NOT NULL,
+				  device_name TEXT NOT NULL,
 				  issued_at BIGINT NOT NULL,
 				  revoked BOOLEAN NOT NULL DEFAULT FALSE
 				)
 				""");
+			// Additive migration for installs whose `sessions` table was
+			// created before device_name existed (the CREATE TABLE above is a
+			// no-op against an already-existing table) -- a no-op here too on
+			// fresh installs, since the column already exists from above.
+			statement.execute("ALTER TABLE sessions ADD COLUMN IF NOT EXISTS device_name VARCHAR NOT NULL DEFAULT ''");
 		}
 	}
 

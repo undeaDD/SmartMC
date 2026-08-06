@@ -7,5 +7,5 @@ import java.util.UUID;
  * are never persisted (in-memory, single-use, TTL-bound) -- this record is
  * only for tokens that have actually been issued, checked on reconnect.
  */
-public record SessionRecord(String jti, UUID ownerUuid, String deviceId, long issuedAt, boolean revoked) {
+public record SessionRecord(String jti, UUID ownerUuid, String deviceId, String deviceName, long issuedAt, boolean revoked) {
 }

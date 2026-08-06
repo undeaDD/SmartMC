@@ -8,6 +8,7 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
 
+import java.time.Duration;
 import java.util.List;
 
 /**
@@ -54,8 +55,9 @@ public class MagicBytePeekDecoder extends ByteToMessageDecoder {
 			ChannelPipeline pipeline = ctx.pipeline();
 			pipeline.addAfter(ctx.name(), "smartmc_frame_decoder", new LengthFieldBasedFrameDecoder(1 << 20, 0, 4, 0, 4));
 			pipeline.addAfter("smartmc_frame_decoder", "smartmc_frame_encoder", new LengthFieldPrepender(4));
-			pipeline.addAfter("smartmc_frame_encoder", "smartmc_noise_handshake",
-				new NoiseHandshakeHandler(SmartMC.noiseKeys().keyPair()));
+			pipeline.addAfter("smartmc_frame_encoder", "smartmc_noise_handshake", new NoiseHandshakeHandler(
+				SmartMC.noiseKeys().keyPair(), SmartMC.pairingCodes(), SmartMC.tokens(), SmartMC.sessions(),
+				Duration.ofSeconds(SmartMC.config().tokenExpirySeconds)));
 		}
 		// Either path: get out of the way. Removing a ByteToMessageDecoder from
 		// inside its own decode() defers the actual removal until this call

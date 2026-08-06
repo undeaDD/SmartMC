@@ -1,7 +1,9 @@
 package com.smartmc;
 
 import com.smartmc.auth.NoiseStaticKeys;
+import com.smartmc.auth.PairingCodeManager;
 import com.smartmc.auth.ServerIdentity;
+import com.smartmc.auth.TokenService;
 import com.smartmc.config.SmartMcConfig;
 import com.smartmc.platform.Platform;
 import com.smartmc.storage.DeviceStore;
@@ -38,6 +40,8 @@ public class SmartMC {
 	private static SmartMcConfig config;
 	private static ServerIdentity identity;
 	private static NoiseStaticKeys noiseKeys;
+	private static PairingCodeManager pairingCodes;
+	private static TokenService tokens;
 	private static H2Database database;
 	private static DeviceStore devices;
 	private static GroupStore groups;
@@ -63,6 +67,8 @@ public class SmartMC {
 		config = SmartMcConfig.load(configDir);
 		identity = ServerIdentity.load(configDir);
 		noiseKeys = NoiseStaticKeys.load(configDir);
+		pairingCodes = new PairingCodeManager();
+		tokens = new TokenService(identity);
 
 		try {
 			database = H2Database.open(configDir);
@@ -89,6 +95,8 @@ public class SmartMC {
 			groups = null;
 			sessions = null;
 		}
+		pairingCodes = null;
+		tokens = null;
 	}
 
 	public static SmartMcConfig config() {
@@ -101,6 +109,14 @@ public class SmartMC {
 
 	public static NoiseStaticKeys noiseKeys() {
 		return noiseKeys;
+	}
+
+	public static PairingCodeManager pairingCodes() {
+		return pairingCodes;
+	}
+
+	public static TokenService tokens() {
+		return tokens;
 	}
 
 	public static DeviceStore devices() {

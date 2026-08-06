@@ -239,6 +239,10 @@ abstract class ModPlatformPlugin @Inject constructor() : Plugin<Project> {
 			// LOGGER field (e.g. from NoiseHandshakeHandler) triggers its
 			// static initializer, which needs SLF4J on the classpath.
 			"testImplementation"("org.slf4j:slf4j-api:2.0.16")
+			// Same asymmetry again -- tests that build/parse PairRequest/
+			// PairResponse JSON (jsonschema2pojo's Gson-annotated output)
+			// need Gson explicitly on NeoForge's test classpath too.
+			"testImplementation"("com.google.code.gson:gson:2.11.0")
 		}
 		tasks.withType<Test>().configureEach {
 			useJUnitPlatform()

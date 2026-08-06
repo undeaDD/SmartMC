@@ -3,8 +3,10 @@ package com.smartmc.platform.neoforge;
 //? neoforge {
 
 /*import com.smartmc.SmartMC;
+import com.smartmc.command.SmartMcCommand;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 
@@ -22,6 +24,11 @@ public class NeoforgeServerEventSubscriber {
 	@SubscribeEvent
 	public static void onServerStopping(ServerStoppingEvent event) {
 		SmartMC.onServerStopping();
+	}
+
+	@SubscribeEvent
+	public static void onRegisterCommands(RegisterCommandsEvent event) {
+		SmartMcCommand.register(event.getDispatcher());
 	}
 }
 *///?}
