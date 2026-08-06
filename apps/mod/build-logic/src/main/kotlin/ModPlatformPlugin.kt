@@ -100,7 +100,7 @@ abstract class ModPlatformPlugin @Inject constructor() : Plugin<Project> {
 	}
 
 	private fun Project.configureProject(ctx: Context) {
-		listOf("java", "me.modmuss50.mod-publish-plugin", "idea").forEach { apply(plugin = it) }
+		listOf("java", "me.modmuss50.mod-publish-plugin", "idea", "org.jsonschema2pojo").forEach { apply(plugin = it) }
 
 		version = ctx.fullVersion
 		ctx.extension.requiredJava.set(ctx.javaVersion)
@@ -112,6 +112,7 @@ abstract class ModPlatformPlugin @Inject constructor() : Plugin<Project> {
 		}
 
 		configureFletchingTable(ctx)
+		configureJsonSchema2Pojo(ctx)
 		registerGenerateManifestTask(ctx)
 		configureJarTask(ctx)
 		configureIdea()
@@ -178,6 +179,36 @@ abstract class ModPlatformPlugin @Inject constructor() : Plugin<Project> {
 			mixins.create("main") { mixin("default", "${ctx.modId}.mixins.json") }
 			j52j.register("main") { extension("json", "**/*.json5") }
 		}
+	}
+
+	// The jsonSchema2Pojo{} extension's properties are plain Java bean setters,
+	// not real Kotlin vars/Provider-backed -- Kotlin property-assignment syntax
+	// silently does nothing here, must call the setters explicitly.
+	private fun Project.configureJsonSchema2Pojo(ctx: Context) {
+		extensions.configure<org.jsonschema2pojo.gradle.JsonSchemaExtension> {
+			setSource(files(rootProject.file("../../packages/protocol/generated/jsonschema")))
+			setTargetPackage("com.smartmc.protocol")
+			setAnnotationStyle("gson")
+		}
+		// The plugin only wires its output into compileJava's inputs, not as a
+		// proper Provider-tracked source directory -- Gradle's stricter
+		// task-dependency validation (9.x) then flags every OTHER consumer of
+		// that same generated-sources directory (compileKotlin, sourcesJar,
+		// javadoc, ...) one at a time as build failures. Fix it for the whole
+		// class of consumer task TYPES at once via mustRunAfter (ordering
+		// only, not a hard dependency). Deliberately scoped to these three
+		// types, not a blanket tasks.configureEach{} over everything -- that
+		// was tried first and caused a real circular dependency by also
+		// touching tasks generateJsonSchema2Pojo's own upstream chain
+		// (stonecutterGenerate, kspKotlin, generateModManifest, ...) runs
+		// through, which already have their own carefully ordered edges.
+		val generate = tasks.named("generateJsonSchema2Pojo")
+		// Kotlin's own compile task doesn't extend Gradle's built-in
+		// AbstractCompile, so it needs naming explicitly rather than by type.
+		tasks.named("compileKotlin") { dependsOn(generate) }
+		tasks.withType<org.gradle.api.tasks.compile.AbstractCompile>().configureEach { mustRunAfter(generate) }
+		tasks.withType<Jar>().configureEach { mustRunAfter(generate) }
+		tasks.withType<org.gradle.api.tasks.javadoc.Javadoc>().configureEach { mustRunAfter(generate) }
 	}
 
 	private fun Project.registerBuildAndCollectTask(ctx: Context) {

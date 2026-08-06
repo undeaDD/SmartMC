@@ -1,0 +1,19 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "PairRequest.json",
+    "type": "object",
+    "properties": {
+        "pairingCode": {
+            "type": "string"
+        },
+        "deviceName": {
+            "type": "string",
+            "description": "Player-chosen, app-side name for this paired device (e.g. \"Dominic's\niPhone\") -- stored on the session record so /smartmc devices list\nshows something meaningful instead of an opaque session id."
+        }
+    },
+    "required": [
+        "pairingCode",
+        "deviceName"
+    ],
+    "description": "Sent by the app once the Noise_XX handshake completes, submitting the\nin-game pairing code the player was shown after running the in-game\npairing command (see the players wiki page for the full user-facing flow)."
+}

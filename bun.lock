@@ -28,6 +28,7 @@
       "name": "@smart-mc/mobile",
       "version": "0.0.0",
       "dependencies": {
+        "@smart-mc/protocol": "workspace:*",
         "expo": "~57.0.9",
         "expo-constants": "~57.0.8",
         "expo-font": "~57.0.1",

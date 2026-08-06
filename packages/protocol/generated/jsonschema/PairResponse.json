@@ -1,0 +1,26 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "PairResponse.json",
+    "type": "object",
+    "properties": {
+        "success": {
+            "type": "boolean"
+        },
+        "token": {
+            "type": "string",
+            "description": "Present only when success is true: the opaque, versioned auth token\n(see CLAUDE.md's Security model for its exact format). The app never\nparses this, only stores and re-presents it."
+        },
+        "playerUuid": {
+            "type": "string",
+            "description": "Present only when success is true."
+        },
+        "error": {
+            "type": "string",
+            "description": "Present only when success is false -- a player-facing reason (expired\ncode, already used, etc)."
+        }
+    },
+    "required": [
+        "success"
+    ],
+    "description": "The mod's reply to a PairRequest."
+}

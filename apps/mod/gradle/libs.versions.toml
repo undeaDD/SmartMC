@@ -14,6 +14,7 @@ mixin = "0.8.5"
 serialization-json = "1.7.3"
 serialization-toml = "0.6.0"
 h2 = "2.4.240"
+jsonschema2pojo = "1.3.3"
 
 [libraries]
 kikugie-postprocess = { module = "dev.kikugie:postprocess", version.ref = "stonecutter-postprocess" }
@@ -27,6 +28,7 @@ vanniktech-maven-publish = { module = "com.vanniktech.maven.publish:com.vannikte
 serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization-json" }
 serialization-toml = { module = "dev.eav.tomlkt:tomlkt", version.ref = "serialization-toml" }
 h2 = { module = "com.h2database:h2", version.ref = "h2" }
+jsonschema2pojo = { module = "org.jsonschema2pojo:jsonschema2pojo-gradle-plugin", version.ref = "jsonschema2pojo" }
 
 [plugins]
 stonecutter = { id = "dev.kikugie.stonecutter", version.ref = "stonecutter" }
