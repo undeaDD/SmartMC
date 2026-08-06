@@ -51,5 +51,14 @@
     "svg2ttf": "^6.1.0",
     "svgicons2svgfont": "^16.0.0",
     "typescript": "~6.0.3"
+  },
+  "expo": {
+    "doctor": {
+      "reactNativeDirectoryCheck": {
+        "exclude": [
+          "react-native-tcp-socket"
+        ]
+      }
+    }
   }
 }
