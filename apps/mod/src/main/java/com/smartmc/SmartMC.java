@@ -4,10 +4,13 @@ import com.smartmc.auth.NoiseStaticKeys;
 import com.smartmc.auth.ServerIdentity;
 import com.smartmc.config.SmartMcConfig;
 import com.smartmc.platform.Platform;
-import com.smartmc.storage.Database;
 import com.smartmc.storage.DeviceStore;
 import com.smartmc.storage.GroupStore;
 import com.smartmc.storage.SessionStore;
+import com.smartmc.storage.h2.H2Database;
+import com.smartmc.storage.h2.H2DeviceStore;
+import com.smartmc.storage.h2.H2GroupStore;
+import com.smartmc.storage.h2.H2SessionStore;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -35,7 +38,7 @@ public class SmartMC {
 	private static SmartMcConfig config;
 	private static ServerIdentity identity;
 	private static NoiseStaticKeys noiseKeys;
-	private static Database database;
+	private static H2Database database;
 	private static DeviceStore devices;
 	private static GroupStore groups;
 	private static SessionStore sessions;
@@ -62,14 +65,14 @@ public class SmartMC {
 		noiseKeys = NoiseStaticKeys.load(configDir);
 
 		try {
-			database = Database.open(configDir);
+			database = H2Database.open(configDir);
 		} catch (SQLException e) {
 			LOGGER.error("Failed to open SmartMC's database at {} -- the mod will not function this session", configDir, e);
 			return;
 		}
-		devices = new DeviceStore(database);
-		groups = new GroupStore(database);
-		sessions = new SessionStore(database);
+		devices = new H2DeviceStore(database);
+		groups = new H2GroupStore(database);
+		sessions = new H2SessionStore(database);
 
 		LOGGER.info("SmartMC ready -- enabled: {}, identity fingerprint: {}", config.enabled, identity.fingerprint());
 	}

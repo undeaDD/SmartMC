@@ -1,4 +1,4 @@
-package com.smartmc.storage;
+package com.smartmc.storage.h2;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,15 +14,15 @@ import java.sql.Statement;
  * library in a heavily-modded server environment -- H2 is pure Java.
  * File lives at {@code config/smartmc/data/smartmc.mv.db}.
  */
-public class Database implements AutoCloseable {
+public class H2Database implements AutoCloseable {
 
 	private final Connection connection;
 
-	private Database(Connection connection) {
+	private H2Database(Connection connection) {
 		this.connection = connection;
 	}
 
-	public static Database open(Path configDir) throws SQLException {
+	public static H2Database open(Path configDir) throws SQLException {
 		Path dataDir = configDir.resolve("data");
 		try {
 			Files.createDirectories(dataDir);
@@ -32,7 +32,7 @@ public class Database implements AutoCloseable {
 
 		String url = "jdbc:h2:file:" + dataDir.resolve("smartmc").toAbsolutePath();
 		Connection connection = DriverManager.getConnection(url);
-		Database database = new Database(connection);
+		H2Database database = new H2Database(connection);
 		database.ensureSchema();
 		return database;
 	}
