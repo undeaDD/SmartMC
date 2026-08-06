@@ -2,7 +2,7 @@
   "name": "@smart-mc/mobile",
   "private": true,
   "main": "expo-router/entry",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",

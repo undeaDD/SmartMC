@@ -18,7 +18,6 @@ logs/
 # --- Node / Bun ---
 node_modules/
 .bun/
-bun.lockb
 dist/
 .turbo/
 *.tsbuildinfo
