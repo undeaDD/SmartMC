@@ -46,6 +46,7 @@ public final class SmartMcCommand {
 		new CommandInfo("/smartmc group invite <player>", "Invites an online player to a group you own."),
 		new CommandInfo("/smartmc group remove <player>", "Removes a player from a group you own."),
 		new CommandInfo("/smartmc group list", "Lists the groups you belong to."),
+		new CommandInfo("/smartmc admin revoke <player> <id>", "Ops only: revokes another (online) player's paired device."),
 		new CommandInfo("/smartmc help", "Shows this list of commands.")
 	);
 
@@ -76,6 +77,12 @@ public final class SmartMcCommand {
 					.then(Commands.argument("player", StringArgumentType.word())
 						.executes(ctx -> groupMembership(ctx, false))))
 				.then(Commands.literal("list").executes(SmartMcCommand::groupList)))
+			.then(Commands.literal("admin")
+				.requires(source -> SmartMC.permissions().hasPermission(source, Permission.ADMIN))
+				.then(Commands.literal("revoke")
+					.then(Commands.argument("player", StringArgumentType.word())
+						.then(Commands.argument("id", StringArgumentType.word())
+							.executes(SmartMcCommand::adminRevoke)))))
 			.then(Commands.literal("help")
 				.requires(source -> SmartMC.permissions().hasPermission(source, Permission.HELP))
 				.executes(SmartMcCommand::help)));
@@ -156,6 +163,56 @@ public final class SmartMcCommand {
 			return 0;
 		}
 		ctx.getSource().sendSuccess(() -> Component.literal("Revoked '" + match.deviceName() + "'."), false);
+		return 1;
+	}
+
+	/**
+	 * Ops-only override of {@code sessionsRevoke} -- same short-id prefix
+	 * matching and error messages, but against the named player's sessions
+	 * instead of the caller's own. v1 requires the target to be online, same
+	 * limitation as {@code groupMembership}'s player lookup (no offline-UUID
+	 * resolution yet).
+	 */
+	private static int adminRevoke(CommandContext<CommandSourceStack> ctx) {
+		String targetName = StringArgumentType.getString(ctx, "player");
+		ServerPlayer target = ctx.getSource().getServer().getPlayerList().getPlayerByName(targetName);
+		if (target == null) {
+			ctx.getSource().sendFailure(Component.literal("Player '" + targetName + "' isn't online."));
+			return 0;
+		}
+
+		String idPrefix = StringArgumentType.getString(ctx, "id").toLowerCase(Locale.ROOT);
+		List<SessionRecord> sessions;
+		try {
+			sessions = SmartMC.sessions().findByOwner(target.getUUID());
+		} catch (SQLException e) {
+			ctx.getSource().sendFailure(Component.literal("Server error while revoking that device."));
+			return 0;
+		}
+
+		List<SessionRecord> matches = sessions.stream()
+			.filter(session -> shortId(session.deviceId()).startsWith(idPrefix))
+			.collect(Collectors.toList());
+
+		if (matches.isEmpty()) {
+			ctx.getSource().sendFailure(Component.literal(
+				"No paired device found matching '" + idPrefix + "' for " + target.getName().getString() + "."));
+			return 0;
+		}
+		if (matches.size() > 1) {
+			ctx.getSource().sendFailure(Component.literal("Multiple paired devices match '" + idPrefix + "' -- use more characters."));
+			return 0;
+		}
+
+		SessionRecord match = matches.get(0);
+		try {
+			SmartMC.sessions().revoke(match.jti());
+		} catch (SQLException e) {
+			ctx.getSource().sendFailure(Component.literal("Server error while revoking that device."));
+			return 0;
+		}
+		ctx.getSource().sendSuccess(() -> Component.literal(
+			"Revoked '" + match.deviceName() + "' for " + target.getName().getString() + "."), true);
 		return 1;
 	}
 
