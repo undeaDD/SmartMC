@@ -46,6 +46,7 @@ public final class SmartMcCommand {
 		new CommandInfo("/smartmc group invite <player>", "Invites an online player to a group you own."),
 		new CommandInfo("/smartmc group remove <player>", "Removes a player from a group you own."),
 		new CommandInfo("/smartmc group list", "Lists the groups you belong to."),
+		new CommandInfo("/smartmc admin list <player>", "Ops only: lists another (online) player's paired devices."),
 		new CommandInfo("/smartmc admin revoke <player> <id>", "Ops only: revokes another (online) player's paired device."),
 		new CommandInfo("/smartmc help", "Shows this list of commands.")
 	);
@@ -79,6 +80,9 @@ public final class SmartMcCommand {
 				.then(Commands.literal("list").executes(SmartMcCommand::groupList)))
 			.then(Commands.literal("admin")
 				.requires(source -> SmartMC.permissions().hasPermission(source, Permission.ADMIN))
+				.then(Commands.literal("list")
+					.then(Commands.argument("player", StringArgumentType.word())
+						.executes(SmartMcCommand::adminList)))
 				.then(Commands.literal("revoke")
 					.then(Commands.argument("player", StringArgumentType.word())
 						.then(Commands.argument("id", StringArgumentType.word())
@@ -106,23 +110,36 @@ public final class SmartMcCommand {
 		if (player == null) {
 			return 0;
 		}
+		return listSessions(ctx.getSource(), player.getUUID(), "Your paired devices:", "You have no paired devices.");
+	}
 
+	/** Ops-only override of {@code sessionsList} -- same rendering, against a named (online) player instead of the caller. */
+	private static int adminList(CommandContext<CommandSourceStack> ctx) {
+		ServerPlayer target = requireOnlinePlayer(ctx, "player");
+		if (target == null) {
+			return 0;
+		}
+		String name = target.getName().getString();
+		return listSessions(ctx.getSource(), target.getUUID(), name + "'s paired devices:", name + " has no paired devices.");
+	}
+
+	private static int listSessions(CommandSourceStack source, UUID ownerUuid, String header, String emptyMessage) {
 		List<SessionRecord> sessions;
 		try {
-			sessions = SmartMC.sessions().findByOwner(player.getUUID());
+			sessions = SmartMC.sessions().findByOwner(ownerUuid);
 		} catch (SQLException e) {
-			ctx.getSource().sendFailure(Component.literal("Server error while listing your paired devices."));
+			source.sendFailure(Component.literal("Server error while listing paired devices."));
 			return 0;
 		}
 
 		if (sessions.isEmpty()) {
-			ctx.getSource().sendSuccess(() -> Component.literal("You have no paired devices."), false);
+			source.sendSuccess(() -> Component.literal(emptyMessage), false);
 			return 1;
 		}
-		ctx.getSource().sendSuccess(() -> Component.literal("Your paired devices:"), false);
+		source.sendSuccess(() -> Component.literal(header), false);
 		for (SessionRecord session : sessions) {
 			String line = shortId(session.deviceId()) + " -- " + session.deviceName();
-			ctx.getSource().sendSuccess(() -> Component.literal(line), false);
+			source.sendSuccess(() -> Component.literal(line), false);
 		}
 		return 1;
 	}
@@ -132,38 +149,7 @@ public final class SmartMcCommand {
 		if (player == null) {
 			return 0;
 		}
-
-		String idPrefix = StringArgumentType.getString(ctx, "id").toLowerCase(Locale.ROOT);
-		List<SessionRecord> sessions;
-		try {
-			sessions = SmartMC.sessions().findByOwner(player.getUUID());
-		} catch (SQLException e) {
-			ctx.getSource().sendFailure(Component.literal("Server error while revoking that device."));
-			return 0;
-		}
-
-		List<SessionRecord> matches = sessions.stream()
-			.filter(session -> shortId(session.deviceId()).startsWith(idPrefix))
-			.collect(Collectors.toList());
-
-		if (matches.isEmpty()) {
-			ctx.getSource().sendFailure(Component.literal("No paired device found matching '" + idPrefix + "'."));
-			return 0;
-		}
-		if (matches.size() > 1) {
-			ctx.getSource().sendFailure(Component.literal("Multiple paired devices match '" + idPrefix + "' -- use more characters."));
-			return 0;
-		}
-
-		SessionRecord match = matches.get(0);
-		try {
-			SmartMC.sessions().revoke(match.jti());
-		} catch (SQLException e) {
-			ctx.getSource().sendFailure(Component.literal("Server error while revoking that device."));
-			return 0;
-		}
-		ctx.getSource().sendSuccess(() -> Component.literal("Revoked '" + match.deviceName() + "'."), false);
-		return 1;
+		return revokeSession(ctx.getSource(), player.getUUID(), StringArgumentType.getString(ctx, "id"), null);
 	}
 
 	/**
@@ -174,33 +160,35 @@ public final class SmartMcCommand {
 	 * resolution yet).
 	 */
 	private static int adminRevoke(CommandContext<CommandSourceStack> ctx) {
-		String targetName = StringArgumentType.getString(ctx, "player");
-		ServerPlayer target = ctx.getSource().getServer().getPlayerList().getPlayerByName(targetName);
+		ServerPlayer target = requireOnlinePlayer(ctx, "player");
 		if (target == null) {
-			ctx.getSource().sendFailure(Component.literal("Player '" + targetName + "' isn't online."));
 			return 0;
 		}
+		return revokeSession(ctx.getSource(), target.getUUID(), StringArgumentType.getString(ctx, "id"), target.getName().getString());
+	}
 
-		String idPrefix = StringArgumentType.getString(ctx, "id").toLowerCase(Locale.ROOT);
+	/** @param targetLabel null for self-service (no name suffix, no op broadcast); the target's name for the admin override. */
+	private static int revokeSession(CommandSourceStack source, UUID ownerUuid, String idPrefix, String targetLabel) {
+		String normalizedPrefix = idPrefix.toLowerCase(Locale.ROOT);
 		List<SessionRecord> sessions;
 		try {
-			sessions = SmartMC.sessions().findByOwner(target.getUUID());
+			sessions = SmartMC.sessions().findByOwner(ownerUuid);
 		} catch (SQLException e) {
-			ctx.getSource().sendFailure(Component.literal("Server error while revoking that device."));
+			source.sendFailure(Component.literal("Server error while revoking that device."));
 			return 0;
 		}
 
 		List<SessionRecord> matches = sessions.stream()
-			.filter(session -> shortId(session.deviceId()).startsWith(idPrefix))
+			.filter(session -> shortId(session.deviceId()).startsWith(normalizedPrefix))
 			.collect(Collectors.toList());
 
+		String suffix = targetLabel == null ? "" : " for " + targetLabel;
 		if (matches.isEmpty()) {
-			ctx.getSource().sendFailure(Component.literal(
-				"No paired device found matching '" + idPrefix + "' for " + target.getName().getString() + "."));
+			source.sendFailure(Component.literal("No paired device found matching '" + normalizedPrefix + "'" + suffix + "."));
 			return 0;
 		}
 		if (matches.size() > 1) {
-			ctx.getSource().sendFailure(Component.literal("Multiple paired devices match '" + idPrefix + "' -- use more characters."));
+			source.sendFailure(Component.literal("Multiple paired devices match '" + normalizedPrefix + "' -- use more characters."));
 			return 0;
 		}
 
@@ -208,11 +196,10 @@ public final class SmartMcCommand {
 		try {
 			SmartMC.sessions().revoke(match.jti());
 		} catch (SQLException e) {
-			ctx.getSource().sendFailure(Component.literal("Server error while revoking that device."));
+			source.sendFailure(Component.literal("Server error while revoking that device."));
 			return 0;
 		}
-		ctx.getSource().sendSuccess(() -> Component.literal(
-			"Revoked '" + match.deviceName() + "' for " + target.getName().getString() + "."), true);
+		source.sendSuccess(() -> Component.literal("Revoked '" + match.deviceName() + "'" + suffix + "."), targetLabel != null);
 		return 1;
 	}
 
@@ -239,10 +226,8 @@ public final class SmartMcCommand {
 			return 0;
 		}
 
-		String targetName = StringArgumentType.getString(ctx, "player");
-		ServerPlayer target = ctx.getSource().getServer().getPlayerList().getPlayerByName(targetName);
+		ServerPlayer target = requireOnlinePlayer(ctx, "player");
 		if (target == null) {
-			ctx.getSource().sendFailure(Component.literal("Player '" + targetName + "' isn't online."));
 			return 0;
 		}
 
@@ -318,6 +303,17 @@ public final class SmartMcCommand {
 			ctx.getSource().sendFailure(Component.literal("This command must be run by a player."));
 			return null;
 		}
+	}
+
+	/** v1 limitation shared by every command that targets another player: only online players can be resolved (no offline-UUID lookup yet). */
+	private static ServerPlayer requireOnlinePlayer(CommandContext<CommandSourceStack> ctx, String argumentName) {
+		String targetName = StringArgumentType.getString(ctx, argumentName);
+		ServerPlayer target = ctx.getSource().getServer().getPlayerList().getPlayerByName(targetName);
+		if (target == null) {
+			ctx.getSource().sendFailure(Component.literal("Player '" + targetName + "' isn't online."));
+			return null;
+		}
+		return target;
 	}
 
 	private static boolean requireNativeProvider(CommandContext<CommandSourceStack> ctx) {
