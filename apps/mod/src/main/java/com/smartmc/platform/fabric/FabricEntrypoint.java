@@ -14,6 +14,7 @@ public class FabricEntrypoint implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		FabricBlocks.register();
 		SmartMC.onInitialize();
 		ServerLifecycleEvents.SERVER_STARTING.register(SmartMC::onServerStarting);
 		ServerLifecycleEvents.SERVER_STOPPING.register(server -> SmartMC.onServerStopping());

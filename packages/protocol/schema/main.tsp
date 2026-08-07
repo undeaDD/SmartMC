@@ -2,6 +2,7 @@ import "@typespec/json-schema";
 import "./pairing.tsp";
 import "./envelope.tsp";
 import "./reconnect.tsp";
+import "./devices.tsp";
 
 using TypeSpec.JsonSchema;
 

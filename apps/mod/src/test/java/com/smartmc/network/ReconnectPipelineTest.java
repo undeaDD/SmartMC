@@ -71,7 +71,7 @@ class ReconnectPipelineTest {
 				return Optional.empty();
 			}
 		};
-		MessageContext context = new MessageContext(pairingCodes, tokens, sessions, noGroups, Duration.ofDays(90));
+		MessageContext context = new MessageContext(pairingCodes, tokens, sessions, noGroups, null /* devices unused by this test */, null /* server unused by this test */, Duration.ofDays(90));
 
 		KeyPair serverStatic = generateX25519();
 		KeyPair clientStatic = generateX25519();

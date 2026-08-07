@@ -1,28 +1,28 @@
 import { router } from 'expo-router';
 import { AppleShortcuts, Plus, Server } from 'iconoir-react-native';
-import { useState } from 'react';
-import { FlatList, StyleSheet } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet } from 'react-native';
 
 import { DeviceCell } from '@/components/DeviceCell';
 import { EmptyState } from '@/components/EmptyState';
+import { mapDeviceSummary } from '@/lib/devices/mapDeviceSummary';
 import type { Device } from '@/lib/devices/types';
+import { toggleDevice } from '@/lib/smartmc/deviceToggleClient';
 import { SERVER_MODAL_HREF } from '@/lib/smartmc/routes';
-import { usePairedServers } from '@/lib/smartmc/usePairedServers';
+import type { PairedServer } from '@/lib/smartmc/storage';
+import { useDeviceLists } from '@/lib/smartmc/useDeviceLists';
 import { useI18n } from '@/providers/I18nProvider';
+
+type HomeItem = { device: Device; server: PairedServer };
 
 export default function HomeScreen() {
   const { t } = useI18n();
-  const pairedServers = usePairedServers();
-  // No persistence/backend for pinned devices yet (M5's real device model
-  // hasn't landed server-side) -- starts genuinely empty rather than seeded
-  // with fake data, so the empty state you see here is accurate, not staged.
-  const [pinnedDevices] = useState<Device[]>([]);
+  const { serverDevices, refreshing, refresh } = useDeviceLists();
 
-  if (pairedServers === undefined) {
+  if (serverDevices === undefined) {
     return null;
   }
 
-  if (pairedServers.length === 0) {
+  if (serverDevices.length === 0) {
     return (
       <EmptyState
         icon={Server}
@@ -35,7 +35,14 @@ export default function HomeScreen() {
     );
   }
 
-  if (pinnedDevices.length === 0) {
+  // No real pinning UI/persistence exists yet -- shows every fetched device
+  // across every paired server, flattened, as an honest interim stand-in
+  // for "pinned" until that feature lands, rather than staying empty.
+  const items: HomeItem[] = serverDevices.flatMap(({ server, devices }) =>
+    (devices ?? []).map((summary) => ({ device: mapDeviceSummary(summary), server })),
+  );
+
+  if (items.length === 0) {
     return (
       <EmptyState
         icon={AppleShortcuts}
@@ -50,12 +57,30 @@ export default function HomeScreen() {
 
   return (
     <FlatList
-      data={pinnedDevices}
-      keyExtractor={(device) => device.id}
+      data={items}
+      keyExtractor={(item) => item.device.id}
       numColumns={2}
       columnWrapperStyle={styles.row}
       contentContainerStyle={styles.grid}
-      renderItem={({ item }) => <DeviceCell device={item} />}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
+      renderItem={({ item }) => (
+        <DeviceCell
+          device={item.device}
+          onPress={
+            item.device.deviceType === 'switch'
+              ? () => {
+                  toggleDevice({
+                    host: item.server.host,
+                    port: item.server.port,
+                    token: item.server.token,
+                    expectedServerFingerprint: item.server.serverFingerprint,
+                    deviceId: item.device.id,
+                  });
+                }
+              : undefined
+          }
+        />
+      )}
       automaticallyAdjustContentInsets={true}
       keyboardShouldPersistTaps="handled"
     />

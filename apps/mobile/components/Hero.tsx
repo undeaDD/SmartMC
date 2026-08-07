@@ -22,28 +22,31 @@ export function Hero({ icon: Icon, title, subtitle }: HeroProps) {
   return (
     <View style={styles.container}>
       <Icon width={40} height={40} color={theme.colors.primary} />
-      <Text style={[styles.title, { color: theme.colors.text }]}>{title}</Text>
-      <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>{subtitle}</Text>
+      <View style={{ gap: 4, marginTop: 8 }}>
+        <Text style={[styles.title, { color: theme.colors.text }]}>{title}</Text>
+        <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>{subtitle}</Text>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
+    marginTop: 70,
+    alignItems: 'flex-start',
     paddingVertical: 24,
-    paddingHorizontal: 32,
+    paddingHorizontal: 20,
     gap: 6,
   },
   title: {
     fontSize: 18,
     fontWeight: '700',
-    textAlign: 'center',
+    textAlign: 'left',
     marginTop: 4,
   },
   subtitle: {
     fontSize: 14,
-    textAlign: 'center',
+    textAlign: 'left',
     opacity: 0.8,
   },
 });

@@ -1,33 +1,33 @@
 import { router } from 'expo-router';
 import { AppleShortcuts, Plus, Server } from 'iconoir-react-native';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
 
 import { DeviceCell } from '@/components/DeviceCell';
-import { DocsButton } from '@/components/DocsButton';
 import { EmptyState } from '@/components/EmptyState';
+import { mapDeviceSummary } from '@/lib/devices/mapDeviceSummary';
 import type { Device } from '@/lib/devices/types';
-import { PLAYERS_DOCS_URL } from '@/lib/smartmc/docsUrl';
+import { toggleDevice } from '@/lib/smartmc/deviceToggleClient';
 import { SERVER_MODAL_HREF } from '@/lib/smartmc/routes';
 import { type PairedServer, serverLabel } from '@/lib/smartmc/storage';
-import { usePairedServers } from '@/lib/smartmc/usePairedServers';
+import { type ServerDeviceState, useDeviceLists } from '@/lib/smartmc/useDeviceLists';
 import { useTheme } from '@/providers/ExtendedThemeProvider';
 import { useI18n } from '@/providers/I18nProvider';
 
 type ListItem =
   | { type: 'header'; key: string; server: PairedServer }
   | { type: 'empty'; key: string }
-  | { type: 'row'; key: string; devices: Device[] };
+  | { type: 'row'; key: string; server: PairedServer; devices: Device[] };
 
 export default function DevicesScreen() {
   const { t } = useI18n();
   const { theme } = useTheme();
-  const pairedServers = usePairedServers();
+  const { serverDevices, refreshing, refresh } = useDeviceLists();
 
-  if (pairedServers === undefined) {
+  if (serverDevices === undefined) {
     return null;
   }
 
-  if (pairedServers.length === 0) {
+  if (serverDevices.length === 0) {
     return (
       <EmptyState
         icon={Server}
@@ -40,12 +40,7 @@ export default function DevicesScreen() {
     );
   }
 
-  // No real device-fetch mechanism exists yet -- querying a paired server's
-  // actual devices needs the persistent live connection (M5/later work per
-  // CLAUDE.md), not just the one-shot pairing/reconnect connections that
-  // exist today. Genuinely empty per server, same honest-empty approach as
-  // Home.
-  const items = buildListItems(pairedServers);
+  const items = buildListItems(serverDevices);
 
   return (
     <FlatList
@@ -54,6 +49,7 @@ export default function DevicesScreen() {
       contentContainerStyle={styles.scrollContent}
       automaticallyAdjustContentInsets={true}
       keyboardShouldPersistTaps="handled"
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
       renderItem={({ item }) => {
         if (item.type === 'header') {
           return (
@@ -71,14 +67,29 @@ export default function DevicesScreen() {
               <Text style={[styles.hintText, { color: theme.colors.textSecondary }]}>
                 {t('devicesEmpty')}
               </Text>
-              <DocsButton url={PLAYERS_DOCS_URL} size={20} />
             </View>
           );
         }
         return (
           <View style={styles.row}>
             {item.devices.map((device) => (
-              <DeviceCell key={device.id} device={device} />
+              <DeviceCell
+                key={device.id}
+                device={device}
+                onPress={
+                  device.deviceType === 'switch'
+                    ? () => {
+                        toggleDevice({
+                          host: item.server.host,
+                          port: item.server.port,
+                          token: item.server.token,
+                          expectedServerFingerprint: item.server.serverFingerprint,
+                          deviceId: device.id,
+                        });
+                      }
+                    : undefined
+                }
+              />
             ))}
             {item.devices.length === 1 ? <View style={styles.spacer} /> : null}
           </View>
@@ -95,9 +106,9 @@ export default function DevicesScreen() {
 // full-width header interleaved with 2-wide device rows without hacky
 // padding tricks; pre-chunking devices into row items (each rendering its
 // own 1-2 cells) gets the same 2-column visual result without fighting that.
-function buildListItems(servers: PairedServer[]): ListItem[] {
-  return servers.flatMap((server) => {
-    const devices: Device[] = [];
+function buildListItems(serverDevices: ServerDeviceState[]): ListItem[] {
+  return serverDevices.flatMap(({ server, devices: summaries }) => {
+    const devices: Device[] = (summaries ?? []).map(mapDeviceSummary);
     return [
       { type: 'header', key: `header-${server.id}`, server } as ListItem,
       ...(devices.length === 0
@@ -106,6 +117,7 @@ function buildListItems(servers: PairedServer[]): ListItem[] {
             (row, index): ListItem => ({
               type: 'row',
               key: `row-${server.id}-${index}`,
+              server,
               devices: row,
             }),
           )),

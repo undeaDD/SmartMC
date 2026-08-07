@@ -56,7 +56,7 @@ public class MagicBytePeekDecoder extends ByteToMessageDecoder {
 			pipeline.addAfter(ctx.name(), "smartmc_frame_decoder", new LengthFieldBasedFrameDecoder(1 << 20, 0, 4, 0, 4));
 			pipeline.addAfter("smartmc_frame_decoder", "smartmc_frame_encoder", new LengthFieldPrepender(4));
 			MessageContext context = new MessageContext(
-				SmartMC.pairingCodes(), SmartMC.tokens(), SmartMC.sessions(), SmartMC.groupProvider(),
+				SmartMC.pairingCodes(), SmartMC.tokens(), SmartMC.sessions(), SmartMC.groupProvider(), SmartMC.devices(), SmartMC.server(),
 				Duration.ofSeconds(SmartMC.config().tokenExpirySeconds));
 			pipeline.addAfter("smartmc_frame_encoder", "smartmc_noise_handshake",
 				new NoiseHandshakeHandler(SmartMC.noiseKeys().keyPair(), context));

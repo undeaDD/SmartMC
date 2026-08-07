@@ -24,7 +24,7 @@ const ServerStackLayout = () => {
       title: t('settingsServer'),
       headerLeft: () => (
         <Pressable onPress={() => router.dismiss()} hitSlop={8}>
-          <Xmark width={22} height={22} color={theme.colors.primary} />
+          <Xmark width={22} height={22} color={theme.colors.text} />
         </Pressable>
       ),
       headerRight: () => (

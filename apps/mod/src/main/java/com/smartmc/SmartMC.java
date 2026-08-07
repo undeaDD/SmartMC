@@ -62,6 +62,7 @@ public class SmartMC {
 	private static GroupStore groups;
 	private static SessionStore sessions;
 	private static GroupProvider groupProvider;
+	private static MinecraftServer server;
 
 	public static void onInitialize() {
 		LOGGER.info("Initializing {} on {}", MOD_ID, SmartMC.xplat().loader());
@@ -79,6 +80,7 @@ public class SmartMC {
 	 * {@code platform/neoforge}'s entrypoints.
 	 */
 	public static void onServerStarting(MinecraftServer server) {
+		SmartMC.server = server;
 		var configDir = xplat().configDir();
 		config = SmartMcConfig.load(configDir);
 		identity = ServerIdentity.load(configDir);
@@ -130,6 +132,7 @@ public class SmartMC {
 		pairingCodes = null;
 		tokens = null;
 		groupProvider = null;
+		server = null;
 	}
 
 	public static SmartMcConfig config() {
@@ -170,6 +173,10 @@ public class SmartMC {
 
 	public static GroupProvider groupProvider() {
 		return groupProvider;
+	}
+
+	public static MinecraftServer server() {
+		return server;
 	}
 
 	static Platform xplat() {

@@ -1,0 +1,26 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "DeviceSummary.json",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "string"
+        },
+        "type": {
+            "type": "string"
+        },
+        "label": {
+            "type": "string"
+        },
+        "groupId": {
+            "type": "string",
+            "description": "Present only when the device is shared with a group."
+        }
+    },
+    "required": [
+        "id",
+        "type",
+        "label"
+    ],
+    "description": "One device, as much as the app needs to render it in a list -- not the\nfull server-side DeviceRecord (dimension/x/y/z stay server-side for now)."
+}

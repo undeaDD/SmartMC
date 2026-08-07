@@ -1,10 +1,5 @@
-import { sha256 } from '@noble/hashes/sha2.js';
-import { bytesToHex } from '@noble/hashes/utils.js';
 import type { ReconnectRequest, ReconnectResponse } from '@smart-mc/protocol';
-import TcpSocket from 'react-native-tcp-socket';
-import { generateKeyPair, NoiseHandshakeState, NoiseTransport } from '../noise';
-import { MAGIC_PREFIX, NOISE_PROTOCOL_NAME } from './constants';
-import { FrameReader, prependLength } from './framing';
+import { withSmartMcConnection } from './connection';
 
 export type ReconnectOptions = {
   host: string;
@@ -33,111 +28,24 @@ export type ReconnectOutcome = ReconnectSuccess | ReconnectFailure;
  * persist the returned token in place of the one they sent.
  */
 export function reconnectToServer(options: ReconnectOptions): Promise<ReconnectOutcome> {
-  const { host, port, token, expectedServerFingerprint, timeoutMs = 10_000 } = options;
+  const { host, port, token, expectedServerFingerprint, timeoutMs } = options;
 
-  return new Promise((resolve) => {
-    let settled = false;
-    const finish = (outcome: ReconnectOutcome) => {
-      if (settled) return;
-      settled = true;
-      clearTimeout(timer);
-      socket.destroy();
-      resolve(outcome);
-    };
-
-    const timer = setTimeout(
-      () => finish({ success: false, error: 'Timed out connecting to server' }),
-      timeoutMs,
-    );
-
-    const reader = new FrameReader();
-    const framePending: Uint8Array[] = [];
-    let frameWaiter: ((frame: Uint8Array) => void) | undefined;
-
-    const nextFrame = (): Promise<Uint8Array> => {
-      const queued = framePending.shift();
-      if (queued) return Promise.resolve(queued);
-      return new Promise((resolveFrame) => {
-        frameWaiter = resolveFrame;
-      });
-    };
-
-    const socket = TcpSocket.createConnection({ port, host }, () => {
-      runHandshake().catch((error: unknown) => {
-        finish({
-          success: false,
-          error: error instanceof Error ? error.message : 'Reconnect failed',
-        });
-      });
-    });
-
-    socket.on('data', (data) => {
-      const chunk = data instanceof Uint8Array ? data : new Uint8Array(Buffer.from(data, 'utf8'));
-      for (const frame of reader.push(chunk)) {
-        if (frameWaiter) {
-          const waiter = frameWaiter;
-          frameWaiter = undefined;
-          waiter(frame);
-        } else {
-          framePending.push(frame);
-        }
-      }
-    });
-
-    socket.on('error', (error) => finish({ success: false, error: error.message }));
-    socket.on('close', () => finish({ success: false, error: 'Connection closed unexpectedly' }));
-
-    async function runHandshake() {
-      socket.write(MAGIC_PREFIX);
-
-      const clientStatic = generateKeyPair();
-      const handshake = new NoiseHandshakeState(
-        NOISE_PROTOCOL_NAME,
-        'initiator',
-        clientStatic,
-        generateKeyPair,
-      );
-
-      socket.write(prependLength(handshake.writeMessage()));
-      handshake.readMessage(await nextFrame());
-      socket.write(prependLength(handshake.writeMessage()));
-
-      const serverStaticKey = handshake.getRemoteStaticKey();
-      if (!handshake.isDone() || !serverStaticKey) {
-        throw new Error('Noise handshake did not complete');
-      }
-
-      const serverFingerprint = bytesToHex(sha256(serverStaticKey));
-      if (serverFingerprint !== expectedServerFingerprint) {
-        finish({
-          success: false,
-          error:
-            'Server identity changed since pairing -- refusing to connect. Re-pair if this server was reinstalled.',
-        });
-        return;
-      }
-
-      const transport = new NoiseTransport(...handshake.split());
-
+  return withSmartMcConnection<ReconnectOutcome>(
+    { host, port, expectedServerFingerprint, timeoutMs },
+    async (session) => {
       const request: ReconnectRequest = { token };
-      const envelope = { type: 'reconnect', payload: request };
-      const plaintext = new TextEncoder().encode(JSON.stringify(envelope));
-      socket.write(prependLength(transport.writeMessage(plaintext)));
+      session.sendEnvelope('reconnect', request);
 
-      const responseFrame = await nextFrame();
-      const responsePlaintext = transport.readMessage(responseFrame);
-      const responseEnvelope = JSON.parse(new TextDecoder().decode(responsePlaintext));
-
+      const responseEnvelope = await session.nextEnvelope();
       if (responseEnvelope.type !== 'reconnect') {
         throw new Error(`Unexpected response type: ${responseEnvelope.type}`);
       }
       const response = responseEnvelope.payload as ReconnectResponse;
 
       if (!response.success) {
-        finish({ success: false, error: response.error ?? 'Reconnect failed' });
-        return;
+        return { success: false, error: response.error ?? 'Reconnect failed' };
       }
-      finish({ ...response, success: true });
-    }
-  });
+      return { ...response, success: true };
+    },
+  );
 }

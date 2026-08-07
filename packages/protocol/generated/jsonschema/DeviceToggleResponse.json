@@ -1,0 +1,26 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "DeviceToggleResponse.json",
+    "type": "object",
+    "properties": {
+        "success": {
+            "type": "boolean"
+        },
+        "powered": {
+            "type": "boolean",
+            "description": "Present only when success is true -- the device's new output state."
+        },
+        "errorCode": {
+            "type": "string",
+            "description": "Present only when success is false. One of \"UNAUTHORIZED\" (also covers\n\"device doesn't exist\", deliberately generic to prevent device-ID\nenumeration -- see CLAUDE.md's Security model), \"DEVICE_CHUNK_NOT_LOADED\",\n\"STALE_REFERENCE\" (chunk loaded, but the block itself is gone),\n\"UNSUPPORTED_DEVICE_TYPE\", or \"SERVER_ERROR\"."
+        },
+        "error": {
+            "type": "string",
+            "description": "Present only when success is false -- a player-facing message."
+        }
+    },
+    "required": [
+        "success"
+    ],
+    "description": "The mod's reply to a DeviceToggleRequest."
+}

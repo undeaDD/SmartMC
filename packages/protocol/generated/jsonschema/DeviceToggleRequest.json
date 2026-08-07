@@ -1,0 +1,18 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "DeviceToggleRequest.json",
+    "type": "object",
+    "properties": {
+        "token": {
+            "type": "string"
+        },
+        "deviceId": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "token",
+        "deviceId"
+    ],
+    "description": "Sent by the app to toggle a SWITCH-type device's redstone output."
+}

@@ -1,0 +1,14 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "DeviceListRequest.json",
+    "type": "object",
+    "properties": {
+        "token": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "token"
+    ],
+    "description": "Sent by the app to list the devices it can see -- v1 scope is \"devices\nthis player owns\" only; group-shared visibility is a known follow-up gap,\nnot yet queryable server-side."
+}

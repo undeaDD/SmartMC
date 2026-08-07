@@ -139,12 +139,13 @@ const styles = StyleSheet.create({
     borderRadius: 26,
     paddingHorizontal: 12,
     paddingVertical: 4,
-    marginBottom: 30,
+    marginBottom: 15,
   },
   version: {
     fontSize: 13,
     textAlign: 'center',
     opacity: 0.6,
+    marginTop: -20,
     marginBottom: 15,
   },
 });

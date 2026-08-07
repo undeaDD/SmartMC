@@ -1,3 +1,8 @@
+export type { DeviceListRequest } from "./DeviceListRequest";
+export type { DeviceListResponse } from "./DeviceListResponse";
+export type { DeviceSummary } from "./DeviceSummary";
+export type { DeviceToggleRequest } from "./DeviceToggleRequest";
+export type { DeviceToggleResponse } from "./DeviceToggleResponse";
 export type { Envelope } from "./Envelope";
 export type { PairRequest } from "./PairRequest";
 export type { PairResponse } from "./PairResponse";

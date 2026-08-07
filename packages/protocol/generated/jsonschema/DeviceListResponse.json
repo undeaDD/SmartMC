@@ -1,0 +1,25 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "DeviceListResponse.json",
+    "type": "object",
+    "properties": {
+        "success": {
+            "type": "boolean"
+        },
+        "devices": {
+            "type": "array",
+            "items": {
+                "$ref": "DeviceSummary.json"
+            },
+            "description": "Present only when success is true."
+        },
+        "error": {
+            "type": "string",
+            "description": "Present only when success is false (invalid/expired token, revoked session)."
+        }
+    },
+    "required": [
+        "success"
+    ],
+    "description": "The mod's reply to a DeviceListRequest."
+}
