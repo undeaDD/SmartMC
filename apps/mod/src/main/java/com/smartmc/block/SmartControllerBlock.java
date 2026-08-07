@@ -125,16 +125,27 @@ public class SmartControllerBlock extends HorizontalDirectionalBlock implements 
 		return getSignal(state, level, pos, direction);
 	}
 
+	/**
+	 * Redstone input read, corrected: verified against the real decompiled
+	 * 1.21.1 {@code DiodeBlock} ({@code getInputSignal}) and the wiki's own
+	 * "direction from output side to input side = opposite of the direction
+	 * the player faces while placing" -- both independently confirm the
+	 * genuinely counter-intuitive fact that {@link #FACING} itself points
+	 * toward the INPUT side for this whole block family, not the output
+	 * side (output is {@code FACING.getOpposite()}). An earlier version of
+	 * this method read the opposite side, so back-face redstone input
+	 * silently did nothing even though the model/output side worked fine.
+	 */
 	@Override
 	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
 		if (level.isClientSide) {
 			return;
 		}
-		Direction back = state.getValue(FACING).getOpposite();
-		boolean inputPowered = level.getSignal(pos.relative(back), back) > 0;
+		Direction inputSide = state.getValue(FACING);
+		boolean inputPowered = level.getSignal(pos.relative(inputSide), inputSide) > 0;
 		if (inputPowered != state.getValue(POWERED)) {
 			level.setBlock(pos, state.setValue(POWERED, inputPowered), Block.UPDATE_ALL);
-			level.updateNeighborsAt(pos.relative(state.getValue(FACING)), this);
+			level.updateNeighborsAt(pos.relative(state.getValue(FACING).getOpposite()), this);
 		}
 	}
 

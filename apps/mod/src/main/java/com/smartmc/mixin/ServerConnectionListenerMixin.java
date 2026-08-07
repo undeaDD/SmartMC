@@ -26,9 +26,10 @@ public class ServerConnectionListenerMixin {
 	@Inject(method = "initChannel", at = @At("HEAD"))
 	private void smartmc$installMultiplexPeek(Channel channel, CallbackInfo ci) {
 		channel.pipeline().addFirst("smartmc_peek", new MagicBytePeekDecoder());
-		// info, not debug, while M1 is still being hand-verified against a real
-		// server console; fires once per connection (including every vanilla
-		// player), so drop back to debug once the config's logLevel option exists.
-		SmartMC.LOGGER.info("Installed multiplex peek handler for {}", channel.remoteAddress());
+		// debug, not info -- this fires once per connection, including every
+		// vanilla player, and was flooding real server consoles at info level
+		// (was bumped up temporarily for M1's own hand-verification, per this
+		// comment's own original note that it should drop back once verified).
+		SmartMC.LOGGER.debug("Installed multiplex peek handler for {}", channel.remoteAddress());
 	}
 }

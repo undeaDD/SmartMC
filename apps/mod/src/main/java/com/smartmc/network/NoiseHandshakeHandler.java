@@ -71,7 +71,7 @@ public class NoiseHandshakeHandler extends SimpleChannelInboundHandler<ByteBuf> 
 		}
 
 		if (handshake.isDone()) {
-			SmartMC.LOGGER.info("Noise handshake complete for {}", ctx.channel().remoteAddress());
+			SmartMC.LOGGER.debug("Noise handshake complete for {}", ctx.channel().remoteAddress());
 			NoiseTransport transport = handshake.toTransport();
 			ChannelPipeline pipeline = ctx.pipeline();
 			pipeline.addAfter(ctx.name(), "smartmc_noise_transport", new NoiseTransportCodec(transport));

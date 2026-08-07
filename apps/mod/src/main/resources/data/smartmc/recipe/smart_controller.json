@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": [
+    "SRS",
+    "DED",
+    "SCS"
+  ],
+  "key": {
+    "S": { "item": "minecraft:stone" },
+    "R": { "item": "minecraft:repeater" },
+    "D": { "item": "minecraft:diamond_block" },
+    "E": { "item": "minecraft:emerald" },
+    "C": { "item": "minecraft:comparator" }
+  },
+  "result": {
+    "id": "smartmc:smart_controller",
+    "count": 1
+  }
+}

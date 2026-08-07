@@ -1,5 +1,6 @@
 import { router } from 'expo-router';
 import { AppleShortcuts, Plus, Server } from 'iconoir-react-native';
+import { useState } from 'react';
 import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
 
 import { DeviceCell } from '@/components/DeviceCell';
@@ -22,6 +23,12 @@ export default function DevicesScreen() {
   const { t } = useI18n();
   const { theme } = useTheme();
   const { serverDevices, refreshing, refresh } = useDeviceLists();
+  // DeviceListResponse carries no live state (see mapDeviceSummary's own
+  // comment), so a successful toggle's returned `powered` value is the only
+  // source of truth for a switch's on/off display until refresh -- kept
+  // locally rather than threaded through useDeviceLists, since it's purely
+  // a presentation-layer patch on top of the last fetched snapshot.
+  const [toggledOn, setToggledOn] = useState<Record<string, boolean>>({});
 
   if (serverDevices === undefined) {
     return null;
@@ -40,7 +47,7 @@ export default function DevicesScreen() {
     );
   }
 
-  const items = buildListItems(serverDevices);
+  const items = buildListItems(serverDevices, toggledOn);
 
   return (
     <FlatList
@@ -85,6 +92,13 @@ export default function DevicesScreen() {
                           token: item.server.token,
                           expectedServerFingerprint: item.server.serverFingerprint,
                           deviceId: device.id,
+                        }).then((outcome) => {
+                          if (outcome.success) {
+                            setToggledOn((prev) => ({
+                              ...prev,
+                              [device.id]: outcome.powered ?? false,
+                            }));
+                          }
                         });
                       }
                     : undefined
@@ -106,9 +120,17 @@ export default function DevicesScreen() {
 // full-width header interleaved with 2-wide device rows without hacky
 // padding tricks; pre-chunking devices into row items (each rendering its
 // own 1-2 cells) gets the same 2-column visual result without fighting that.
-function buildListItems(serverDevices: ServerDeviceState[]): ListItem[] {
+function buildListItems(
+  serverDevices: ServerDeviceState[],
+  toggledOn: Record<string, boolean>,
+): ListItem[] {
   return serverDevices.flatMap(({ server, devices: summaries }) => {
-    const devices: Device[] = (summaries ?? []).map(mapDeviceSummary);
+    const devices: Device[] = (summaries ?? []).map((summary) => {
+      const device = mapDeviceSummary(summary);
+      return device.deviceType === 'switch' && device.id in toggledOn
+        ? { ...device, on: toggledOn[device.id] }
+        : device;
+    });
     return [
       { type: 'header', key: `header-${server.id}`, server } as ListItem,
       ...(devices.length === 0

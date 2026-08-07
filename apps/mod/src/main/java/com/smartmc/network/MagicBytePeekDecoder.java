@@ -41,7 +41,7 @@ public class MagicBytePeekDecoder extends ByteToMessageDecoder {
 
 		if (match) {
 			in.skipBytes(prefixLen);
-			SmartMC.LOGGER.info("smartmc handshake matched from {}, swapping pipeline", ctx.channel().remoteAddress());
+			SmartMC.LOGGER.debug("smartmc handshake matched from {}, swapping pipeline", ctx.channel().remoteAddress());
 			// addAfter, not addLast: by the time decode() runs, initChannel has
 			// already added vanilla's ReadTimeoutHandler/LegacyQueryHandler/packet
 			// codec/Connection ahead of us in the pipeline (we're only first

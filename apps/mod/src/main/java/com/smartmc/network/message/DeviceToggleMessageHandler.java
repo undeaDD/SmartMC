@@ -117,7 +117,9 @@ public class DeviceToggleMessageHandler implements MessageHandler {
 		BlockState state = level.getBlockState(pos);
 		boolean newPowered = !state.getValue(SmartControllerBlock.POWERED);
 		level.setBlock(pos, state.setValue(SmartControllerBlock.POWERED, newPowered), 3);
-		level.updateNeighborsAt(pos.relative(state.getValue(SmartControllerBlock.FACING)), state.getBlock());
+		// FACING is the INPUT side for this block family (see SmartControllerBlock.neighborChanged's
+		// javadoc) -- the output side that should actually be notified is the opposite.
+		level.updateNeighborsAt(pos.relative(state.getValue(SmartControllerBlock.FACING).getOpposite()), state.getBlock());
 
 		DeviceToggleResponse response = new DeviceToggleResponse();
 		response.setSuccess(true);

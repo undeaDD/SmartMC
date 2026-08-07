@@ -1,53 +1,91 @@
-"""One-off script to generate the SmartController block's placeholder top
-texture (off/on variants). Not part of the build -- run manually, output
-committed directly to src/main/resources/assets/smartmc/textures/block/.
-Swap for real art later without touching model/blockstate/registration code.
+"""One-off script to generate the SmartController block's top texture
+(off/on variants): a stone plate with a low-poly SM shield badge centered on
+top, plus a small facing-direction arrow. Not part of the build -- run
+manually, output committed directly to
+src/main/resources/assets/smartmc/textures/block/. Swap for real art later
+without touching model/blockstate/registration code -- block models use
+virtual 0-16 UV space regardless of actual texture resolution, so this can
+be re-run at a different SIZE later with zero other changes.
+
+Renders the shield+"SM" mark at high supersample resolution with a real bold
+font (for genuinely readable letterforms, not hand-pixeled guesswork), then
+downsamples with nearest-neighbor to get hard, low-poly pixel edges instead
+of smooth antialiasing.
 """
 
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 
-SIZE = 16
+SIZE = 64
+SUPER = 4  # supersample factor for the shield+lettermark, then hard-downsample
 
 # Brand palette (apps/landing/src/styles/theme.css)
-INK = (24, 24, 24)  # #181818
-STONE_BASE = (74, 74, 74)  # neutral plate base, distinct from vanilla stone
+STONE_BASE = (74, 74, 74)
 STONE_EDGE = (58, 58, 58)
-GREEN_DIM = (39, 92, 45)  # muted brand-green, "off" indicator
-GREEN_LIT = (92, 207, 104)  # #5ccf68, "on" indicator, bright/emissive-looking
-GRAY = (140, 140, 140)  # #8c8c8c
+INK = (24, 24, 24)  # #181818, shield badge background
+GREEN_DIM = (39, 92, 45)  # muted brand-green, "off" mark
+GREEN_LIT = (92, 207, 104)  # #5ccf68, "on" mark
+GRAY = (140, 140, 140)  # #8c8c8c, facing arrow
+
+
+def shield_polygon(scale: int) -> list[tuple[int, int]]:
+	# Flat-topped shield, symmetric, pointed base -- classic badge silhouette.
+	cx = SIZE * scale // 2
+	top = 9 * scale
+	bottom = 55 * scale
+	left = 12 * scale
+	right = SIZE * scale - left
+	mid = 38 * scale
+	return [
+		(left, top), (right, top),
+		(right, mid), (cx, bottom), (left, mid),
+	]
+
+
+def draw_shield_and_mark(img: Image.Image, lit: bool) -> None:
+	hi = Image.new("RGBA", (SIZE * SUPER, SIZE * SUPER), (0, 0, 0, 0))
+	draw = ImageDraw.Draw(hi)
+
+	mark = GREEN_LIT if lit else GREEN_DIM
+	draw.polygon(shield_polygon(SUPER), fill=INK + (255,), outline=mark + (255,), width=2 * SUPER)
+
+	font = ImageFont.truetype("arialbd.ttf", 22 * SUPER)
+	text = "SM"
+	bbox = draw.textbbox((0, 0), text, font=font)
+	tw, th = bbox[2] - bbox[0], bbox[3] - bbox[1]
+	tx = (SIZE * SUPER - tw) // 2 - bbox[0]
+	ty = (SIZE * SUPER - th) // 2 - bbox[1] - 2 * SUPER
+	draw.text((tx, ty), text, font=font, fill=mark + (255,))
+
+	low = hi.resize((SIZE, SIZE), Image.NEAREST)
+	img.paste(low, (0, 0), low)
+
+
+def draw_facing_arrow(draw: ImageDraw.ImageDraw) -> None:
+	# Small triangle near the front edge (low Z / "north" before blockstate
+	# rotation), pointing toward the front -- orientation hint, secondary to
+	# the shield mark now that the shield is the main visual identity.
+	cx = SIZE // 2
+	draw.polygon([(cx - 4, 6), (cx + 4, 6), (cx, 2)], fill=GRAY)
 
 
 def make(lit: bool) -> Image.Image:
-	img = Image.new("RGB", (SIZE, SIZE), STONE_BASE)
-	px = img.load()
+	img = Image.new("RGBA", (SIZE, SIZE), STONE_BASE + (255,))
+	draw = ImageDraw.Draw(img)
 
-	# Plate border
-	for x in range(SIZE):
-		for y in range(SIZE):
-			if x == 0 or y == 0 or x == SIZE - 1 or y == SIZE - 1:
-				px[x, y] = STONE_EDGE
+	border = SIZE // 16
+	draw.rectangle([0, 0, SIZE - 1, border - 1], fill=STONE_EDGE)
+	draw.rectangle([0, SIZE - border, SIZE - 1, SIZE - 1], fill=STONE_EDGE)
+	draw.rectangle([0, 0, border - 1, SIZE - 1], fill=STONE_EDGE)
+	draw.rectangle([SIZE - border, 0, SIZE - 1, SIZE - 1], fill=STONE_EDGE)
 
-	# Small central "screen" panel (device status readout)
-	for x in range(5, 11):
-		for y in range(5, 11):
-			px[x, y] = INK
+	draw_facing_arrow(draw)
+	draw_shield_and_mark(img, lit)
 
-	indicator = GREEN_LIT if lit else GREEN_DIM
-	for x in range(6, 10):
-		for y in range(6, 10):
-			px[x, y] = indicator
-
-	# Directional line from back (y=15, input) to front (y=1, output),
-	# matching a redstone repeater's own directional affordance -- points
-	# toward -Z (north) before blockstate rotation is applied.
-	for y in range(2, 14):
-		px[8, y] = GRAY if not lit else indicator
-
-	return img
+	return img.convert("RGB")
 
 
 if __name__ == "__main__":
 	out_dir = "../src/main/resources/assets/smartmc/textures/block"
 	make(lit=False).save(f"{out_dir}/smart_controller.png")
 	make(lit=True).save(f"{out_dir}/smart_controller_on.png")
-	print("wrote smart_controller.png and smart_controller_on.png")
+	print("wrote smart_controller.png and smart_controller_on.png at", SIZE, "x", SIZE)
