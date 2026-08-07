@@ -27,12 +27,16 @@ export function SettingsRow({ icon: Icon, label, detail, onPress, disabled }: Se
       onPress={onPress}
       disabled={disabled || !onPress}
     >
-      <View style={[styles.iconWrap, { backgroundColor: theme.colors.surface }]}>
-        <Icon width={18} height={18} color={theme.colors.primary} />
+      <View style={[styles.iconWrap, { backgroundColor: `${theme.colors.primary}ee` }]}>
+        <Icon width={18} height={18} color={'black'} />
       </View>
       <Text style={[styles.label, { color: theme.colors.text }]}>{label}</Text>
-      {detail ? <Text style={[styles.detail, { color: theme.colors.textSecondary }]}>{detail}</Text> : null}
-      {onPress && !disabled ? <NavArrowRight width={16} height={16} color={theme.colors.textSecondary} /> : null}
+      {detail ? (
+        <Text style={[styles.detail, { color: theme.colors.textSecondary }]}>{detail}</Text>
+      ) : null}
+      {onPress && !disabled ? (
+        <NavArrowRight width={16} height={16} color={theme.colors.textSecondary} />
+      ) : null}
     </Pressable>
   );
 }

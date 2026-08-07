@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 const { withDangerousMod } = require('expo/config-plugins');
 
 // NativeTabs on iOS occasionally mis-lays-out icons sourced from a React

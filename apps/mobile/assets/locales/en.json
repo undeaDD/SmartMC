@@ -18,7 +18,7 @@
 
   "reconnectSuccess": "Reconnected",
 
-  "settingsServer": "Server",
+  "settingsServer": "Minecraft Server",
   "settingsNotifications": "Notifications",
   "settingsImprint": "Imprint",
   "settingsPrivacy": "Data Privacy",
@@ -28,6 +28,10 @@
   "settingsDocs": "Documentation",
   "settingsDiscord": "Discord",
   "settingsFeedback": "Send Feedback",
+  "settingsServerSection": "Configurations",
+  "settingsLegalSection": "Legal Information",
+  "settingsCommunitySection": "Social Media & Community",
+  "settingsFeedbackSection": "Quick Actions",
 
   "serverNotPairedIntro": "Run /smartmc pair in-game, then pair the app with your server.",
   "serverPairDifferent": "Pair with a different server",

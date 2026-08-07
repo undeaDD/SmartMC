@@ -27,7 +27,14 @@ type EmptyStateProps = {
  * Home, since those are real, already-planned near-term call sites, not a
  * hypothetical.
  */
-export function EmptyState({ icon, title, subtitle, actionLabel, actionIcon: ActionIcon, onAction }: EmptyStateProps) {
+export function EmptyState({
+  icon,
+  title,
+  subtitle,
+  actionLabel,
+  actionIcon: ActionIcon,
+  onAction,
+}: EmptyStateProps) {
   const { theme } = useTheme();
 
   return (
@@ -36,7 +43,10 @@ export function EmptyState({ icon, title, subtitle, actionLabel, actionIcon: Act
       <Text style={[styles.title, { color: theme.colors.text }]}>{title}</Text>
       <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>{subtitle}</Text>
       {actionLabel && onAction ? (
-        <Pressable style={[styles.button, { backgroundColor: theme.colors.primary }]} onPress={onAction}>
+        <Pressable
+          style={[styles.button, { backgroundColor: theme.colors.primary }]}
+          onPress={onAction}
+        >
           {ActionIcon ? <ActionIcon width={18} height={18} color="#000" /> : null}
           <Text style={styles.buttonText}>{actionLabel}</Text>
         </Pressable>

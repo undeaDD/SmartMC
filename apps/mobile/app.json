@@ -11,16 +11,16 @@
     "userInterfaceStyle": "automatic",
     "platforms": ["ios", "android"],
     "assetBundlePatterns": ["assets/*"],
-		"developmentClient": {
-			"silentLaunch": true
-		},
+    "developmentClient": {
+      "silentLaunch": true
+    },
     "ios": {
       "supportsTablet": false,
       "deploymentTarget": "18.0",
       "bundleIdentifier": "com.smartmc.app",
       "infoPlist": {
         "CFBundleDevelopmentRegion": "en",
-				"CFBundleLocalizations": ["en", "de"],
+        "CFBundleLocalizations": ["en", "de"],
         "ITSAppUsesNonExemptEncryption": false
       }
     },
@@ -37,48 +37,48 @@
     },
     "plugins": [
       ["expo-router", {}],
-			["expo-status-bar", {}],
-			["expo-web-browser", {}],
-			["expo-localization", {}],
-			["react-native-legal", {}],
-			["expo-alternate-app-icons", {}],
+      ["expo-status-bar", {}],
+      ["expo-web-browser", {}],
+      ["expo-localization", {}],
+      ["react-native-legal", {}],
+      ["expo-alternate-app-icons", {}],
       ["./plugins/withTabIcons", {}],
       [
-				"expo-quick-actions",
-				{
-					"androidIcons": {
-						"quickaction_search": {
-							"foregroundImage": "./assets/icons/quickaction_search_foreground.png",
-							"backgroundColor": "#fab616"
-						},
-						"quickaction_feedback": {
-							"foregroundImage": "./assets/icons/quickaction_feedback_foreground.png",
-							"backgroundColor": "#fab616"
-						}
-					}
-				}
-			],
+        "expo-quick-actions",
+        {
+          "androidIcons": {
+            "quickaction_search": {
+              "foregroundImage": "./assets/icons/quickaction_search_foreground.png",
+              "backgroundColor": "#fab616"
+            },
+            "quickaction_feedback": {
+              "foregroundImage": "./assets/icons/quickaction_feedback_foreground.png",
+              "backgroundColor": "#fab616"
+            }
+          }
+        }
+      ],
       [
-				"expo-build-properties",
-				{
-					"ios": {
-						"useFrameworks": "static",
-						"useHermesV1": true
-					},
-					"android": {
-						"minSdkVersion": 29,
-						"useHermesV1": true,
-						"enableProguardInReleaseBuilds": true,
-						"enableShrinkResourcesInReleaseBuilds": true
-					}
-				}
-			],
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static",
+            "useHermesV1": true
+          },
+          "android": {
+            "minSdkVersion": 29,
+            "useHermesV1": true,
+            "enableProguardInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true
+          }
+        }
+      ],
       [
-				"react-native-permissions",
-				{
-					"iosPermissions": []
-				}
-			],
+        "react-native-permissions",
+        {
+          "iosPermissions": []
+        }
+      ],
       [
         "expo-splash-screen",
         {
@@ -88,22 +88,19 @@
         }
       ],
       [
-				"expo-secure-store",
-				{
-					"configureAndroidBackup": true,
-					"faceIDPermission": "Erlaube SmartMC zugriff auf Gesichtserkennung"
-				}
-			],
+        "expo-secure-store",
+        {
+          "configureAndroidBackup": true,
+          "faceIDPermission": "Erlaube SmartMC zugriff auf Gesichtserkennung"
+        }
+      ],
       [
-				"expo-image",
-				{
-					"disableLibdav1d": true
-				}
-			],
-      [
-				"expo-alternate-app-icons",
-				{}
-      ]
+        "expo-image",
+        {
+          "disableLibdav1d": true
+        }
+      ],
+      ["expo-alternate-app-icons", {}]
     ],
     "experiments": {
       "reactCompiler": true,

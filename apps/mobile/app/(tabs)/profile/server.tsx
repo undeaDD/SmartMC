@@ -1,11 +1,15 @@
 import { Link, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 
-import { View } from '@/components/Themed';
 import { reconnectToServer } from '@/lib/smartmc/reconnectClient';
-import { clearPairedServer, getPairedServer, savePairedServer, type PairedServer } from '@/lib/smartmc/storage';
+import {
+  clearPairedServer,
+  getPairedServer,
+  type PairedServer,
+  savePairedServer,
+} from '@/lib/smartmc/storage';
 import { useTheme } from '@/providers/ExtendedThemeProvider';
 import { useI18n } from '@/providers/I18nProvider';
 
@@ -58,43 +62,73 @@ export default function ServerModal() {
   }
 
   if (pairedServer === null) {
+    const emptyStateButtonStyle = StyleSheet.flatten([
+      styles.button,
+      { backgroundColor: theme.colors.primary },
+    ]);
+
     return (
-      <View style={styles.container}>
-        <Text style={[styles.intro, { color: theme.colors.textSecondary }]}>{t('serverNotPairedIntro')}</Text>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        automaticallyAdjustKeyboardInsets={true}
+        keyboardShouldPersistTaps="handled"
+      >
+        <Text style={[styles.intro, { color: theme.colors.textSecondary }]}>
+          {t('serverNotPairedIntro')}
+        </Text>
         <Link href="/modal" asChild>
-          <Pressable style={[styles.button, { backgroundColor: theme.colors.primary }]}>
+          <Pressable style={emptyStateButtonStyle}>
             <Text style={styles.buttonText}>{t('pairSubmit')}</Text>
           </Pressable>
         </Link>
-      </View>
+      </ScrollView>
     );
   }
 
+  const primaryButtonStyle = StyleSheet.flatten([
+    styles.button,
+    { backgroundColor: theme.colors.primary, opacity: reconnecting ? 0.6 : 1 },
+  ]);
+  const secondaryButtonStyle = StyleSheet.flatten([
+    styles.secondaryButton,
+    { borderColor: theme.colors.border },
+  ]);
+
   return (
-    <View style={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      automaticallyAdjustKeyboardInsets={true}
+      keyboardShouldPersistTaps="handled"
+    >
       <Text style={[styles.pairedServerLabel, { color: theme.colors.text }]}>
         {t('profilePairedServerAddress', { host: pairedServer.host, port: pairedServer.port })}
       </Text>
-      <Text style={[styles.deviceNameLabel, { color: theme.colors.textSecondary }]}>{pairedServer.deviceName}</Text>
+      <Text style={[styles.deviceNameLabel, { color: theme.colors.textSecondary }]}>
+        {pairedServer.deviceName}
+      </Text>
 
-      <Pressable
-        style={[styles.button, { backgroundColor: theme.colors.primary, opacity: reconnecting ? 0.6 : 1 }]}
-        onPress={handleReconnect}
-        disabled={reconnecting}
-      >
-        {reconnecting ? <ActivityIndicator color="#000" /> : <Text style={styles.buttonText}>{t('profileReconnect')}</Text>}
+      <Pressable style={primaryButtonStyle} onPress={handleReconnect} disabled={reconnecting}>
+        {reconnecting ? (
+          <ActivityIndicator color="#000" />
+        ) : (
+          <Text style={styles.buttonText}>{t('profileReconnect')}</Text>
+        )}
       </Pressable>
 
       <Link href="/modal" asChild>
-        <Pressable style={[styles.secondaryButton, { borderColor: theme.colors.border }]}>
-          <Text style={[styles.secondaryButtonText, { color: theme.colors.text }]}>{t('serverPairDifferent')}</Text>
+        <Pressable style={secondaryButtonStyle}>
+          <Text style={[styles.secondaryButtonText, { color: theme.colors.text }]}>
+            {t('serverPairDifferent')}
+          </Text>
         </Pressable>
       </Link>
 
       <Pressable style={styles.forgetButton} onPress={handleForget}>
-        <Text style={[styles.forgetButtonText, { color: theme.colors.danger }]}>{t('serverForget')}</Text>
+        <Text style={[styles.forgetButtonText, { color: theme.colors.danger }]}>
+          {t('serverForget')}
+        </Text>
       </Pressable>
-    </View>
+    </ScrollView>
   );
 }
 

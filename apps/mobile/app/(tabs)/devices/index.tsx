@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
 import { router, useFocusEffect } from 'expo-router';
 import { Settings } from 'iconoir-react-native';
 import { useCallback, useState } from 'react';
@@ -48,12 +49,22 @@ export default function DevicesScreen() {
   // v1-scoped single-paired-server limit), but built to section by server
   // since that's the real, already-planned shape once multi-server pairing
   // lands.
-  const sections: { server: PairedServer; devices: Device[] }[] = [{ server: pairedServer, devices: [] }];
+  const sections: { server: PairedServer; devices: Device[] }[] = [
+    { server: pairedServer, devices: [] },
+  ];
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContent}>
+    <ScrollView
+      contentContainerStyle={styles.scrollContent}
+      automaticallyAdjustKeyboardInsets={true}
+      keyboardShouldPersistTaps="handled"
+    >
       {sections.map((section) => (
-        <DeviceSection key={`${section.server.host}:${section.server.port}`} server={section.server} devices={section.devices} />
+        <DeviceSection
+          key={`${section.server.host}:${section.server.port}`}
+          server={section.server}
+          devices={section.devices}
+        />
       ))}
     </ScrollView>
   );
@@ -70,7 +81,9 @@ function DeviceSection({ server, devices }: { server: PairedServer; devices: Dev
         {t('profilePairedServerAddress', { host: server.host, port: server.port })}
       </Text>
       {devices.length === 0 ? (
-        <Text style={[styles.sectionEmptyText, { color: theme.colors.textSecondary }]}>{t('devicesEmpty')}</Text>
+        <Text style={[styles.sectionEmptyText, { color: theme.colors.textSecondary }]}>
+          {t('devicesEmpty')}
+        </Text>
       ) : (
         rows.map((row, index) => (
           <View key={index} style={styles.row}>

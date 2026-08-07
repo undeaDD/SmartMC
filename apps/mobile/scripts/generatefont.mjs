@@ -16,11 +16,11 @@
 // Re-run with:
 //   bun run apps/mobile/scripts/generatefont.mjs
 
-import { writeFileSync, createReadStream, createWriteStream, unlinkSync } from 'node:fs';
+import { createReadStream, createWriteStream, unlinkSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { SVGIcons2SVGFontStream } from 'svgicons2svgfont';
 import svg2ttf from 'svg2ttf';
+import { SVGIcons2SVGFontStream } from 'svgicons2svgfont';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const inputDir = join(scriptDir, '../assets/icons/tabs');
@@ -35,7 +35,11 @@ const svgFontPath = join(outputDir, 'TabIcons.svg');
 const ttfFontPath = join(outputDir, 'TabIcons.ttf');
 const codepointsPath = join(outputDir, 'tab-icons-codepoints.json');
 
-const fontStream = new SVGIcons2SVGFontStream({ fontName: 'TabIcons', normalize: true, fontHeight: 300 });
+const fontStream = new SVGIcons2SVGFontStream({
+  fontName: 'TabIcons',
+  normalize: true,
+  fontHeight: 300,
+});
 
 await new Promise((resolve, reject) => {
   const out = createWriteStream(svgFontPath);

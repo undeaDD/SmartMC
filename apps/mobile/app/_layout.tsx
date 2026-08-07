@@ -1,41 +1,41 @@
 import { useFonts } from 'expo-font';
-import { NativeStackNavigationOptions, Stack } from 'expo-router';
+import { type NativeStackNavigationOptions, Stack } from 'expo-router';
 import { LogBox, Platform } from 'react-native';
 import FlashMessage from 'react-native-flash-message';
 import 'react-native-reanimated';
-import { enableFreeze, enableScreens, FullWindowOverlay } from 'react-native-screens';
-import { I18nProvider } from '@/providers/I18nProvider';
-import { ExtendedThemeProvider, useTheme } from '@/providers/ExtendedThemeProvider';
-import { AppPreferencesProvider } from '@/providers/AppPreferences';
-import AppPlatform from '@/components/AppPlatform';
 import { StatusBar } from 'expo-status-bar';
+import { enableFreeze, enableScreens, FullWindowOverlay } from 'react-native-screens';
+import AppPlatform from '@/components/AppPlatform';
+import { AppPreferencesProvider } from '@/providers/AppPreferences';
+import { ExtendedThemeProvider, useTheme } from '@/providers/ExtendedThemeProvider';
+import { I18nProvider } from '@/providers/I18nProvider';
 
 LogBox.ignoreAllLogs();
 enableScreens(true);
 enableFreeze(true);
 
 const ROOT_SCREEN_OPTIONS: NativeStackNavigationOptions = {
-	headerShown: false,
-	headerBackButtonDisplayMode: "generic",
-	headerTransparent: AppPlatform.OS === "iosnew",
-	freezeOnBlur: true,
-	scrollEdgeEffects: {
-		bottom: "soft",
-		left: "soft",
-		right: "soft",
-		top: "soft",
-	},
+  headerShown: false,
+  headerBackButtonDisplayMode: 'generic',
+  headerTransparent: AppPlatform.OS === 'iosnew',
+  freezeOnBlur: true,
+  scrollEdgeEffects: {
+    bottom: 'soft',
+    left: 'soft',
+    right: 'soft',
+    top: 'soft',
+  },
 };
 
 const TABS_SCREEN_OPTIONS: NativeStackNavigationOptions = {
-	animation: "fade",
+  animation: 'fade',
   animationDuration: 150,
 };
 
 const AppStatusBar = () => {
-	const { scheme } = useTheme();
-	return <StatusBar style={scheme === "dark" ? "light" : "dark"} animated={true} />;
-};  
+  const { scheme } = useTheme();
+  return <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} animated={true} />;
+};
 
 export default function RootLayout() {
   useFonts({

@@ -1,6 +1,6 @@
-import type { ReconnectRequest, ReconnectResponse } from '@smart-mc/protocol';
 import { sha256 } from '@noble/hashes/sha2.js';
 import { bytesToHex } from '@noble/hashes/utils.js';
+import type { ReconnectRequest, ReconnectResponse } from '@smart-mc/protocol';
 import TcpSocket from 'react-native-tcp-socket';
 import { generateKeyPair, NoiseHandshakeState, NoiseTransport } from '../noise';
 import { MAGIC_PREFIX, NOISE_PROTOCOL_NAME } from './constants';
@@ -45,7 +45,10 @@ export function reconnectToServer(options: ReconnectOptions): Promise<ReconnectO
       resolve(outcome);
     };
 
-    const timer = setTimeout(() => finish({ success: false, error: 'Timed out connecting to server' }), timeoutMs);
+    const timer = setTimeout(
+      () => finish({ success: false, error: 'Timed out connecting to server' }),
+      timeoutMs,
+    );
 
     const reader = new FrameReader();
     const framePending: Uint8Array[] = [];
@@ -61,7 +64,10 @@ export function reconnectToServer(options: ReconnectOptions): Promise<ReconnectO
 
     const socket = TcpSocket.createConnection({ port, host }, () => {
       runHandshake().catch((error: unknown) => {
-        finish({ success: false, error: error instanceof Error ? error.message : 'Reconnect failed' });
+        finish({
+          success: false,
+          error: error instanceof Error ? error.message : 'Reconnect failed',
+        });
       });
     });
 
@@ -85,7 +91,12 @@ export function reconnectToServer(options: ReconnectOptions): Promise<ReconnectO
       socket.write(MAGIC_PREFIX);
 
       const clientStatic = generateKeyPair();
-      const handshake = new NoiseHandshakeState(NOISE_PROTOCOL_NAME, 'initiator', clientStatic, generateKeyPair);
+      const handshake = new NoiseHandshakeState(
+        NOISE_PROTOCOL_NAME,
+        'initiator',
+        clientStatic,
+        generateKeyPair,
+      );
 
       socket.write(prependLength(handshake.writeMessage()));
       handshake.readMessage(await nextFrame());
@@ -100,7 +111,8 @@ export function reconnectToServer(options: ReconnectOptions): Promise<ReconnectO
       if (serverFingerprint !== expectedServerFingerprint) {
         finish({
           success: false,
-          error: 'Server identity changed since pairing -- refusing to connect. Re-pair if this server was reinstalled.',
+          error:
+            'Server identity changed since pairing -- refusing to connect. Re-pair if this server was reinstalled.',
         });
         return;
       }

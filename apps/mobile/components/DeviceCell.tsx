@@ -39,8 +39,16 @@ function DeviceReadout({ device }: { device: Device }) {
 
   switch (device.deviceType) {
     case 'alarm': {
-      const color = device.triggered ? theme.colors.danger : device.armed ? theme.colors.success : theme.colors.disabled;
-      const text = device.triggered ? t('deviceAlarmTriggered') : device.armed ? t('deviceAlarmArmed') : t('deviceAlarmDisarmed');
+      const color = device.triggered
+        ? theme.colors.danger
+        : device.armed
+          ? theme.colors.success
+          : theme.colors.disabled;
+      const text = device.triggered
+        ? t('deviceAlarmTriggered')
+        : device.armed
+          ? t('deviceAlarmArmed')
+          : t('deviceAlarmDisarmed');
       return (
         <>
           <View style={[styles.statusDot, { backgroundColor: color }]} />
@@ -52,7 +60,10 @@ function DeviceReadout({ device }: { device: Device }) {
       return (
         <Text style={[styles.valueText, { color: theme.colors.text }]}>
           {device.value}
-          <Text style={[styles.unitText, { color: theme.colors.textSecondary }]}> {device.unit}</Text>
+          <Text style={[styles.unitText, { color: theme.colors.textSecondary }]}>
+            {' '}
+            {device.unit}
+          </Text>
         </Text>
       );
     case 'switch': {

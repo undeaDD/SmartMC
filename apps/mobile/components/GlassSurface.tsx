@@ -25,7 +25,10 @@ export function GlassSurface({ style, children }: GlassSurfaceProps) {
   // isGlassEffectAPIAvailable() guards against a real crash on some iOS 26
   // beta builds where the OS version check alone (AppPlatform.OS === 'iosnew')
   // isn't sufficient -- see expo-glass-effect's own docs (expo/expo#40911).
-  const useNativeGlass = useMemo(() => AppPlatform.OS === 'iosnew' && isGlassEffectAPIAvailable(), []);
+  const useNativeGlass = useMemo(
+    () => AppPlatform.OS === 'iosnew' && isGlassEffectAPIAvailable(),
+    [],
+  );
 
   if (useNativeGlass) {
     return (
@@ -39,7 +42,14 @@ export function GlassSurface({ style, children }: GlassSurfaceProps) {
     <BlurView
       intensity={theme.blur.intensity}
       tint={theme.blur.tint}
-      style={[style, { backgroundColor: theme.blur.background, borderRadius: theme.radius.medium, overflow: 'hidden' }]}
+      style={[
+        style,
+        {
+          backgroundColor: theme.blur.background,
+          borderRadius: theme.radius.medium,
+          overflow: 'hidden',
+        },
+      ]}
     >
       {children}
     </BlurView>

@@ -1,4 +1,4 @@
-import { CipherState } from './cipherState';
+import type { CipherState } from './cipherState';
 import { concatBytes, DHLEN, dh } from './primitives';
 import { SymmetricState } from './symmetricState';
 
@@ -109,14 +109,14 @@ export class NoiseHandshakeState {
     } else if (step === 1) {
       this.remoteEphemeral = readBytes(DHLEN);
       this.symmetric.mixHash(this.remoteEphemeral);
-      this.symmetric.mixKey(dh(this.ephemeralKeyPair!.privateKey, this.remoteEphemeral));
+      this.symmetric.mixKey(dh(this.ephemeralKeyPair?.privateKey, this.remoteEphemeral));
       const encryptedStatic = readBytes(DHLEN + 16);
       this.remoteStatic = this.symmetric.decryptAndHash(encryptedStatic);
-      this.symmetric.mixKey(dh(this.ephemeralKeyPair!.privateKey, this.remoteStatic));
+      this.symmetric.mixKey(dh(this.ephemeralKeyPair?.privateKey, this.remoteStatic));
     } else if (step === 2) {
       const encryptedStatic = readBytes(DHLEN + 16);
       this.remoteStatic = this.symmetric.decryptAndHash(encryptedStatic);
-      this.symmetric.mixKey(dh(this.ephemeralKeyPair!.privateKey, this.remoteStatic));
+      this.symmetric.mixKey(dh(this.ephemeralKeyPair?.privateKey, this.remoteStatic));
     } else {
       throw new Error('XX handshake only has 3 messages');
     }

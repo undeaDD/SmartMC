@@ -18,16 +18,20 @@
 
   "reconnectSuccess": "Neu verbunden",
 
-  "settingsServer": "Server",
+  "settingsServer": "Minecraft Server",
   "settingsNotifications": "Benachrichtigungen",
   "settingsImprint": "Impressum",
   "settingsPrivacy": "Datenschutz",
   "settingsLicense": "Lizenz",
   "settingsHomepage": "Homepage",
-  "settingsGithub": "GitHub-Quellcode",
+  "settingsGithub": "GitHub",
   "settingsDocs": "Dokumentation",
   "settingsDiscord": "Discord",
   "settingsFeedback": "Feedback senden",
+  "settingsServerSection": "Konfigurationen",
+  "settingsLegalSection": "Informationen",
+  "settingsCommunitySection": "Soziale Medien & Community",
+  "settingsFeedbackSection": "Schnellaktionen",
 
   "serverNotPairedIntro": "Führe /smartmc pair im Spiel aus und verbinde dann die App mit deinem Server.",
   "serverPairDifferent": "Mit einem anderen Server verbinden",

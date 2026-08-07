@@ -1,4 +1,4 @@
-import { CipherState } from './cipherState';
+import type { CipherState } from './cipherState';
 
 const NO_AD = new Uint8Array(0);
 

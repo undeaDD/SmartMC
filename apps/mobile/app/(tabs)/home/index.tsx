@@ -1,11 +1,10 @@
 import { router } from 'expo-router';
 import { Plus } from 'iconoir-react-native';
 import { useState } from 'react';
-import { FlatList, StyleSheet } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
 
 import { DeviceCell } from '@/components/DeviceCell';
 import { EmptyState } from '@/components/EmptyState';
-import { View } from '@/components/Themed';
 import type { Device } from '@/lib/devices/types';
 import { useI18n } from '@/providers/I18nProvider';
 
@@ -38,6 +37,8 @@ export default function HomeScreen() {
         columnWrapperStyle={styles.row}
         contentContainerStyle={styles.grid}
         renderItem={({ item }) => <DeviceCell device={item} />}
+        automaticallyAdjustKeyboardInsets={true}
+        keyboardShouldPersistTaps="handled"
       />
     </View>
   );

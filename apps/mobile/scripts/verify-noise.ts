@@ -17,12 +17,15 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { x25519 } from '@noble/curves/ed25519.js';
-import { hexToBytes } from '../lib/noise/primitives';
 import { NoiseHandshakeState } from '../lib/noise/handshakeState';
+import { hexToBytes } from '../lib/noise/primitives';
 import { NoiseTransport } from '../lib/noise/transport';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
-const vectorPath = join(scriptDir, '../lib/noise/__tests__/noise-xx-25519-chachapoly-sha256.vector.json');
+const vectorPath = join(
+  scriptDir,
+  '../lib/noise/__tests__/noise-xx-25519-chachapoly-sha256.vector.json',
+);
 const vector = JSON.parse(readFileSync(vectorPath, 'utf8'));
 
 function hex(bytes: Uint8Array): string {
@@ -44,9 +47,15 @@ function assertEqual(actual: Uint8Array, expectedHex: string, label: string) {
 const protocolName = `Noise_${vector.pattern}_${vector.dh}_${vector.cipher}_${vector.hash}`;
 
 const initStatic = { privateKey: hexToBytes(vector.init_static), publicKey: new Uint8Array(0) };
-const initEphemeral = { privateKey: hexToBytes(vector.init_ephemeral), publicKey: new Uint8Array(0) };
+const initEphemeral = {
+  privateKey: hexToBytes(vector.init_ephemeral),
+  publicKey: new Uint8Array(0),
+};
 const respStatic = { privateKey: hexToBytes(vector.resp_static), publicKey: new Uint8Array(0) };
-const respEphemeral = { privateKey: hexToBytes(vector.resp_ephemeral), publicKey: new Uint8Array(0) };
+const respEphemeral = {
+  privateKey: hexToBytes(vector.resp_ephemeral),
+  publicKey: new Uint8Array(0),
+};
 
 // Public keys aren't given directly in the vector -- derive them the same
 // way generateKeyPair() would, via x25519.getPublicKey.
@@ -56,8 +65,20 @@ for (const kp of [initStatic, initEphemeral, respStatic, respEphemeral]) {
 
 const prologue = hexToBytes(vector.init_prologue);
 
-const initiator = new NoiseHandshakeState(protocolName, 'initiator', initStatic, () => initEphemeral, prologue);
-const responder = new NoiseHandshakeState(protocolName, 'responder', respStatic, () => respEphemeral, prologue);
+const initiator = new NoiseHandshakeState(
+  protocolName,
+  'initiator',
+  initStatic,
+  () => initEphemeral,
+  prologue,
+);
+const responder = new NoiseHandshakeState(
+  protocolName,
+  'responder',
+  respStatic,
+  () => respEphemeral,
+  prologue,
+);
 
 const messages = vector.messages as { payload: string; ciphertext: string }[];
 

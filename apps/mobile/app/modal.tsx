@@ -1,18 +1,17 @@
-import { router } from 'expo-router';
 import Constants from 'expo-constants';
+import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, TextInput } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import { z } from 'zod';
-
-import { Text, View, useThemeColor } from '@/components/Themed';
 import { pairWithServer } from '@/lib/smartmc/pairingClient';
 import { savePairedServer } from '@/lib/smartmc/storage';
+import { useTheme } from '@/providers/ExtendedThemeProvider';
 import { useI18n } from '@/providers/I18nProvider';
 
 export default function PairScreen() {
   const { t } = useI18n();
-  const tint = useThemeColor({}, 'tint');
+  const { theme } = useTheme();
   const [host, setHost] = useState('');
   const [port, setPort] = useState('25565');
   const [pairingCode, setPairingCode] = useState('');
@@ -34,7 +33,11 @@ export default function PairScreen() {
   async function handleSubmit() {
     const result = schema.safeParse({ host, port, pairingCode, deviceName });
     if (!result.success) {
-      setErrors(Object.fromEntries(Object.entries(result.error.flatten().fieldErrors).map(([k, v]) => [k, v?.[0] ?? ''])));
+      setErrors(
+        Object.fromEntries(
+          Object.entries(result.error.flatten().fieldErrors).map(([k, v]) => [k, v?.[0] ?? '']),
+        ),
+      );
       return;
     }
     setErrors({});
@@ -66,7 +69,13 @@ export default function PairScreen() {
       <Text style={styles.title}>{t('pairTitle')}</Text>
       <Text style={styles.intro}>{t('pairIntro')}</Text>
 
-      <Field label={t('pairHost')} value={host} onChangeText={setHost} error={errors.host} autoCapitalize="none" />
+      <Field
+        label={t('pairHost')}
+        value={host}
+        onChangeText={setHost}
+        error={errors.host}
+        autoCapitalize="none"
+      />
       <Field
         label={t('pairPort')}
         value={port}
@@ -82,14 +91,26 @@ export default function PairScreen() {
         keyboardType="number-pad"
         maxLength={6}
       />
-      <Field label={t('pairDeviceName')} value={deviceName} onChangeText={setDeviceName} error={errors.deviceName} />
+      <Field
+        label={t('pairDeviceName')}
+        value={deviceName}
+        onChangeText={setDeviceName}
+        error={errors.deviceName}
+      />
 
       <Pressable
-        style={[styles.button, { backgroundColor: tint, opacity: submitting ? 0.6 : 1 }]}
+        style={[
+          styles.button,
+          { backgroundColor: theme.colors.primary, opacity: submitting ? 0.6 : 1 },
+        ]}
         onPress={handleSubmit}
         disabled={submitting}
       >
-        {submitting ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>{t('pairSubmit')}</Text>}
+        {submitting ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={styles.buttonText}>{t('pairSubmit')}</Text>
+        )}
       </Pressable>
     </View>
   );
@@ -105,9 +126,16 @@ type FieldProps = {
   maxLength?: number;
 };
 
-function Field({ label, value, onChangeText, error, autoCapitalize, keyboardType, maxLength }: FieldProps) {
-  const text = useThemeColor({}, 'text');
-  const tabIconDefault = useThemeColor({}, 'tabIconDefault');
+function Field({
+  label,
+  value,
+  onChangeText,
+  error,
+  autoCapitalize,
+  keyboardType,
+  maxLength,
+}: FieldProps) {
+  const { theme } = useTheme();
 
   return (
     <View style={styles.field}>
@@ -118,7 +146,10 @@ function Field({ label, value, onChangeText, error, autoCapitalize, keyboardType
         autoCapitalize={autoCapitalize ?? 'sentences'}
         keyboardType={keyboardType ?? 'default'}
         maxLength={maxLength}
-        style={[styles.input, { color: text, borderColor: error ? '#e5484d' : tabIconDefault }]}
+        style={[
+          styles.input,
+          { color: theme.colors.text, borderColor: error ? '#e5484d' : theme.colors.primary },
+        ]}
       />
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
     </View>
