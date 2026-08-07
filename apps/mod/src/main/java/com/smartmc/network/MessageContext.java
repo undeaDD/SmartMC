@@ -6,6 +6,7 @@ import com.smartmc.group.GroupProvider;
 import com.smartmc.storage.DeviceStore;
 import com.smartmc.storage.SessionStore;
 
+import java.nio.file.Path;
 import java.time.Duration;
 import java.util.concurrent.Executor;
 
@@ -35,6 +36,7 @@ public record MessageContext(
 	GroupProvider groupProvider,
 	DeviceStore devices,
 	Executor server,
-	Duration tokenValidity
+	Duration tokenValidity,
+	Path gameDir
 ) {
 }

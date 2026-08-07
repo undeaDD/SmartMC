@@ -179,6 +179,10 @@ public class SmartMC {
 		return server;
 	}
 
+	public static java.nio.file.Path gameDir() {
+		return PLATFORM.gameDir();
+	}
+
 	static Platform xplat() {
 		return PLATFORM;
 	}

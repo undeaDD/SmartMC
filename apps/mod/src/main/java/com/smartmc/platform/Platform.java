@@ -14,6 +14,9 @@ public interface Platform {
 	/** This loader's config directory, e.g. {@code config/smartmc/}. */
 	Path configDir();
 
+	/** The server's root/game directory -- where {@code server-icon.png}, {@code server.properties}, etc. live, one level up from {@code configDir()}'s parent. */
+	Path gameDir();
+
 	default boolean isDebug() {
 		return isDevelopmentEnvironment();
 	}

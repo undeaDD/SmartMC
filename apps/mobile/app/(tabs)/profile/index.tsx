@@ -16,8 +16,9 @@ import {
 import type { ReactNode } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { Hero } from '@/components/Hero';
 import { SettingsRow } from '@/components/SettingsRow';
-import { APP_SETTINGS_HREF, SERVER_MODAL_HREF } from '@/lib/smartmc/routes';
+import { SERVER_MODAL_HREF } from '@/lib/smartmc/routes';
 import { useTheme } from '@/providers/ExtendedThemeProvider';
 import { useI18n } from '@/providers/I18nProvider';
 
@@ -37,9 +38,12 @@ export default function ProfileScreen() {
   return (
     <ScrollView
       contentContainerStyle={styles.container}
+      contentInsetAdjustmentBehavior="automatic"
       automaticallyAdjustContentInsets={true}
       keyboardShouldPersistTaps="handled"
     >
+      <Hero icon={Settings} title={t('profileHeroTitle')} subtitle={t('profileHeroSubtitle')} />
+
       <Section title={t('settingsServerSection')}>
         <SettingsRow
           icon={Server}
@@ -49,7 +53,7 @@ export default function ProfileScreen() {
         <SettingsRow
           icon={Settings}
           label={t('appSettingsTitle')}
-          onPress={() => router.push(APP_SETTINGS_HREF)}
+          onPress={() => router.push('/(tabs)/profile/app-settings')}
         />
       </Section>
 
@@ -115,7 +119,7 @@ export default function ProfileScreen() {
 function Section({ title, children }: { title: string; children: ReactNode }) {
   const { theme } = useTheme();
   return (
-    <View>
+    <View style={styles.sectionContainer}>
       <Text style={[styles.sectionHeader, { color: theme.colors.textSecondary }]}>{title}</Text>
       <View style={[styles.section, { backgroundColor: theme.colors.card }]}>{children}</View>
     </View>
@@ -125,14 +129,16 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    gap: 20,
+  },
+  sectionContainer: {
+    paddingHorizontal: 20,
+    marginBottom: 12,
   },
   sectionHeader: {
     fontSize: 12,
     fontWeight: '600',
     textTransform: 'uppercase',
-    paddingHorizontal: 0,
+    paddingHorizontal: 14,
     marginBottom: 8,
   },
   section: {
@@ -145,7 +151,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     textAlign: 'center',
     opacity: 0.6,
-    marginTop: -20,
-    marginBottom: 15,
+    marginTop: 0,
+    marginBottom: 35,
   },
 });

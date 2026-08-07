@@ -1,14 +1,15 @@
 import { useFonts } from 'expo-font';
 import { type NativeStackNavigationOptions, Stack } from 'expo-router';
-import { LogBox, Platform } from 'react-native';
+import { LogBox, Platform, StyleSheet } from 'react-native';
 import FlashMessage from 'react-native-flash-message';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { StatusBar } from 'expo-status-bar';
 import { enableFreeze, enableScreens, FullWindowOverlay } from 'react-native-screens';
 import AppPlatform from '@/components/AppPlatform';
 import { AppPreferencesProvider } from '@/providers/AppPreferences';
 import { ExtendedThemeProvider, useTheme } from '@/providers/ExtendedThemeProvider';
-import { I18nProvider, useI18n } from '@/providers/I18nProvider';
+import { I18nProvider } from '@/providers/I18nProvider';
 
 LogBox.ignoreAllLogs();
 enableScreens(true);
@@ -47,29 +48,34 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   return (
-    <AppPreferencesProvider>
-      <I18nProvider>
-        <ExtendedThemeProvider>
-          <RootStack />
-          <ToastHost />
-          <AppStatusBar />
-        </ExtendedThemeProvider>
-      </I18nProvider>
-    </AppPreferencesProvider>
+    // Required by react-native-gesture-handler (and thus
+    // react-native-draggable-flatlist's drag gesture) -- without an ancestor
+    // GestureHandlerRootView, gesture handlers silently don't respond,
+    // especially on Android. Wraps the whole app since it's a one-time root
+    // requirement, not something worth scoping per-screen.
+    <GestureHandlerRootView style={styles.fill}>
+      <AppPreferencesProvider>
+        <I18nProvider>
+          <ExtendedThemeProvider>
+            <RootStack />
+            <ToastHost />
+            <AppStatusBar />
+          </ExtendedThemeProvider>
+        </I18nProvider>
+      </AppPreferencesProvider>
+    </GestureHandlerRootView>
   );
 }
 
-function RootStack() {
-  const { t } = useI18n();
+const styles = StyleSheet.create({
+  fill: { flex: 1 },
+});
 
+function RootStack() {
   return (
     <Stack screenOptions={ROOT_SCREEN_OPTIONS}>
       <Stack.Screen name="(tabs)" options={TABS_SCREEN_OPTIONS} />
       <Stack.Screen name="server" options={{ presentation: 'modal', headerShown: false }} />
-      <Stack.Screen
-        name="app-settings"
-        options={{ presentation: 'modal', headerShown: true, title: t('appSettingsTitle') }}
-      />
     </Stack>
   );
 }

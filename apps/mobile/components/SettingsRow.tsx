@@ -1,24 +1,41 @@
 import { NavArrowRight } from 'iconoir-react-native';
-import type { ComponentType } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { SvgProps } from 'react-native-svg';
 
 import { useTheme } from '@/providers/ExtendedThemeProvider';
 
 type SettingsRowProps = {
-  icon: ComponentType<SvgProps>;
+  /** Ignored when `leading` is provided. */
+  icon?: ComponentType<SvgProps>;
+  /** Replaces the default icon-in-rounded-square entirely, e.g. a `ServerIcon` showing a real fetched image instead of a plain SVG glyph. */
+  leading?: ReactNode;
   label: string;
+  /** A second line under the label, e.g. a live status ("Online"/"Offline") -- distinct from `detail`, which stays a trailing side value like an address. */
+  subtitle?: string;
+  /** Overrides `subtitle`'s color (e.g. green/red for a status word). Defaults to the theme's secondary text color. */
+  subtitleColor?: string;
   detail?: string;
   onPress?: () => void;
   disabled?: boolean;
 };
 
 /**
- * A single iOS-Settings-style row: icon in a rounded square, label, optional
- * trailing detail text, chevron. Shared by every row in the Settings screen
- * (both the plain link rows and the "Server" row that opens a modal).
+ * A single iOS-Settings-style row: icon in a rounded square, label (+
+ * optional subtitle line), optional trailing detail text, chevron. Shared by
+ * every row in the Settings screen (both the plain link rows and the
+ * "Server" row that opens a modal) and the paired-server list.
  */
-export function SettingsRow({ icon: Icon, label, detail, onPress, disabled }: SettingsRowProps) {
+export function SettingsRow({
+  icon: Icon,
+  leading,
+  label,
+  subtitle,
+  subtitleColor,
+  detail,
+  onPress,
+  disabled,
+}: SettingsRowProps) {
   const { theme } = useTheme();
 
   return (
@@ -27,10 +44,20 @@ export function SettingsRow({ icon: Icon, label, detail, onPress, disabled }: Se
       onPress={onPress}
       disabled={disabled || !onPress}
     >
-      <View style={[styles.iconWrap, { backgroundColor: `${theme.colors.primary}ee` }]}>
-        <Icon width={18} height={18} color={'black'} />
+      {leading ??
+        (Icon ? (
+          <View style={[styles.iconWrap, { backgroundColor: `${theme.colors.primary}ee` }]}>
+            <Icon width={18} height={18} color={'black'} />
+          </View>
+        ) : null)}
+      <View style={styles.textColumn}>
+        <Text style={[styles.label, { color: theme.colors.text }]}>{label}</Text>
+        {subtitle ? (
+          <Text style={[styles.subtitle, { color: subtitleColor ?? theme.colors.textSecondary }]}>
+            {subtitle}
+          </Text>
+        ) : null}
       </View>
-      <Text style={[styles.label, { color: theme.colors.text }]}>{label}</Text>
       {detail ? (
         <Text style={[styles.detail, { color: theme.colors.textSecondary }]}>{detail}</Text>
       ) : null}
@@ -56,9 +83,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  label: {
+  textColumn: {
     flex: 1,
+    gap: 2,
+  },
+  label: {
     fontSize: 16,
+  },
+  subtitle: {
+    fontSize: 13,
   },
   detail: {
     fontSize: 14,

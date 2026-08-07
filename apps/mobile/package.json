@@ -13,6 +13,7 @@
     "verify-noise": "bun run scripts/verify-noise.ts"
   },
   "dependencies": {
+    "@expo/ui": "~57.0.9",
     "@noble/ciphers": "^2.2.0",
     "@noble/curves": "^2.3.0",
     "@noble/hashes": "^2.3.0",
@@ -52,6 +53,7 @@
     "react-native-reanimated": "4.5.1",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "4.26.0",
+    "react-native-sortables": "^1.10.0",
     "react-native-svg": "15.15.4",
     "react-native-tcp-socket": "^6.4.2",
     "react-native-webview": "13.16.1",

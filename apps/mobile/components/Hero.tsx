@@ -21,7 +21,11 @@ export function Hero({ icon: Icon, title, subtitle }: HeroProps) {
 
   return (
     <View style={styles.container}>
-      <Icon width={40} height={40} color={theme.colors.primary} />
+      {/* Icon-in-rounded-square, matching SettingsRow's iconWrap convention
+          (primary bg, black icon) -- just scaled up for a hero-sized icon. */}
+      <View style={[styles.iconWrap, { backgroundColor: `${theme.colors.primary}` }]}>
+        <Icon width={32} height={32} color={'black'} />
+      </View>
       <View style={{ gap: 4, marginTop: 8 }}>
         <Text style={[styles.title, { color: theme.colors.text }]}>{title}</Text>
         <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>{subtitle}</Text>
@@ -32,11 +36,17 @@ export function Hero({ icon: Icon, title, subtitle }: HeroProps) {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 70,
     alignItems: 'flex-start',
     paddingVertical: 24,
     paddingHorizontal: 20,
     gap: 6,
+  },
+  iconWrap: {
+    width: 60,
+    height: 60,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   title: {
     fontSize: 18,

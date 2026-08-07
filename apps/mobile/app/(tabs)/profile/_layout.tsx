@@ -27,6 +27,7 @@ const ProfileStackLayout = () => {
   return (
     <Stack screenOptions={screenOptions}>
       <Stack.Screen name="index" options={indexOptions} />
+      <Stack.Screen name="app-settings" options={{ title: t('appSettingsTitle') }} />
     </Stack>
   );
 };

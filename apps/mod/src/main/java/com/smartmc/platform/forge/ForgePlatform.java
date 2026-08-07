@@ -35,5 +35,10 @@ public class ForgePlatform implements Platform {
 	public Path configDir() {
 		return FMLPaths.CONFIGDIR.get().resolve("smartmc");
 	}
+
+	@Override
+	public Path gameDir() {
+		return FMLPaths.GAMEDIR.get();
+	}
 }
 *///?}

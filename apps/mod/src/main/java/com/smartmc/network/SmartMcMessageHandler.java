@@ -6,6 +6,7 @@ import com.smartmc.network.message.DeviceListMessageHandler;
 import com.smartmc.network.message.DeviceToggleMessageHandler;
 import com.smartmc.network.message.PairMessageHandler;
 import com.smartmc.network.message.ReconnectMessageHandler;
+import com.smartmc.network.message.ServerIconMessageHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -41,6 +42,7 @@ public class SmartMcMessageHandler extends SimpleChannelInboundHandler<String> {
 			case "reconnect" -> new ReconnectMessageHandler();
 			case "devices" -> new DeviceListMessageHandler();
 			case "device_toggle" -> new DeviceToggleMessageHandler();
+			case "server_icon" -> new ServerIconMessageHandler();
 			default -> null;
 		};
 	}

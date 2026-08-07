@@ -35,5 +35,10 @@ public class FabricPlatform implements Platform {
 	public Path configDir() {
 		return FabricLoader.getInstance().getConfigDir().resolve("smartmc");
 	}
+
+	@Override
+	public Path gameDir() {
+		return FabricLoader.getInstance().getGameDir();
+	}
 }
 //?}

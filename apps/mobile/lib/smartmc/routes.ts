@@ -9,4 +9,3 @@ import type { Href } from 'expo-router';
 // a typed `Href` cast is correct at runtime regardless of what the dev-time
 // cache currently thinks the route union looks like.
 export const SERVER_MODAL_HREF = '/server' as Href;
-export const APP_SETTINGS_HREF = '/app-settings' as Href;

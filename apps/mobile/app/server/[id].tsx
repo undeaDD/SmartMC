@@ -1,8 +1,9 @@
 import { Link, router, useFocusEffect, useLocalSearchParams, useNavigation } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 
+import { ServerIcon } from '@/components/ServerIcon';
 import { reconnectToServer } from '@/lib/smartmc/reconnectClient';
 import {
   getPairedServer,
@@ -11,6 +12,7 @@ import {
   savePairedServer,
   serverLabel,
 } from '@/lib/smartmc/storage';
+import { useServerIcons } from '@/lib/smartmc/useServerIcons';
 import { useTheme } from '@/providers/ExtendedThemeProvider';
 import { useI18n } from '@/providers/I18nProvider';
 
@@ -26,6 +28,14 @@ export default function ServerDetailScreen() {
   const navigation = useNavigation();
   const [pairedServer, setPairedServer] = useState<PairedServer | null | undefined>(undefined);
   const [reconnecting, setReconnecting] = useState(false);
+
+  // Memoized so `useServerIcons` (keyed on this array's identity) only
+  // re-fetches when `pairedServer` itself actually changes, not on every
+  // unrelated re-render (e.g. `reconnecting` toggling) -- an inline
+  // `pairedServer ? [pairedServer] : undefined` would create a fresh array
+  // every render instead.
+  const serverForIcon = useMemo(() => (pairedServer ? [pairedServer] : undefined), [pairedServer]);
+  const icons = useServerIcons(serverForIcon);
 
   // The layout's static Stack.Screen options can only see the route param
   // (the raw "host:port" id) -- once the real record loads, prefer its
@@ -88,6 +98,7 @@ export default function ServerDetailScreen() {
     return (
       <ScrollView
         contentContainerStyle={styles.container}
+        contentInsetAdjustmentBehavior="automatic"
         automaticallyAdjustContentInsets={true}
         keyboardShouldPersistTaps="handled"
       >
@@ -110,9 +121,11 @@ export default function ServerDetailScreen() {
   return (
     <ScrollView
       contentContainerStyle={styles.container}
+      contentInsetAdjustmentBehavior="automatic"
       automaticallyAdjustKeyboardInsets={true}
       keyboardShouldPersistTaps="handled"
     >
+      <ServerIcon imageBase64={icons[pairedServer.id]} size={64} />
       <Text style={[styles.pairedServerLabel, { color: theme.colors.text }]}>
         {serverLabel(pairedServer)}
       </Text>

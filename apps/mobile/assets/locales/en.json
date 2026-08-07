@@ -19,6 +19,9 @@
 
   "reconnectSuccess": "Reconnected",
 
+  "profileHeroTitle": "Settings",
+  "profileHeroSubtitle": "Manage your paired servers, app preferences, and more.",
+
   "settingsServer": "Minecraft Server",
   "settingsAddServer": "Add server",
   "settingsNotifications": "Notifications",
@@ -41,22 +44,24 @@
   "serverForgotten": "Server forgotten",
   "serverListHeroTitle": "Your servers",
   "serverListHeroSubtitle": "Manage the Minecraft servers paired with this app.",
+  "serverStatusOnline": "Online",
+  "serverStatusOffline": "Offline",
+  "serverStatusChecking": "Checking…",
 
   "pairTitle": "Pair with a server",
   "pairHeroTitle": "Connect to your server",
-  "pairHeroSubtitle": "Run /smartmc pair in-game to get a 6-digit code, then enter your server's address and the code below.",
-  "pairServerName": "Server name (optional)",
+  "pairHeroSubtitle": "Run /smartmc pair in-game to get the 6-digit pairing code.",
+  "pairServerName": "Server name",
   "pairHost": "Server address",
   "pairPort": "Port",
   "pairCode": "Pairing code",
-  "pairDeviceName": "Device name",
   "pairSubmit": "Pair",
   "pairPairing": "Pairing…",
   "pairSuccess": "Paired successfully",
   "pairHostRequired": "Enter a server address",
   "pairPortInvalid": "Enter a valid port (1-65535)",
   "pairCodeInvalid": "Enter the 6-digit code shown in-game",
-  "pairDeviceNameRequired": "Enter a name for this device",
+  "pairServerNameRequired": "Enter a name for this server",
 
   "appSettingsTitle": "App Settings",
   "appSettingsEmpty": "Nothing here yet.",
@@ -65,5 +70,7 @@
   "deviceAlarmDisarmed": "Disarmed",
   "deviceAlarmTriggered": "Triggered",
   "deviceSwitchOn": "On",
-  "deviceSwitchOff": "Off"
+  "deviceSwitchOff": "Off",
+  "devicePin": "Pin to dashboard",
+  "deviceUnpin": "Unpin"
 }

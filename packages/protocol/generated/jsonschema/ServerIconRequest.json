@@ -1,0 +1,14 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "ServerIconRequest.json",
+    "type": "object",
+    "properties": {
+        "token": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "token"
+    ],
+    "description": "Sent by the app to fetch the server's icon, for the paired-server list and detail view -- same `server-icon.png` vanilla itself shows in the multiplayer server list, not a SmartMC-specific asset."
+}

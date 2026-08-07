@@ -9,6 +9,7 @@ import type { Device } from '@/lib/devices/types';
 import { SERVER_MODAL_HREF } from '@/lib/smartmc/routes';
 import { type PairedServer, serverLabel } from '@/lib/smartmc/storage';
 import { type ServerDeviceState, useDeviceLists } from '@/lib/smartmc/useDeviceLists';
+import { usePinnedDevices } from '@/lib/smartmc/usePinnedDevices';
 import { useTheme } from '@/providers/ExtendedThemeProvider';
 import { useI18n } from '@/providers/I18nProvider';
 
@@ -21,10 +22,13 @@ export default function DevicesScreen() {
   const { t } = useI18n();
   const { theme } = useTheme();
   const { serverDevices, refreshing, refresh } = useDeviceLists();
+  const { pinnedRefs, refresh: refreshPinned } = usePinnedDevices();
 
-  if (serverDevices === undefined) {
+  if (serverDevices === undefined || pinnedRefs === undefined) {
     return null;
   }
+
+  const pinnedKeys = new Set(pinnedRefs.map((ref) => `${ref.serverId}::${ref.deviceId}`));
 
   if (serverDevices.length === 0) {
     return (
@@ -46,6 +50,7 @@ export default function DevicesScreen() {
       data={items}
       keyExtractor={(item) => item.key}
       contentContainerStyle={styles.scrollContent}
+      contentInsetAdjustmentBehavior="automatic"
       automaticallyAdjustContentInsets={true}
       keyboardShouldPersistTaps="handled"
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
@@ -72,7 +77,14 @@ export default function DevicesScreen() {
         return (
           <View style={styles.row}>
             {item.devices.map((device) => (
-              <DeviceCell key={device.id} device={device} server={item.server} />
+              <DeviceCell
+                key={device.id}
+                device={device}
+                server={item.server}
+                pinned={pinnedKeys.has(`${item.server.id}::${device.id}`)}
+                allowPinning
+                onPinChange={refreshPinned}
+              />
             ))}
             {item.devices.length === 1 ? <View style={styles.spacer} /> : null}
           </View>
@@ -118,14 +130,14 @@ function chunkPairs<T>(items: T[]): T[][] {
 
 const styles = StyleSheet.create({
   scrollContent: {
-    padding: 12,
+    padding: 8,
     gap: 8,
   },
   sectionHeader: {
     fontSize: 13,
     fontWeight: '600',
     textTransform: 'uppercase',
-    paddingHorizontal: 4,
+    paddingHorizontal: 20,
     marginTop: 12,
   },
   hintCard: {
@@ -151,7 +163,7 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 4,
   },
   spacer: {
     flex: 1,

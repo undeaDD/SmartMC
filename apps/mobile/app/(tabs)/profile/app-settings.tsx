@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text } from 'react-native';
 
 import { useTheme } from '@/providers/ExtendedThemeProvider';
 import { useI18n } from '@/providers/I18nProvider';
@@ -9,17 +9,21 @@ export default function AppSettingsScreen() {
   const { theme } = useTheme();
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      contentInsetAdjustmentBehavior="automatic"
+      automaticallyAdjustContentInsets={true}
+      keyboardShouldPersistTaps="handled"
+    >
       <Text style={[styles.text, { color: theme.colors.textSecondary }]}>
         {t('appSettingsEmpty')}
       </Text>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 32,

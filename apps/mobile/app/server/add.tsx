@@ -28,24 +28,27 @@ export default function PairScreen() {
   const [host, setHost] = useState('');
   const [port, setPort] = useState('25565');
   const [pairingCode, setPairingCode] = useState('');
-  const [deviceName, setDeviceName] = useState(Constants.deviceName ?? '');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
+
+  // Not user-editable -- always the phone's own name, matching what the app
+  // already shows elsewhere (e.g. Profile's version row) and what the mod
+  // shows back via `/smartmc sessions list`.
+  const deviceName = Constants.deviceName ?? '';
 
   const schema = useMemo(
     () =>
       z.object({
-        serverName: z.string().trim(),
+        serverName: z.string().trim().min(1, t('pairServerNameRequired')),
         host: z.string().trim().min(1, t('pairHostRequired')),
         port: z.coerce.number().int().min(1, t('pairPortInvalid')).max(65535, t('pairPortInvalid')),
         pairingCode: z.string().regex(/^\d{6}$/, t('pairCodeInvalid')),
-        deviceName: z.string().trim().min(1, t('pairDeviceNameRequired')),
       }),
     [t],
   );
 
   async function handleSubmit() {
-    const result = schema.safeParse({ serverName, host, port, pairingCode, deviceName });
+    const result = schema.safeParse({ serverName, host, port, pairingCode });
     if (!result.success) {
       setErrors(
         Object.fromEntries(
@@ -57,7 +60,7 @@ export default function PairScreen() {
     setErrors({});
     setSubmitting(true);
 
-    const outcome = await pairWithServer(result.data);
+    const outcome = await pairWithServer({ ...result.data, deviceName });
     setSubmitting(false);
 
     if (!outcome.success) {
@@ -70,7 +73,7 @@ export default function PairScreen() {
       host: result.data.host,
       port: result.data.port,
       serverName: result.data.serverName,
-      deviceName: result.data.deviceName,
+      deviceName,
       token: outcome.token ?? '',
       playerUuid: outcome.playerUuid ?? '',
       serverFingerprint: outcome.serverFingerprint,
@@ -84,6 +87,7 @@ export default function PairScreen() {
     <View style={styles.screen}>
       <ScrollView
         contentContainerStyle={[styles.container, { paddingBottom: insets.bottom + 96 }]}
+        contentInsetAdjustmentBehavior="automatic"
         automaticallyAdjustContentInsets={true}
         keyboardShouldPersistTaps="handled"
       >
@@ -116,12 +120,6 @@ export default function PairScreen() {
           error={errors.pairingCode}
           keyboardType="number-pad"
           maxLength={6}
-        />
-        <Field
-          label={t('pairDeviceName')}
-          value={deviceName}
-          onChangeText={setDeviceName}
-          error={errors.deviceName}
         />
       </ScrollView>
 

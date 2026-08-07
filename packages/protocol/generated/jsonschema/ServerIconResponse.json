@@ -1,0 +1,22 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "ServerIconResponse.json",
+    "type": "object",
+    "properties": {
+        "success": {
+            "type": "boolean"
+        },
+        "imageBase64": {
+            "type": "string",
+            "description": "Present only when success is true AND the server has a `server-icon.png` -- base64-encoded PNG bytes, no data URI prefix. Absent (but still success) when the server simply hasn't set one; the app should fall back to a generic icon, not treat this as an error."
+        },
+        "error": {
+            "type": "string",
+            "description": "Present only when success is false (invalid/expired token, revoked session)."
+        }
+    },
+    "required": [
+        "success"
+    ],
+    "description": "The mod's reply to a ServerIconRequest."
+}
