@@ -1,32 +1,51 @@
-import { Link, useFocusEffect } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { Link, router, useFocusEffect, useLocalSearchParams, useNavigation } from 'expo-router';
+import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 
 import { reconnectToServer } from '@/lib/smartmc/reconnectClient';
 import {
-  clearPairedServer,
   getPairedServer,
   type PairedServer,
+  removePairedServer,
   savePairedServer,
+  serverLabel,
 } from '@/lib/smartmc/storage';
 import { useTheme } from '@/providers/ExtendedThemeProvider';
 import { useI18n } from '@/providers/I18nProvider';
 
-// The paired-server status/actions used to live inline on the main Settings
-// screen -- pulled out into its own modal (opened via the "Server" row) so
-// the Settings list itself stays a plain list of short rows, matching an
-// iOS-Settings look, rather than mixing in a stateful sub-view.
-export default function ServerModal() {
+// Root-level (not nested under (tabs)/profile) so it's reachable via
+// router.push from anywhere in the app, not just the Settings tab's own
+// stack -- per explicit request, now that multiple servers can be paired
+// and each gets its own row -> pushed detail screen, matching an iOS
+// Settings list/detail pattern (e.g. Wi-Fi's network list).
+export default function ServerDetailScreen() {
+  const { id } = useLocalSearchParams<{ id: string }>();
   const { t } = useI18n();
   const { theme } = useTheme();
+  const navigation = useNavigation();
   const [pairedServer, setPairedServer] = useState<PairedServer | null | undefined>(undefined);
   const [reconnecting, setReconnecting] = useState(false);
 
+  // The layout's static Stack.Screen options can only see the route param
+  // (the raw "host:port" id) -- once the real record loads, prefer its
+  // user-given name for the header title.
+  useEffect(() => {
+    if (pairedServer) {
+      navigation.setOptions({ title: serverLabel(pairedServer) });
+    }
+  }, [pairedServer, navigation]);
+
   useFocusEffect(
     useCallback(() => {
-      getPairedServer().then(setPairedServer);
-    }, []),
+      let cancelled = false;
+      getPairedServer(id).then((server) => {
+        if (!cancelled) setPairedServer(server);
+      });
+      return () => {
+        cancelled = true;
+      };
+    }, [id]),
   );
 
   async function handleReconnect() {
@@ -52,9 +71,9 @@ export default function ServerModal() {
   }
 
   async function handleForget() {
-    await clearPairedServer();
-    setPairedServer(null);
+    await removePairedServer(id);
     showMessage({ message: t('serverForgotten'), type: 'info' });
+    router.back();
   }
 
   if (pairedServer === undefined) {
@@ -62,25 +81,19 @@ export default function ServerModal() {
   }
 
   if (pairedServer === null) {
-    const emptyStateButtonStyle = StyleSheet.flatten([
-      styles.button,
-      { backgroundColor: theme.colors.primary },
-    ]);
-
+    // The server this screen was opened for was removed elsewhere (e.g.
+    // forgotten from another instance of this same screen) while this one
+    // was still mounted -- not the "never paired" case, which the Settings
+    // list itself handles by simply not showing a row at all.
     return (
       <ScrollView
         contentContainerStyle={styles.container}
-        automaticallyAdjustKeyboardInsets={true}
+        automaticallyAdjustContentInsets={true}
         keyboardShouldPersistTaps="handled"
       >
         <Text style={[styles.intro, { color: theme.colors.textSecondary }]}>
-          {t('serverNotPairedIntro')}
+          {t('serverNotFound')}
         </Text>
-        <Link href="/modal" asChild>
-          <Pressable style={emptyStateButtonStyle}>
-            <Text style={styles.buttonText}>{t('pairSubmit')}</Text>
-          </Pressable>
-        </Link>
       </ScrollView>
     );
   }
@@ -101,9 +114,10 @@ export default function ServerModal() {
       keyboardShouldPersistTaps="handled"
     >
       <Text style={[styles.pairedServerLabel, { color: theme.colors.text }]}>
-        {t('profilePairedServerAddress', { host: pairedServer.host, port: pairedServer.port })}
+        {serverLabel(pairedServer)}
       </Text>
       <Text style={[styles.deviceNameLabel, { color: theme.colors.textSecondary }]}>
+        {t('profilePairedServerAddress', { host: pairedServer.host, port: pairedServer.port })} ·{' '}
         {pairedServer.deviceName}
       </Text>
 
@@ -115,7 +129,7 @@ export default function ServerModal() {
         )}
       </Pressable>
 
-      <Link href="/modal" asChild>
+      <Link href="/server/add" asChild>
         <Pressable style={secondaryButtonStyle}>
           <Text style={[styles.secondaryButtonText, { color: theme.colors.text }]}>
             {t('serverPairDifferent')}

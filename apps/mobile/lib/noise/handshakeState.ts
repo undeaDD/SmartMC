@@ -46,6 +46,18 @@ export class NoiseHandshakeState {
     return this.splitResult !== undefined;
   }
 
+  // XX's fixed 3-message sequence guarantees these fields are populated by
+  // the time each step reads them, but that's a protocol-level invariant
+  // TypeScript can't see across separate writeMessage/readMessage calls (it
+  // narrows local `const`s from control flow, not `this` fields). A clear
+  // thrown error on violation is strictly better than a non-null assertion's
+  // generic crash if that invariant is ever actually broken by a caller.
+  private requireField<T>(value: T | undefined, name: string): T {
+    if (value === undefined)
+      throw new Error(`Noise handshake: ${name} not yet available at this step`);
+    return value;
+  }
+
   /** Only valid once {@link isDone} is true. [sendCipher, receiveCipher] from this side's perspective. */
   split(): [CipherState, CipherState] {
     if (!this.splitResult) throw new Error('handshake not complete');
@@ -67,15 +79,17 @@ export class NoiseHandshakeState {
       parts.push(this.ephemeralKeyPair.publicKey);
       this.symmetric.mixHash(this.ephemeralKeyPair.publicKey);
     } else if (step === 1) {
+      const remoteEphemeral = this.requireField(this.remoteEphemeral, 'remoteEphemeral');
       this.ephemeralKeyPair = this.generateEphemeral();
       parts.push(this.ephemeralKeyPair.publicKey);
       this.symmetric.mixHash(this.ephemeralKeyPair.publicKey);
-      this.symmetric.mixKey(dh(this.ephemeralKeyPair.privateKey, this.remoteEphemeral!));
+      this.symmetric.mixKey(dh(this.ephemeralKeyPair.privateKey, remoteEphemeral));
       parts.push(this.symmetric.encryptAndHash(this.staticKeyPair.publicKey));
-      this.symmetric.mixKey(dh(this.staticKeyPair.privateKey, this.remoteEphemeral!));
+      this.symmetric.mixKey(dh(this.staticKeyPair.privateKey, remoteEphemeral));
     } else if (step === 2) {
+      const remoteEphemeral = this.requireField(this.remoteEphemeral, 'remoteEphemeral');
       parts.push(this.symmetric.encryptAndHash(this.staticKeyPair.publicKey));
-      this.symmetric.mixKey(dh(this.staticKeyPair.privateKey, this.remoteEphemeral!));
+      this.symmetric.mixKey(dh(this.staticKeyPair.privateKey, remoteEphemeral));
     } else {
       throw new Error('XX handshake only has 3 messages');
     }
@@ -107,16 +121,21 @@ export class NoiseHandshakeState {
       this.remoteEphemeral = readBytes(DHLEN);
       this.symmetric.mixHash(this.remoteEphemeral);
     } else if (step === 1) {
-      this.remoteEphemeral = readBytes(DHLEN);
-      this.symmetric.mixHash(this.remoteEphemeral);
-      this.symmetric.mixKey(dh(this.ephemeralKeyPair?.privateKey, this.remoteEphemeral));
+      const ephemeralKeyPair = this.requireField(this.ephemeralKeyPair, 'ephemeralKeyPair');
+      const remoteEphemeral = readBytes(DHLEN);
+      this.remoteEphemeral = remoteEphemeral;
+      this.symmetric.mixHash(remoteEphemeral);
+      this.symmetric.mixKey(dh(ephemeralKeyPair.privateKey, remoteEphemeral));
       const encryptedStatic = readBytes(DHLEN + 16);
-      this.remoteStatic = this.symmetric.decryptAndHash(encryptedStatic);
-      this.symmetric.mixKey(dh(this.ephemeralKeyPair?.privateKey, this.remoteStatic));
+      const remoteStatic = this.symmetric.decryptAndHash(encryptedStatic);
+      this.remoteStatic = remoteStatic;
+      this.symmetric.mixKey(dh(ephemeralKeyPair.privateKey, remoteStatic));
     } else if (step === 2) {
+      const ephemeralKeyPair = this.requireField(this.ephemeralKeyPair, 'ephemeralKeyPair');
       const encryptedStatic = readBytes(DHLEN + 16);
-      this.remoteStatic = this.symmetric.decryptAndHash(encryptedStatic);
-      this.symmetric.mixKey(dh(this.ephemeralKeyPair?.privateKey, this.remoteStatic));
+      const remoteStatic = this.symmetric.decryptAndHash(encryptedStatic);
+      this.remoteStatic = remoteStatic;
+      this.symmetric.mixKey(dh(ephemeralKeyPair.privateKey, remoteStatic));
     } else {
       throw new Error('XX handshake only has 3 messages');
     }

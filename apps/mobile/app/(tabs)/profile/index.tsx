@@ -1,6 +1,6 @@
 import * as Application from 'expo-application';
 import * as Linking from 'expo-linking';
-import { Link } from 'expo-router';
+import { router } from 'expo-router';
 import {
   Book,
   Discord,
@@ -11,11 +11,13 @@ import {
   PrivacyPolicy,
   SendMail,
   Server,
+  Settings,
 } from 'iconoir-react-native';
 import type { ReactNode } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { SettingsRow } from '@/components/SettingsRow';
+import { APP_SETTINGS_HREF, SERVER_MODAL_HREF } from '@/lib/smartmc/routes';
 import { useTheme } from '@/providers/ExtendedThemeProvider';
 import { useI18n } from '@/providers/I18nProvider';
 
@@ -34,14 +36,21 @@ export default function ProfileScreen() {
 
   return (
     <ScrollView
-      style={styles.container}
-      automaticallyAdjustKeyboardInsets={true}
+      contentContainerStyle={styles.container}
+      automaticallyAdjustContentInsets={true}
       keyboardShouldPersistTaps="handled"
     >
       <Section title={t('settingsServerSection')}>
-        <Link href="/(tabs)/profile/server" asChild>
-          <SettingsRow icon={Server} label={t('settingsServer')} />
-        </Link>
+        <SettingsRow
+          icon={Server}
+          label={t('settingsServer')}
+          onPress={() => router.push(SERVER_MODAL_HREF)}
+        />
+        <SettingsRow
+          icon={Settings}
+          label={t('appSettingsTitle')}
+          onPress={() => router.push(APP_SETTINGS_HREF)}
+        />
       </Section>
 
       <Section title={t('settingsCommunitySection')}>
@@ -130,7 +139,7 @@ const styles = StyleSheet.create({
     borderRadius: 26,
     paddingHorizontal: 12,
     paddingVertical: 4,
-    marginBottom: 18,
+    marginBottom: 30,
   },
   version: {
     fontSize: 13,

@@ -8,7 +8,7 @@ import { enableFreeze, enableScreens, FullWindowOverlay } from 'react-native-scr
 import AppPlatform from '@/components/AppPlatform';
 import { AppPreferencesProvider } from '@/providers/AppPreferences';
 import { ExtendedThemeProvider, useTheme } from '@/providers/ExtendedThemeProvider';
-import { I18nProvider } from '@/providers/I18nProvider';
+import { I18nProvider, useI18n } from '@/providers/I18nProvider';
 
 LogBox.ignoreAllLogs();
 enableScreens(true);
@@ -50,16 +50,27 @@ function RootLayoutNav() {
     <AppPreferencesProvider>
       <I18nProvider>
         <ExtendedThemeProvider>
-          <Stack screenOptions={ROOT_SCREEN_OPTIONS}>
-            <Stack.Screen name="index" options={{ animation: 'none' }} />
-            <Stack.Screen name="(tabs)" options={TABS_SCREEN_OPTIONS} />
-            <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-          </Stack>
+          <RootStack />
           <ToastHost />
           <AppStatusBar />
         </ExtendedThemeProvider>
       </I18nProvider>
     </AppPreferencesProvider>
+  );
+}
+
+function RootStack() {
+  const { t } = useI18n();
+
+  return (
+    <Stack screenOptions={ROOT_SCREEN_OPTIONS}>
+      <Stack.Screen name="(tabs)" options={TABS_SCREEN_OPTIONS} />
+      <Stack.Screen name="server" options={{ presentation: 'modal', headerShown: false }} />
+      <Stack.Screen
+        name="app-settings"
+        options={{ presentation: 'modal', headerShown: true, title: t('appSettingsTitle') }}
+      />
+    </Stack>
   );
 }
 

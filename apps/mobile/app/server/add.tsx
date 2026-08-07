@@ -1,17 +1,30 @@
 import Constants from 'expo-constants';
 import { router } from 'expo-router';
+import { Server } from 'iconoir-react-native';
 import { useMemo, useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import { showMessage } from 'react-native-flash-message';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { z } from 'zod';
+import { Hero } from '@/components/Hero';
 import { pairWithServer } from '@/lib/smartmc/pairingClient';
-import { savePairedServer } from '@/lib/smartmc/storage';
+import { makeServerId, savePairedServer } from '@/lib/smartmc/storage';
 import { useTheme } from '@/providers/ExtendedThemeProvider';
 import { useI18n } from '@/providers/I18nProvider';
 
 export default function PairScreen() {
   const { t } = useI18n();
   const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
+  const [serverName, setServerName] = useState('');
   const [host, setHost] = useState('');
   const [port, setPort] = useState('25565');
   const [pairingCode, setPairingCode] = useState('');
@@ -22,6 +35,7 @@ export default function PairScreen() {
   const schema = useMemo(
     () =>
       z.object({
+        serverName: z.string().trim(),
         host: z.string().trim().min(1, t('pairHostRequired')),
         port: z.coerce.number().int().min(1, t('pairPortInvalid')).max(65535, t('pairPortInvalid')),
         pairingCode: z.string().regex(/^\d{6}$/, t('pairCodeInvalid')),
@@ -31,7 +45,7 @@ export default function PairScreen() {
   );
 
   async function handleSubmit() {
-    const result = schema.safeParse({ host, port, pairingCode, deviceName });
+    const result = schema.safeParse({ serverName, host, port, pairingCode, deviceName });
     if (!result.success) {
       setErrors(
         Object.fromEntries(
@@ -52,8 +66,10 @@ export default function PairScreen() {
     }
 
     await savePairedServer({
+      id: makeServerId(result.data.host, result.data.port),
       host: result.data.host,
       port: result.data.port,
+      serverName: result.data.serverName,
       deviceName: result.data.deviceName,
       token: outcome.token ?? '',
       playerUuid: outcome.playerUuid ?? '',
@@ -65,53 +81,71 @@ export default function PairScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{t('pairTitle')}</Text>
-      <Text style={styles.intro}>{t('pairIntro')}</Text>
-
-      <Field
-        label={t('pairHost')}
-        value={host}
-        onChangeText={setHost}
-        error={errors.host}
-        autoCapitalize="none"
-      />
-      <Field
-        label={t('pairPort')}
-        value={port}
-        onChangeText={setPort}
-        error={errors.port}
-        keyboardType="number-pad"
-      />
-      <Field
-        label={t('pairCode')}
-        value={pairingCode}
-        onChangeText={setPairingCode}
-        error={errors.pairingCode}
-        keyboardType="number-pad"
-        maxLength={6}
-      />
-      <Field
-        label={t('pairDeviceName')}
-        value={deviceName}
-        onChangeText={setDeviceName}
-        error={errors.deviceName}
-      />
-
-      <Pressable
-        style={[
-          styles.button,
-          { backgroundColor: theme.colors.primary, opacity: submitting ? 0.6 : 1 },
-        ]}
-        onPress={handleSubmit}
-        disabled={submitting}
+    <View style={styles.screen}>
+      <ScrollView
+        contentContainerStyle={[styles.container, { paddingBottom: insets.bottom + 96 }]}
+        automaticallyAdjustContentInsets={true}
+        keyboardShouldPersistTaps="handled"
       >
-        {submitting ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.buttonText}>{t('pairSubmit')}</Text>
-        )}
-      </Pressable>
+        <Hero icon={Server} title={t('pairHeroTitle')} subtitle={t('pairHeroSubtitle')} />
+
+        <Field
+          label={t('pairServerName')}
+          value={serverName}
+          onChangeText={setServerName}
+          error={errors.serverName}
+        />
+        <Field
+          label={t('pairHost')}
+          value={host}
+          onChangeText={setHost}
+          error={errors.host}
+          autoCapitalize="none"
+        />
+        <Field
+          label={t('pairPort')}
+          value={port}
+          onChangeText={setPort}
+          error={errors.port}
+          keyboardType="number-pad"
+        />
+        <Field
+          label={t('pairCode')}
+          value={pairingCode}
+          onChangeText={setPairingCode}
+          error={errors.pairingCode}
+          keyboardType="number-pad"
+          maxLength={6}
+        />
+        <Field
+          label={t('pairDeviceName')}
+          value={deviceName}
+          onChangeText={setDeviceName}
+          error={errors.deviceName}
+        />
+      </ScrollView>
+
+      {/* Pinned to the screen bottom with no backdrop of its own -- the
+          ScrollView's content is free to scroll beneath it. */}
+      <View
+        style={[styles.pinnedButtonWrap, { paddingBottom: insets.bottom + 16 }]}
+        pointerEvents="box-none"
+      >
+        <Pressable
+          style={[
+            styles.button,
+            { backgroundColor: theme.colors.primary, opacity: submitting ? 0.6 : 1 },
+          ]}
+          onPress={handleSubmit}
+          disabled={submitting}
+        >
+          {submitting ? (
+            <ActivityIndicator color="#000" />
+          ) : (
+            <Text style={styles.buttonText}>{t('pairSubmit')}</Text>
+          )}
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -139,7 +173,7 @@ function Field({
 
   return (
     <View style={styles.field}>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={[styles.label, { color: theme.colors.textSecondary }]}>{label}</Text>
       <TextInput
         value={value}
         onChangeText={onChangeText}
@@ -157,27 +191,19 @@ function Field({
 }
 
 const styles = StyleSheet.create({
-  container: {
+  screen: {
     flex: 1,
+  },
+  container: {
     padding: 20,
+    paddingTop: 0,
     gap: 8,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  intro: {
-    fontSize: 14,
-    opacity: 0.7,
-    marginBottom: 16,
   },
   field: {
     marginBottom: 12,
   },
   label: {
     fontSize: 13,
-    opacity: 0.6,
     marginBottom: 4,
   },
   input: {
@@ -192,14 +218,20 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 4,
   },
+  pinnedButtonWrap: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    paddingHorizontal: 20,
+  },
   button: {
-    marginTop: 12,
     borderRadius: 8,
     paddingVertical: 14,
     alignItems: 'center',
   },
   buttonText: {
-    color: '#fff',
+    color: '#000',
     fontSize: 16,
     fontWeight: '600',
   },

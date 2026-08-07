@@ -7,10 +7,11 @@
   "homeEmptySubtitle": "Hefte ein Gerät im Geräte-Tab an, um es hier auf deinem Dashboard zu sehen.",
   "homePinDevice": "Gerät anheften",
 
-  "devicesEmpty": "Platziere einen Alarm Controller Block und er erscheint hier.",
-  "devicesNoServerTitle": "Kein Server verbunden",
-  "devicesNoServerSubtitle": "Verbinde dich im Einstellungen-Tab mit einem Server, um deine Geräte hier zu sehen.",
-  "devicesGoToProfile": "Zu den Einstellungen",
+  "devicesEmpty": "Noch keine Geräte im Spiel hinzugefügt...",
+
+  "noServerTitle": "Kein Server verbunden",
+  "noServerSubtitle": "Verbinde dich mit einem Minecraft-Server, um deine Geräte hier zu sehen.",
+  "noServerConnect": "Server verbinden",
 
   "profilePairedServerAddress": "{{host}}:{{port}}",
   "profileReconnect": "Neu verbinden",
@@ -19,6 +20,7 @@
   "reconnectSuccess": "Neu verbunden",
 
   "settingsServer": "Minecraft Server",
+  "settingsAddServer": "Server hinzufügen",
   "settingsNotifications": "Benachrichtigungen",
   "settingsImprint": "Impressum",
   "settingsPrivacy": "Datenschutz",
@@ -33,13 +35,17 @@
   "settingsCommunitySection": "Soziale Medien & Community",
   "settingsFeedbackSection": "Schnellaktionen",
 
-  "serverNotPairedIntro": "Führe /smartmc pair im Spiel aus und verbinde dann die App mit deinem Server.",
+  "serverNotFound": "Dieser Server ist nicht mehr verbunden.",
   "serverPairDifferent": "Mit einem anderen Server verbinden",
   "serverForget": "Diesen Server vergessen",
   "serverForgotten": "Server vergessen",
+  "serverListHeroTitle": "Deine Server",
+  "serverListHeroSubtitle": "Verwalte die mit dieser App verbundenen Minecraft-Server.",
 
   "pairTitle": "Mit Server verbinden",
-  "pairIntro": "Führe /smartmc pair im Spiel aus, um einen 6-stelligen Code zu erhalten, und gib dann unten die Serveradresse und den Code ein.",
+  "pairHeroTitle": "Mit deinem Server verbinden",
+  "pairHeroSubtitle": "Führe /smartmc pair im Spiel aus, um einen 6-stelligen Code zu erhalten, und gib dann unten die Serveradresse und den Code ein.",
+  "pairServerName": "Servername (optional)",
   "pairHost": "Serveradresse",
   "pairPort": "Port",
   "pairCode": "Pairing-Code",
@@ -51,6 +57,9 @@
   "pairPortInvalid": "Gültigen Port eingeben (1-65535)",
   "pairCodeInvalid": "Den 6-stelligen Code aus dem Spiel eingeben",
   "pairDeviceNameRequired": "Namen für dieses Gerät eingeben",
+
+  "appSettingsTitle": "App-Einstellungen",
+  "appSettingsEmpty": "Hier ist noch nichts.",
 
   "deviceAlarmArmed": "Scharf",
   "deviceAlarmDisarmed": "Unscharf",

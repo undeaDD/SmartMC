@@ -1,12 +1,10 @@
 import type { ComponentType } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { SvgProps } from 'react-native-svg';
-
-import TabIcons, { type TabIconName } from '@/components/TabIcons';
 import { useTheme } from '@/providers/ExtendedThemeProvider';
 
 type EmptyStateProps = {
-  icon: TabIconName;
+  icon?: ComponentType<SvgProps>;
   title: string;
   subtitle: string;
   actionLabel?: string;
@@ -28,7 +26,7 @@ type EmptyStateProps = {
  * hypothetical.
  */
 export function EmptyState({
-  icon,
+  icon: TitleIcon,
   title,
   subtitle,
   actionLabel,
@@ -39,7 +37,7 @@ export function EmptyState({
 
   return (
     <View style={styles.container}>
-      <TabIcons name={icon} size={48} color={theme.colors.textSecondary} />
+      {TitleIcon ? <TitleIcon width={48} height={48} color={theme.colors.textSecondary} /> : null}
       <Text style={[styles.title, { color: theme.colors.text }]}>{title}</Text>
       <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>{subtitle}</Text>
       {actionLabel && onAction ? (

@@ -7,10 +7,11 @@
   "homeEmptySubtitle": "Pin a device from the Devices tab to see it here on your dashboard.",
   "homePinDevice": "Pin a device",
 
-  "devicesEmpty": "Place an Alarm Controller block and it'll show up here.",
-  "devicesNoServerTitle": "No server connected",
-  "devicesNoServerSubtitle": "Pair with a server from the Settings tab to see your devices here.",
-  "devicesGoToProfile": "Go to Settings",
+  "devicesEmpty": "No devices added in the game yet...",
+
+  "noServerTitle": "No server connected",
+  "noServerSubtitle": "Connect to a Minecraft server to see your devices here.",
+  "noServerConnect": "Connect server",
 
   "profilePairedServerAddress": "{{host}}:{{port}}",
   "profileReconnect": "Reconnect",
@@ -19,6 +20,7 @@
   "reconnectSuccess": "Reconnected",
 
   "settingsServer": "Minecraft Server",
+  "settingsAddServer": "Add server",
   "settingsNotifications": "Notifications",
   "settingsImprint": "Imprint",
   "settingsPrivacy": "Data Privacy",
@@ -33,13 +35,17 @@
   "settingsCommunitySection": "Social Media & Community",
   "settingsFeedbackSection": "Quick Actions",
 
-  "serverNotPairedIntro": "Run /smartmc pair in-game, then pair the app with your server.",
+  "serverNotFound": "This server is no longer paired.",
   "serverPairDifferent": "Pair with a different server",
   "serverForget": "Forget this server",
   "serverForgotten": "Server forgotten",
+  "serverListHeroTitle": "Your servers",
+  "serverListHeroSubtitle": "Manage the Minecraft servers paired with this app.",
 
   "pairTitle": "Pair with a server",
-  "pairIntro": "Run /smartmc pair in-game to get a 6-digit code, then enter your server's address and the code below.",
+  "pairHeroTitle": "Connect to your server",
+  "pairHeroSubtitle": "Run /smartmc pair in-game to get a 6-digit code, then enter your server's address and the code below.",
+  "pairServerName": "Server name (optional)",
   "pairHost": "Server address",
   "pairPort": "Port",
   "pairCode": "Pairing code",
@@ -51,6 +57,9 @@
   "pairPortInvalid": "Enter a valid port (1-65535)",
   "pairCodeInvalid": "Enter the 6-digit code shown in-game",
   "pairDeviceNameRequired": "Enter a name for this device",
+
+  "appSettingsTitle": "App Settings",
+  "appSettingsEmpty": "Nothing here yet.",
 
   "deviceAlarmArmed": "Armed",
   "deviceAlarmDisarmed": "Disarmed",

@@ -1,42 +1,41 @@
-/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
-import { router, useFocusEffect } from 'expo-router';
-import { Settings } from 'iconoir-react-native';
-import { useCallback, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { router } from 'expo-router';
+import { AppleShortcuts, Plus, Server } from 'iconoir-react-native';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
 
 import { DeviceCell } from '@/components/DeviceCell';
+import { DocsButton } from '@/components/DocsButton';
 import { EmptyState } from '@/components/EmptyState';
 import type { Device } from '@/lib/devices/types';
-import { getPairedServer, type PairedServer } from '@/lib/smartmc/storage';
+import { PLAYERS_DOCS_URL } from '@/lib/smartmc/docsUrl';
+import { SERVER_MODAL_HREF } from '@/lib/smartmc/routes';
+import { type PairedServer, serverLabel } from '@/lib/smartmc/storage';
+import { usePairedServers } from '@/lib/smartmc/usePairedServers';
 import { useTheme } from '@/providers/ExtendedThemeProvider';
 import { useI18n } from '@/providers/I18nProvider';
 
+type ListItem =
+  | { type: 'header'; key: string; server: PairedServer }
+  | { type: 'empty'; key: string }
+  | { type: 'row'; key: string; devices: Device[] };
+
 export default function DevicesScreen() {
   const { t } = useI18n();
-  const [pairedServer, setPairedServer] = useState<PairedServer | null | undefined>(undefined);
+  const { theme } = useTheme();
+  const pairedServers = usePairedServers();
 
-  // Re-read on focus, not just mount -- matches profile.tsx's pattern, so
-  // pairing (or unpairing, once that exists) from another tab is reflected
-  // here without needing a shared store.
-  useFocusEffect(
-    useCallback(() => {
-      getPairedServer().then(setPairedServer);
-    }, []),
-  );
-
-  if (pairedServer === undefined) {
+  if (pairedServers === undefined) {
     return null;
   }
 
-  if (pairedServer === null) {
+  if (pairedServers.length === 0) {
     return (
       <EmptyState
-        icon="profile"
-        title={t('devicesNoServerTitle')}
-        subtitle={t('devicesNoServerSubtitle')}
-        actionLabel={t('devicesGoToProfile')}
-        actionIcon={Settings}
-        onAction={() => router.push('/(tabs)/profile')}
+        icon={Server}
+        title={t('noServerTitle')}
+        subtitle={t('noServerSubtitle')}
+        actionLabel={t('noServerConnect')}
+        actionIcon={Plus}
+        onAction={() => router.push(SERVER_MODAL_HREF)}
       />
     );
   }
@@ -45,57 +44,73 @@ export default function DevicesScreen() {
   // actual devices needs the persistent live connection (M5/later work per
   // CLAUDE.md), not just the one-shot pairing/reconnect connections that
   // exist today. Genuinely empty per server, same honest-empty approach as
-  // Home. Only ever one section in practice right now (storage.ts's
-  // v1-scoped single-paired-server limit), but built to section by server
-  // since that's the real, already-planned shape once multi-server pairing
-  // lands.
-  const sections: { server: PairedServer; devices: Device[] }[] = [
-    { server: pairedServer, devices: [] },
-  ];
+  // Home.
+  const items = buildListItems(pairedServers);
 
   return (
-    <ScrollView
+    <FlatList
+      data={items}
+      keyExtractor={(item) => item.key}
       contentContainerStyle={styles.scrollContent}
-      automaticallyAdjustKeyboardInsets={true}
+      automaticallyAdjustContentInsets={true}
       keyboardShouldPersistTaps="handled"
-    >
-      {sections.map((section) => (
-        <DeviceSection
-          key={`${section.server.host}:${section.server.port}`}
-          server={section.server}
-          devices={section.devices}
-        />
-      ))}
-    </ScrollView>
+      renderItem={({ item }) => {
+        if (item.type === 'header') {
+          return (
+            <Text style={[styles.sectionHeader, { color: theme.colors.textSecondary }]}>
+              {serverLabel(item.server)}
+            </Text>
+          );
+        }
+        if (item.type === 'empty') {
+          return (
+            <View style={[styles.hintCard, { backgroundColor: theme.colors.card }]}>
+              <View style={[styles.hintIconWrap, { backgroundColor: theme.colors.primary }]}>
+                <AppleShortcuts width={18} height={18} color={'black'} />
+              </View>
+              <Text style={[styles.hintText, { color: theme.colors.textSecondary }]}>
+                {t('devicesEmpty')}
+              </Text>
+              <DocsButton url={PLAYERS_DOCS_URL} size={20} />
+            </View>
+          );
+        }
+        return (
+          <View style={styles.row}>
+            {item.devices.map((device) => (
+              <DeviceCell key={device.id} device={device} />
+            ))}
+            {item.devices.length === 1 ? <View style={styles.spacer} /> : null}
+          </View>
+        );
+      }}
+    />
   );
 }
 
-function DeviceSection({ server, devices }: { server: PairedServer; devices: Device[] }) {
-  const { t } = useI18n();
-  const { theme } = useTheme();
-  const rows = chunkPairs(devices);
-
-  return (
-    <View style={styles.section}>
-      <Text style={[styles.sectionHeader, { color: theme.colors.textSecondary }]}>
-        {t('profilePairedServerAddress', { host: server.host, port: server.port })}
-      </Text>
-      {devices.length === 0 ? (
-        <Text style={[styles.sectionEmptyText, { color: theme.colors.textSecondary }]}>
-          {t('devicesEmpty')}
-        </Text>
-      ) : (
-        rows.map((row, index) => (
-          <View key={index} style={styles.row}>
-            {row.map((device) => (
-              <DeviceCell key={device.id} device={device} />
-            ))}
-            {row.length === 1 ? <View style={styles.spacer} /> : null}
-          </View>
-        ))
-      )}
-    </View>
-  );
+// A single virtualized FlatList, not one FlatList per section -- each
+// server contributes a full-width header item followed by either an
+// "empty" notice item or 2-device row items. FlatList's own `numColumns`
+// forces every item into a uniform N-column grid, which can't represent a
+// full-width header interleaved with 2-wide device rows without hacky
+// padding tricks; pre-chunking devices into row items (each rendering its
+// own 1-2 cells) gets the same 2-column visual result without fighting that.
+function buildListItems(servers: PairedServer[]): ListItem[] {
+  return servers.flatMap((server) => {
+    const devices: Device[] = [];
+    return [
+      { type: 'header', key: `header-${server.id}`, server } as ListItem,
+      ...(devices.length === 0
+        ? [{ type: 'empty', key: `empty-${server.id}` } as ListItem]
+        : chunkPairs(devices).map(
+            (row, index): ListItem => ({
+              type: 'row',
+              key: `row-${server.id}-${index}`,
+              devices: row,
+            }),
+          )),
+    ];
+  });
 }
 
 function chunkPairs<T>(items: T[]): T[][] {
@@ -109,9 +124,6 @@ function chunkPairs<T>(items: T[]): T[][] {
 const styles = StyleSheet.create({
   scrollContent: {
     padding: 12,
-    gap: 20,
-  },
-  section: {
     gap: 8,
   },
   sectionHeader: {
@@ -119,11 +131,28 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textTransform: 'uppercase',
     paddingHorizontal: 4,
+    marginTop: 12,
   },
-  sectionEmptyText: {
+  hintCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    borderRadius: 26,
+    paddingLeft: 20,
+    paddingRight: 25,
+    paddingVertical: 13,
+    marginBottom: 30,
+  },
+  hintIconWrap: {
+    width: 30,
+    height: 30,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  hintText: {
+    flex: 1,
     fontSize: 14,
-    paddingHorizontal: 4,
-    opacity: 0.8,
   },
   row: {
     flexDirection: 'row',
