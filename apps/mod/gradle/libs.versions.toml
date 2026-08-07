@@ -4,6 +4,7 @@ stonecutter-postprocess = "2.1-beta.8"
 mod-publish = "2.1.1"
 loomx = "0.4.1"
 neoforge-moddev = "2.0.141"
+neoforge-moddev-legacyforge = "2.0.141"
 foojay = "1.0.0"
 devtools-ksp = "2.2.10-2.0.2"
 kotlin-jvm = "2.2.10"
@@ -39,6 +40,7 @@ ftb-teams-neoforge = { module = "dev.ftb.mods:ftb-teams-neoforge", version.ref =
 stonecutter = { id = "dev.kikugie.stonecutter", version.ref = "stonecutter" }
 loom-back-compat = { id = "dev.kikugie.loom-back-compat", version.ref = "loomx" }
 neoforged-moddev = { id = "net.neoforged.moddev", version.ref = "neoforge-moddev" }
+neoforged-moddev-legacyforge = { id = "net.neoforged.moddev.legacyforge", version.ref = "neoforge-moddev-legacyforge" }
 jsonlang-postprocess = { id = "dev.kikugie.postprocess.jsonlang", version.ref = "stonecutter-postprocess" }
 mod-publish-plugin = { id = "me.modmuss50.mod-publish-plugin", version.ref = "mod-publish" }
 devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "devtools-ksp" }

@@ -54,6 +54,21 @@ public final class SmartMcCommand {
 	private SmartMcCommand() {
 	}
 
+	/**
+	 * {@link CommandSourceStack#sendSuccess} took a plain {@link Component}
+	 * through 1.19.2; from 1.20 onward it's a lazy {@code Supplier<Component>}
+	 * instead (avoids building the component when nothing's actually
+	 * listening). Centralized here so every call site below stays
+	 * version-agnostic rather than needing its own {@code //? } guard.
+	 */
+	private static void sendSuccess(CommandSourceStack source, String message, boolean broadcastToOps) {
+		//? >1.19.2 {
+		source.sendSuccess(() -> Component.literal(message), broadcastToOps);
+		//?} else {
+		/*source.sendSuccess(Component.literal(message), broadcastToOps);
+		*///?}
+	}
+
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
 		dispatcher.register(Commands.literal("smartmc")
 			.executes(SmartMcCommand::help)
@@ -100,8 +115,8 @@ public final class SmartMcCommand {
 
 		int ttlSeconds = SmartMC.config().pairingCodeTtlSeconds;
 		String code = SmartMC.pairingCodes().generate(player.getUUID(), Duration.ofSeconds(ttlSeconds));
-		ctx.getSource().sendSuccess(() -> Component.literal(
-			"Your SmartMC pairing code is " + code + " -- enter it in the app within " + (ttlSeconds / 60) + " minutes."), false);
+		sendSuccess(ctx.getSource(),
+			"Your SmartMC pairing code is " + code + " -- enter it in the app within " + (ttlSeconds / 60) + " minutes.", false);
 		return 1;
 	}
 
@@ -133,13 +148,13 @@ public final class SmartMcCommand {
 		}
 
 		if (sessions.isEmpty()) {
-			source.sendSuccess(() -> Component.literal(emptyMessage), false);
+			sendSuccess(source, emptyMessage, false);
 			return 1;
 		}
-		source.sendSuccess(() -> Component.literal(header), false);
+		sendSuccess(source, header, false);
 		for (SessionRecord session : sessions) {
 			String line = shortId(session.deviceId()) + " -- " + session.deviceName();
-			source.sendSuccess(() -> Component.literal(line), false);
+			sendSuccess(source, line, false);
 		}
 		return 1;
 	}
@@ -199,7 +214,7 @@ public final class SmartMcCommand {
 			source.sendFailure(Component.literal("Server error while revoking that device."));
 			return 0;
 		}
-		source.sendSuccess(() -> Component.literal("Revoked '" + match.deviceName() + "'" + suffix + "."), targetLabel != null);
+		sendSuccess(source, "Revoked '" + match.deviceName() + "'" + suffix + ".", targetLabel != null);
 		return 1;
 	}
 
@@ -216,7 +231,7 @@ public final class SmartMcCommand {
 			ctx.getSource().sendFailure(Component.literal("Server error while creating the group."));
 			return 0;
 		}
-		ctx.getSource().sendSuccess(() -> Component.literal("Created group '" + name + "'."), false);
+		sendSuccess(ctx.getSource(), "Created group '" + name + "'.", false);
 		return 1;
 	}
 
@@ -263,7 +278,7 @@ public final class SmartMcCommand {
 
 		String message = (invite ? "Added " : "Removed ") + target.getName().getString()
 			+ (invite ? " to '" : " from '") + group.name() + "'.";
-		ctx.getSource().sendSuccess(() -> Component.literal(message), false);
+		sendSuccess(ctx.getSource(), message, false);
 		return 1;
 	}
 
@@ -275,13 +290,13 @@ public final class SmartMcCommand {
 
 		List<GroupInfo> groups = SmartMC.groupProvider().findGroupsForPlayer(player.getUUID());
 		if (groups.isEmpty()) {
-			ctx.getSource().sendSuccess(() -> Component.literal("You aren't in any groups."), false);
+			sendSuccess(ctx.getSource(), "You aren't in any groups.", false);
 			return 1;
 		}
-		ctx.getSource().sendSuccess(() -> Component.literal("Your groups:"), false);
+		sendSuccess(ctx.getSource(), "Your groups:", false);
 		for (GroupInfo group : groups) {
 			String line = "- " + group.name();
-			ctx.getSource().sendSuccess(() -> Component.literal(line), false);
+			sendSuccess(ctx.getSource(), line, false);
 		}
 		return 1;
 	}
@@ -289,9 +304,9 @@ public final class SmartMcCommand {
 	/** Also the fallback for bare {@code /smartmc} with no subcommand, instead of Brigadier's generic parse error. */
 	private static int help(CommandContext<CommandSourceStack> ctx) {
 		CommandSourceStack source = ctx.getSource();
-		source.sendSuccess(() -> Component.literal("SmartMC commands:"), false);
+		sendSuccess(source, "SmartMC commands:", false);
 		for (CommandInfo command : COMMANDS) {
-			source.sendSuccess(() -> Component.literal(command.usage() + " -- " + command.description()), false);
+			sendSuccess(source, command.usage() + " -- " + command.description(), false);
 		}
 		return 1;
 	}

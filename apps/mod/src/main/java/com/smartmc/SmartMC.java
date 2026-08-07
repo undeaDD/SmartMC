@@ -7,7 +7,6 @@ import com.smartmc.auth.TokenService;
 import com.smartmc.command.SmartMcPermissions;
 import com.smartmc.command.VanillaPermissions;
 import com.smartmc.config.SmartMcConfig;
-import com.smartmc.group.FtbTeamsGroupProvider;
 import com.smartmc.group.GroupProvider;
 import com.smartmc.group.NativeGroupProvider;
 import com.smartmc.platform.Platform;
@@ -28,9 +27,19 @@ import java.sql.SQLException;
 
 //? fabric {
 import com.smartmc.platform.fabric.FabricPlatform;
-//?} else {
+//?} else if neoforge {
 /*import com.smartmc.platform.neoforge.NeoforgePlatform;
+ *///?} else {
+/*import com.smartmc.platform.forge.ForgePlatform;
  *///?}
+
+// FtbTeamsGroupProvider is itself guarded to fabric||neoforge (see that
+// class's javadoc) since there's no Forge-compatible FTB Teams artifact
+// pinned for the legacy 1.19.2/1.20.1 target -- guarded here too so this
+// file doesn't reference a type that won't exist in the forge build.
+//? fabric || neoforge {
+import com.smartmc.group.FtbTeamsGroupProvider;
+//?}
 
 @SuppressWarnings("LoggingSimilarMessage")
 public class SmartMC {
@@ -89,7 +98,12 @@ public class SmartMC {
 
 		if ("ftbteams".equals(config.groupProvider)) {
 			if (xplat().isModLoaded("ftbteams")) {
+				//? fabric || neoforge {
 				groupProvider = new FtbTeamsGroupProvider();
+				//?} else {
+				/*LOGGER.warn("groupProvider is set to \"ftbteams\" but FTB Teams support isn't built for Forge yet -- falling back to native groups");
+				groupProvider = new NativeGroupProvider(groups);
+				*///?}
 			} else {
 				LOGGER.warn("groupProvider is set to \"ftbteams\" but FTB Teams isn't installed -- falling back to native groups");
 				groupProvider = new NativeGroupProvider(groups);
@@ -165,8 +179,10 @@ public class SmartMC {
 	private static Platform createPlatformInstance() {
 		//? fabric {
 		return new FabricPlatform();
-		//?} else {
+		//?} else if neoforge {
 		/*return new NeoforgePlatform();
+		 *///?} else {
+		/*return new ForgePlatform();
 		 *///?}
 	}
 

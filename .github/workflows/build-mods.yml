@@ -26,8 +26,11 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          # Currently only 1.21.1 is targeted (needs Java 21). Add 17 here
-          # once an older floor version lands in M3.
+          # This is just the JDK that launches Gradle itself -- each
+          # subproject (1.21.1 needs 21, the 1.19.2/1.20.1 Forge targets need
+          # 17) gets its own compile JDK auto-provisioned via
+          # org.gradle.toolchains.foojay-resolver-convention regardless of
+          # this value, confirmed working locally across all four targets.
           java-version: 21
 
       - name: Setup Gradle

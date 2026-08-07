@@ -4,6 +4,7 @@ plugins {
 	alias(libs.plugins.stonecutter)
 	alias(libs.plugins.loom.back.compat).apply(false)
 	alias(libs.plugins.neoforged.moddev).apply(false)
+	alias(libs.plugins.neoforged.moddev.legacyforge).apply(false)
 	alias(libs.plugins.jsonlang.postprocess).apply(false)
 	alias(libs.plugins.mod.publish.plugin).apply(false)
 	alias(libs.plugins.kotlin.jvm).apply(false)
@@ -26,7 +27,7 @@ tasks.register("runActiveServer") {
 }
 
 stonecutter parameters {
-	constants.match(current.project.substringAfterLast('-'), "fabric", "neoforge")
+	constants.match(current.project.substringAfterLast('-'), "fabric", "neoforge", "forge")
 	swaps["mod_version"] = "\"${properties.get<String>("mod.version")}\";"
 	swaps["mod_id"] = "\"${properties.get<String>("mod.id")}\";"
 	swaps["mod_name"] = "\"${properties.get<String>("mod.name")}\";"

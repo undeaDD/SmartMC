@@ -30,18 +30,28 @@ url = "https://github.com/undeaDD"
 # since it's also the real dogfooding environment (the Opolis modpack).
 # Revisit the actual floor version in M3 when expanding version coverage.
 
-# NOTE on loaders: classic Forge is NOT a build target. The
-# `net.neoforged.moddev.legacyforge` plugin (the bridge that would let this
-# Stonecutter/ModDevGradle-family setup target classic Forge) only supports
-# Minecraft 1.17-1.20.1 -- confirmed against its own docs, and against the
-# fact that upstream rotgruengelb/stonecutter-mod-template itself caps its
-# own Forge entry at 1.19.2 while Fabric/NeoForge go much further. Modern
-# Forge (1.21.x) only builds via the separate, unrelated ForgeGradle
-# toolchain, which is a real second Gradle plugin ecosystem, not a config
-# tweak here. Decision: drop Forge from v1 rather than adopt a second
-# toolchain for one loader.
+# NOTE on loaders: classic Forge IS a build target again, re-added to cover
+# legacy modpacks that never migrated to NeoForge -- but scoped, not a full
+# Forge revival. `net.neoforged.moddev.legacyforge` (the same ModDevGradle
+# plugin family the `neoforge` target already uses, confirmed via its own
+# LEGACY.md docs) only supports Minecraft 1.17-1.20.1, so Forge's range here
+# is capped at that ceiling on purpose: 1.20.1 is also exactly the last
+# version before the Forge/NeoForge split, so NeoForge already owns every
+# version above it -- there'd be no reason for a server admin to pick classic
+# Forge over NeoForge there. Floor is 1.19.2, not lower: 1.19.2-1.20.1 both
+# sit on the same modern-era Forge API/toolchain (Java 17, the same
+# `legacyforge` plugin), so this is a bounded, low-risk addition. Going
+# lower (1.16.5 and especially 1.12.2, the single most popular legacy
+# modpack version) would drag in a genuinely different, much older
+# ForgeGradle-2/3-era toolchain (different JDK, different mapping system) --
+# deliberately out of scope for this pass, a "maybe someday" if it's ever
+# worth the real second-toolchain maintenance cost.
 #
-# Quilt fills the third-loader slot instead, at zero extra build cost: Quilt
+# Modern Forge (1.21.x) is still NOT a build target -- it only builds via the
+# separate, unrelated classic ForgeGradle toolchain, and NeoForge already
+# fully covers that range, so there'd be nothing gained from it.
+#
+# Quilt fills the third modern-loader slot at zero extra build cost: Quilt
 # has a built-in Fabric-compatibility layer, so the `fabric` target's jar
 # already runs unmodified on a Quilt server. No separate Stonecutter target,
 # no quilt.mod.json, no new Gradle plugin. If a future feature needs Fabric
@@ -61,3 +71,17 @@ deps.fabric-api = "0.116.7+1.21.1"
 [neoforge."1.21.1"]
 deps.minecraft = "1.21.1"
 deps.neoforge = "21.1.213"
+
+[forge]
+
+# Forge's own "recommended" build per files.minecraftforge.net's
+# promotions_slim.json, confirmed 2026-08-07 -- not "latest", matching the
+# same recommended-over-latest convention M0 already established for Forge
+# version pinning.
+[forge."1.20.1"]
+deps.minecraft = "1.20.1"
+deps.forge = "47.4.10"
+
+[forge."1.19.2"]
+deps.minecraft = "1.19.2"
+deps.forge = "43.5.0"

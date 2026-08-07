@@ -121,10 +121,16 @@ sealed class Loader(val id: String) {
 		override val excludedResources = (super.excludedResources + "META-INF/mods.toml") + "pack.mcmeta"
 	}
 
+	object Forge : ForgeLike("forge") {
+		override val modManifestPath = "META-INF/mods.toml"
+		override val excludedResources = (super.excludedResources + "META-INF/neoforge.mods.toml") + "pack.mcmeta"
+	}
+
 	companion object {
 		fun of(id: String): Loader = when (id) {
 			"fabric" -> Fabric
 			"neoforge" -> NeoForge
+			"forge" -> Forge
 			else -> error("Unknown loader: '$id'")
 		}
 	}
