@@ -15,6 +15,10 @@
         "groupId": {
             "type": "string",
             "description": "Present only when the device is shared with a group."
+        },
+        "powered": {
+            "type": "boolean",
+            "description": "Live on/off state for a \"switch\" device -- read from the actual\nin-world block when the request is handled. Absent if the device's\nchunk isn't currently loaded (state genuinely unknown, not \"off\") or\nthe device type doesn't have a powered state."
         }
     },
     "required": [

@@ -11,7 +11,9 @@
     "protocol:generate": "bun run --filter '@smart-mc/protocol' generate",
     "web:dev": "bun run --filter '@smart-mc/landing' dev --force",
     "lint": "biome check .",
-    "lint:fix": "biome check --write ."
+    "lint:fix": "biome check --write .",
+    "build:mod": "cd apps/mod && ./gradlew build",
+    "build:test": "cd apps/mod && ./gradlew :1.21.1-neoforge:build && bun run scripts/deploy-test-jar.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.7"

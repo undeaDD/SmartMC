@@ -10,7 +10,7 @@
     "S": { "item": "minecraft:stone" },
     "R": { "item": "minecraft:repeater" },
     "D": { "item": "minecraft:diamond_block" },
-    "E": { "item": "minecraft:emerald" },
+    "E": { "item": "minecraft:emerald_block" },
     "C": { "item": "minecraft:comparator" }
   },
   "result": {

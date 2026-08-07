@@ -111,10 +111,45 @@ def make_item_icon() -> Image.Image:
 	return img
 
 
+def make_tab_icon() -> Image.Image:
+	# A dedicated, standalone 16x16 badge -- NOT wired to any registered
+	# item (the creative tab's actual functional icon is the real
+	# smart_controller ItemStack, set in *Blocks.java). This is purely a
+	# reference asset for hand-tweaking/reuse, matching the flat SM-shield
+	# mark's look at the same small scale the block/item textures were
+	# hand-downscaled to.
+	icon_size = 16
+	super_sample = 8
+	img = Image.new("RGBA", (icon_size, icon_size), (0, 0, 0, 0))
+
+	hi = Image.new("RGBA", (icon_size * super_sample, icon_size * super_sample), (0, 0, 0, 0))
+	draw = ImageDraw.Draw(hi)
+	s = super_sample
+	shield = [
+		(2 * s, 1 * s), (14 * s, 1 * s),
+		(14 * s, 9 * s), (8 * s, 15 * s), (2 * s, 9 * s),
+	]
+	draw.polygon(shield, fill=INK + (255,), outline=GREEN_LIT + (255,), width=1 * s)
+
+	font = ImageFont.truetype("arialbd.ttf", 6 * s)
+	text = "SM"
+	bbox = draw.textbbox((0, 0), text, font=font)
+	tw, th = bbox[2] - bbox[0], bbox[3] - bbox[1]
+	tx = (icon_size * s - tw) // 2 - bbox[0]
+	ty = (icon_size * s - th) // 2 - bbox[1] - s
+	draw.text((tx, ty), text, font=font, fill=GREEN_LIT + (255,))
+
+	low = hi.resize((icon_size, icon_size), Image.NEAREST)
+	img.paste(low, (0, 0), low)
+	return img
+
+
 if __name__ == "__main__":
 	out_dir = "../src/main/resources/assets/smartmc/textures"
 	make(lit=False).save(f"{out_dir}/block/smart_controller.png")
 	make(lit=True).save(f"{out_dir}/block/smart_controller_on.png")
 	make_item_icon().save(f"{out_dir}/item/smart_controller.png")
+	make_tab_icon().save(f"{out_dir}/gui/tab_icon_reference.png")
 	print("wrote smart_controller.png and smart_controller_on.png at", SIZE, "x", SIZE)
 	print("wrote item/smart_controller.png at", SIZE, "x", SIZE)
+	print("wrote gui/tab_icon_reference.png at 16x16 (reference only, not wired to any item)")

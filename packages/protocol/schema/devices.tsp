@@ -16,6 +16,12 @@ model DeviceSummary {
 
   /** Present only when the device is shared with a group. */
   groupId?: string;
+
+  /** Live on/off state for a "switch" device -- read from the actual
+   * in-world block when the request is handled. Absent if the device's
+   * chunk isn't currently loaded (state genuinely unknown, not "off") or
+   * the device type doesn't have a powered state. */
+  powered?: boolean;
 }
 
 /** The mod's reply to a DeviceListRequest. */

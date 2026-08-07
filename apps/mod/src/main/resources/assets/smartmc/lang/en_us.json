@@ -1,3 +1,4 @@
 {
-  "block.smartmc.smart_controller": "Smart Controller"
+  "block.smartmc.smart_controller": "Smart Controller",
+  "itemGroup.smartmc": "SmartMC"
 }

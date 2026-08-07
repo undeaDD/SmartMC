@@ -29,11 +29,15 @@ import java.sql.SQLException;
  * player) but deliberately does NOT extend {@code DiodeBlock} -- that base
  * class carries tick-delay scheduling and lock-state logic this block has no
  * use for (right-click always opens the device GUI instead of cycling a
- * delay). Redstone is a plain, immediate passthrough: back face (opposite of
- * {@link #FACING}) is the input, front face ({@link #FACING} itself) is the
- * output, updated synchronously in {@link #neighborChanged} with no
- * scheduled tick -- see CLAUDE.md's Device/alarm model section for why this
- * generalizes the original single-purpose alarm-trigger design.
+ * delay). {@code FACING} is the input side, {@code FACING.getOpposite()} the
+ * output -- but unlike a repeater/diode, input does NOT drive output here:
+ * this is a controlled device, not a wire. {@link #POWERED} (the device's
+ * on/off state, and which texture variant renders) is set only by the app
+ * (see {@code DeviceToggleMessageHandler}) and, later, per-device-type logic
+ * -- see {@link #neighborChanged}'s javadoc for why an earlier version that
+ * mirrored input straight to output was wrong. See CLAUDE.md's Device/alarm
+ * model section for why one block generalizes the original single-purpose
+ * alarm-trigger design.
  *
  * <p>Persists a {@code DeviceRecord} on placement and removes it on break
  * (see {@link #setPlacedBy}/{@link #onRemove}) with hardcoded v1 defaults --
@@ -126,27 +130,29 @@ public class SmartControllerBlock extends HorizontalDirectionalBlock implements 
 	}
 
 	/**
-	 * Redstone input read, corrected: verified against the real decompiled
-	 * 1.21.1 {@code DiodeBlock} ({@code getInputSignal}) and the wiki's own
-	 * "direction from output side to input side = opposite of the direction
-	 * the player faces while placing" -- both independently confirm the
-	 * genuinely counter-intuitive fact that {@link #FACING} itself points
-	 * toward the INPUT side for this whole block family, not the output
-	 * side (output is {@code FACING.getOpposite()}). An earlier version of
-	 * this method read the opposite side, so back-face redstone input
-	 * silently did nothing even though the model/output side worked fine.
+	 * Deliberately does NOT slave {@link #POWERED} to the raw input reading
+	 * -- an earlier version did, and it was wrong on three counts the user
+	 * found live: (1) {@code POWERED} is this device's OUTPUT/on-off state,
+	 * controlled by the app (see {@code DeviceToggleMessageHandler}) and,
+	 * later, per-device-type logic (e.g. an armed alarm reacting to a
+	 * trigger) -- it must never be a plain mirror of the physical input, or
+	 * literally any neighbor-changed event (including the block's own
+	 * app-driven state change notifying its neighbors) immediately
+	 * re-syncs it back to the physical input and undoes whatever just set
+	 * it; (2) that made the block behave like a bare wire -- input
+	 * physically "passing through" to output -- instead of a controlled
+	 * device with its own state; (3) it made the tile's on/off texture
+	 * track raw input instead of the device's actual state.
+	 *
+	 * <p>{@link #FACING} is confirmed the INPUT side for this block family
+	 * (see the class javadoc history / CLAUDE.md), kept here as the
+	 * documented anchor for whichever device-type-specific input reaction
+	 * lands later (e.g. an armed {@code ALARM} triggering on a rising edge)
+	 * -- there is no such reaction yet, so this is intentionally a no-op
+	 * for now rather than guessing one.
 	 */
 	@Override
 	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
-		if (level.isClientSide) {
-			return;
-		}
-		Direction inputSide = state.getValue(FACING);
-		boolean inputPowered = level.getSignal(pos.relative(inputSide), inputSide) > 0;
-		if (inputPowered != state.getValue(POWERED)) {
-			level.setBlock(pos, state.setValue(POWERED, inputPowered), Block.UPDATE_ALL);
-			level.updateNeighborsAt(pos.relative(state.getValue(FACING).getOpposite()), this);
-		}
 	}
 
 	@Override
