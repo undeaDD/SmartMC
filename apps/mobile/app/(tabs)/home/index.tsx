@@ -1,13 +1,11 @@
 import { router } from 'expo-router';
 import { AppleShortcuts, Plus, Server } from 'iconoir-react-native';
-import { useState } from 'react';
 import { FlatList, RefreshControl, StyleSheet } from 'react-native';
 
 import { DeviceCell } from '@/components/DeviceCell';
 import { EmptyState } from '@/components/EmptyState';
 import { mapDeviceSummary } from '@/lib/devices/mapDeviceSummary';
 import type { Device } from '@/lib/devices/types';
-import { toggleDevice } from '@/lib/smartmc/deviceToggleClient';
 import { SERVER_MODAL_HREF } from '@/lib/smartmc/routes';
 import type { PairedServer } from '@/lib/smartmc/storage';
 import { useDeviceLists } from '@/lib/smartmc/useDeviceLists';
@@ -18,10 +16,6 @@ type HomeItem = { device: Device; server: PairedServer };
 export default function HomeScreen() {
   const { t } = useI18n();
   const { serverDevices, refreshing, refresh } = useDeviceLists();
-  // See devices/index.tsx's identical field for why this exists: the wire
-  // device list carries no live state, so a successful toggle's returned
-  // `powered` is the only source of truth for on/off display until refresh.
-  const [toggledOn, setToggledOn] = useState<Record<string, boolean>>({});
 
   if (serverDevices === undefined) {
     return null;
@@ -44,14 +38,7 @@ export default function HomeScreen() {
   // across every paired server, flattened, as an honest interim stand-in
   // for "pinned" until that feature lands, rather than staying empty.
   const items: HomeItem[] = serverDevices.flatMap(({ server, devices }) =>
-    (devices ?? []).map((summary) => {
-      const device = mapDeviceSummary(summary);
-      const withOverride =
-        device.deviceType === 'switch' && device.id in toggledOn
-          ? { ...device, on: toggledOn[device.id] }
-          : device;
-      return { device: withOverride, server };
-    }),
+    (devices ?? []).map((summary) => ({ device: mapDeviceSummary(summary), server })),
   );
 
   if (items.length === 0) {
@@ -75,31 +62,7 @@ export default function HomeScreen() {
       columnWrapperStyle={styles.row}
       contentContainerStyle={styles.grid}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
-      renderItem={({ item }) => (
-        <DeviceCell
-          device={item.device}
-          onPress={
-            item.device.deviceType === 'switch'
-              ? () => {
-                  toggleDevice({
-                    host: item.server.host,
-                    port: item.server.port,
-                    token: item.server.token,
-                    expectedServerFingerprint: item.server.serverFingerprint,
-                    deviceId: item.device.id,
-                  }).then((outcome) => {
-                    if (outcome.success) {
-                      setToggledOn((prev) => ({
-                        ...prev,
-                        [item.device.id]: outcome.powered ?? false,
-                      }));
-                    }
-                  });
-                }
-              : undefined
-          }
-        />
-      )}
+      renderItem={({ item }) => <DeviceCell device={item.device} server={item.server} />}
       automaticallyAdjustContentInsets={true}
       keyboardShouldPersistTaps="handled"
     />

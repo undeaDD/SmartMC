@@ -7,7 +7,13 @@ import type { StyleProp, ViewStyle } from 'react-native';
 import AppPlatform from '@/components/AppPlatform';
 import { useTheme } from '@/providers/ExtendedThemeProvider';
 
+// Matches the opacity of the neutral theme.blur.background values it stands
+// in for (e.g. '#12121299') -- keeps the blur/translucency visible under the
+// tint instead of the color becoming a flat, opaque fill.
+const TINT_ALPHA = '99';
+
 type GlassSurfaceProps = {
+  color?: string;
   style?: StyleProp<ViewStyle>;
   children?: ReactNode;
 };
@@ -19,7 +25,7 @@ type GlassSurfaceProps = {
  * blur fallback has to draw both itself, since BlurView is just a plain
  * translucent rect otherwise.
  */
-export function GlassSurface({ style, children }: GlassSurfaceProps) {
+export function GlassSurface({ color, style, children }: GlassSurfaceProps) {
   const { theme } = useTheme();
 
   // isGlassEffectAPIAvailable() guards against a real crash on some iOS 26
@@ -32,7 +38,7 @@ export function GlassSurface({ style, children }: GlassSurfaceProps) {
 
   if (useNativeGlass) {
     return (
-      <GlassView glassEffectStyle="regular" style={style}>
+      <GlassView glassEffectStyle="regular" style={style} tintColor={color}>
         {children}
       </GlassView>
     );
@@ -45,7 +51,12 @@ export function GlassSurface({ style, children }: GlassSurfaceProps) {
       style={[
         style,
         {
-          backgroundColor: theme.blur.background,
+          // `color` was previously only wired to the native-glass path above
+          // (as tintColor) -- the blur fallback silently ignored it. Blended
+          // at the same alpha as the neutral background it replaces, so the
+          // blur/translucency underneath stays visible instead of the tint
+          // becoming a flat fill.
+          backgroundColor: color ? withAlpha(color, TINT_ALPHA) : theme.blur.background,
           borderRadius: theme.radius.medium,
           overflow: 'hidden',
         },
@@ -54,4 +65,9 @@ export function GlassSurface({ style, children }: GlassSurfaceProps) {
       {children}
     </BlurView>
   );
+}
+
+/** Appends an alpha channel to a `#rrggbb` color; passes through unchanged if one's already present. */
+function withAlpha(hex: string, alphaHex: string): string {
+  return hex.length > 7 ? hex : `${hex}${alphaHex}`;
 }

@@ -1,3 +1,6 @@
 {
-  "parent": "smartmc:block/smart_controller"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "smartmc:item/smart_controller"
+  }
 }

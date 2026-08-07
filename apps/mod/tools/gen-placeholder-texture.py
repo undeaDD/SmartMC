@@ -84,8 +84,37 @@ def make(lit: bool) -> Image.Image:
 	return img.convert("RGB")
 
 
+def make_item_icon() -> Image.Image:
+	# Flat 2D inventory icon (minecraft:item/generated), not the 3D block
+	# model rendered at an angle -- same idea as vanilla's own repeater item
+	# icon (a small plate viewed flat-on with markers on it), but with one
+	# centered green dot standing in for the repeater's twin delay-torches.
+	img = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
+	draw = ImageDraw.Draw(img)
+
+	pad = SIZE // 8
+	draw.rounded_rectangle(
+		[pad, pad, SIZE - 1 - pad, SIZE - 1 - pad],
+		radius=SIZE // 10,
+		fill=STONE_BASE + (255,),
+		outline=STONE_EDGE + (255,),
+		width=max(1, SIZE // 32),
+	)
+
+	line_w = max(1, SIZE // 32)
+	cx = SIZE // 2
+	draw.line([(cx, pad + line_w), (cx, SIZE - 1 - pad - line_w)], fill=GRAY, width=line_w)
+
+	dot_r = SIZE // 10
+	draw.ellipse([cx - dot_r, cx - dot_r, cx + dot_r, cx + dot_r], fill=GREEN_LIT)
+
+	return img
+
+
 if __name__ == "__main__":
-	out_dir = "../src/main/resources/assets/smartmc/textures/block"
-	make(lit=False).save(f"{out_dir}/smart_controller.png")
-	make(lit=True).save(f"{out_dir}/smart_controller_on.png")
+	out_dir = "../src/main/resources/assets/smartmc/textures"
+	make(lit=False).save(f"{out_dir}/block/smart_controller.png")
+	make(lit=True).save(f"{out_dir}/block/smart_controller_on.png")
+	make_item_icon().save(f"{out_dir}/item/smart_controller.png")
 	print("wrote smart_controller.png and smart_controller_on.png at", SIZE, "x", SIZE)
+	print("wrote item/smart_controller.png at", SIZE, "x", SIZE)
